@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react";
-import { getClients } from "./services/api";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+
+import Dashboard from "./pages/Dashboard";
+import Clients from "./pages/Clients";
+import Calendar from "./pages/Calendar";
+import Settings from "./pages/Settings";
 
 function App() {
-  const [clients, setClients] = useState([]);
+    return (
+        <BrowserRouter>
+            <Navbar />
 
-  useEffect(() => {
-    getClients()
-      .then(setClients)
-      .catch(console.error);
-  }, []);
-
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Clients</h1>
-
-      {clients.map((client) => (
-        <div key={client.id}>
-          {client.name} {client.institution}
-        </div>
-      ))}
-    </div>
-  );
+            <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/clients" element={<Clients />} />
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/settings" element={<Settings />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
