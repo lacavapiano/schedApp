@@ -1,0 +1,104 @@
+.client-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.client-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.client-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.client-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.client-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.client-table tbody tr:hover {
+  background: #f8f8f8;
+}
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable-header:hover {
+  background: #f5f5f5;
+}
+
+.action-header {
+  width: 70px;
+  text-align: center !important;
+}
+
+.client-name-button {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.client-name-button:hover {
+  text-decoration: underline;
+}
+
+.table-action-button {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.table-action-button:hover {
+  background: #f5f5f5;
+}
+
+.delete-button {
+  border-color: #ccc;
+}
+
+.clients-empty {
+  padding: 50px 20px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #666;
+}
+
+.clients-empty p {
+  margin: 0;
+}
+
+.phone-column {
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .client-table {
+    min-width: 700px;
+  }
+
+  .client-table-wrapper {
+    overflow-x: auto;
+  }
+}

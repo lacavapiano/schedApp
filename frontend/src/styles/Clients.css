@@ -1,0 +1,61 @@
+.clients-page {
+  width: 100%;
+}
+
+.clients-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.clients-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.clients-count {
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.clients-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.client-search {
+  flex: 1;
+  max-width: 450px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.client-search:focus {
+  outline: none;
+  border-color: #555;
+}
+
+.add-client-button {
+  margin-left: auto;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.add-client-button:hover {
+  opacity: 0.85;
+}
+
+.clients-loading {
+  padding: 40px;
+  text-align: center;
+}

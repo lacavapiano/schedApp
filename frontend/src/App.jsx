@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import ClientDetail from "./pages/ClientDetail";
 
 function App() {
     return (
@@ -13,10 +15,12 @@ function App() {
             <Navbar />
 
             <Routes>
+                <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/clients/:id" element={<ClientDetail />} />
             </Routes>
         </BrowserRouter>
     );
