@@ -257,6 +257,7 @@ export async function updateClient(req, res) {
       emails = [],
       phones = [],
       addresses = [],
+      contacts = [],
     } = req.body;
 
     const { error } = await supabase.rpc(
@@ -269,6 +270,7 @@ export async function updateClient(req, res) {
         p_emails: emails,
         p_phones: phones,
         p_addresses: addresses,
+        p_contacts: contacts,
       }
     );
 
@@ -294,6 +296,7 @@ export async function updateClient(req, res) {
       emails,
       phones,
       addresses,
+      contacts,
     });
   } catch (error) {
     console.error("Unexpected error updating client:", error);

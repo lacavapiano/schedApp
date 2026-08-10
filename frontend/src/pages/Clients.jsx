@@ -113,7 +113,7 @@ function Clients() {
           <AddClientModal
             client={editingClient}
             onClose={() => setEditingClient(null)}
-            onClientAdded={loadClients}
+            onSaved={loadClients}
           />
         )}
       </div>

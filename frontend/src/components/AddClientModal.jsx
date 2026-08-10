@@ -43,6 +43,8 @@ function AddClientModal({
 
   const isEditing = Boolean(client);
 
+  const [contacts, setContacts] = useState([]);
+
   useEffect(() => {
     if (client) {
       setFormData({
@@ -104,6 +106,28 @@ function AddClientModal({
 
         notes: client.notes || "",
       });
+
+      setContacts(
+        client.client_contacts?.map((contact) => ({
+          name: contact.name || "",
+          relationship: contact.relationship || "",
+          notes: contact.notes || "",
+          emails:
+            contact.contact_emails?.map((email) => ({
+              email: email.email || "",
+              label: email.label || "",
+              is_primary: Boolean(email.is_primary),
+            })) || [],
+          phones:
+            contact.contact_phones?.map((phone) => ({
+              phone: phone.phone || "",
+              label: phone.label || "",
+              is_primary: Boolean(phone.is_primary),
+            })) || [],
+        })) || []
+      );
+    } else {
+      setContacts([]);
     }
   }, [client]);
 
@@ -214,6 +238,165 @@ function AddClientModal({
     });
   }
 
+  function addContact() {
+    setContacts((previous) => [
+      ...previous,
+      {
+        name: "",
+        relationship: "",
+        notes: "",
+        emails: [],
+        phones: [],
+      },
+    ]);
+  }
+
+  function removeContact(index) {
+    setContacts((previous) =>
+      previous.filter((_, contactIndex) => contactIndex !== index)
+    );
+  }
+
+  function handleContactChange(index, field, value) {
+    setContacts((previous) =>
+      previous.map((contact, contactIndex) =>
+        contactIndex === index
+          ? {
+              ...contact,
+              [field]: value,
+            }
+          : contact
+      )
+    );
+  }
+
+  function addContactEmail(contactIndex) {
+    setContacts((previous) =>
+      previous.map((contact, index) =>
+        index === contactIndex
+          ? {
+              ...contact,
+              emails: [
+                ...contact.emails,
+                {
+                  email: "",
+                  label: "",
+                  is_primary: contact.emails.length === 0,
+                },
+              ],
+            }
+          : contact
+      )
+    );
+  }
+
+  function addContactPhone(contactIndex) {
+    setContacts((previous) =>
+      previous.map((contact, index) =>
+        index === contactIndex
+          ? {
+              ...contact,
+              phones: [
+                ...contact.phones,
+                {
+                  phone: "",
+                  label: "",
+                  is_primary: contact.phones.length === 0,
+                },
+              ],
+            }
+          : contact
+      )
+    );
+  }
+
+  function handleContactArrayChange(
+    contactIndex,
+    section,
+    itemIndex,
+    field,
+    value
+  ) {
+    setContacts((previous) =>
+      previous.map((contact, index) =>
+        index === contactIndex
+          ? {
+              ...contact,
+              [section]: contact[section].map((item, index) =>
+                index === itemIndex
+                  ? {
+                      ...item,
+                      [field]: value,
+                    }
+                  : item
+              ),
+            }
+          : contact
+      )
+    );
+  }
+
+  function handleContactPrimaryChange(
+    contactIndex,
+    section,
+    itemIndex
+  ) {
+    setContacts((previous) =>
+      previous.map((contact, index) =>
+        index === contactIndex
+          ? {
+              ...contact,
+              [section]: contact[section].map((item, index) => ({
+                ...item,
+                is_primary: index === itemIndex,
+              })),
+            }
+          : contact
+      )
+    );
+  }
+
+  function removeContactItem(
+    contactIndex,
+    section,
+    itemIndex
+  ) {
+    setContacts((previous) =>
+      previous.map((contact, index) => {
+        if (index !== contactIndex) {
+          return contact;
+        }
+
+        const items = contact[section];
+
+        if (items.length === 1) {
+          return {
+            ...contact,
+            [section]: [],
+          };
+        }
+
+        const wasPrimary = items[itemIndex].is_primary;
+
+        const updatedItems = items.filter(
+          (_, index) => index !== itemIndex
+        );
+
+        if (wasPrimary) {
+          updatedItems[0] = {
+            ...updatedItems[0],
+            is_primary: true,
+          };
+        }
+
+        return {
+          ...contact,
+          [section]: updatedItems,
+        };
+      })
+    );
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -233,7 +416,10 @@ function AddClientModal({
         item.zip.trim() !== ""
     );
 
-    if (phones.length === 0 && emails.length === 0) {
+    if (
+      phones.length === 0 &&
+      emails.length === 0
+    ) {
       setError(
         "Please provide either a phone number or an email address."
       );
@@ -243,6 +429,27 @@ function AddClientModal({
     setError("");
 
     try {
+      const cleanedContacts = contacts
+        .map((contact) => ({
+          name: contact.name.trim(),
+          relationship: contact.relationship.trim(),
+          notes: contact.notes.trim(),
+          emails: contact.emails.filter(
+            (item) => item.email.trim() !== ""
+          ),
+          phones: contact.phones.filter(
+            (item) => item.phone.trim() !== ""
+          ),
+        }))
+        .filter(
+          (contact) =>
+            contact.name !== "" ||
+            contact.relationship !== "" ||
+            contact.notes !== "" ||
+            contact.emails.length > 0 ||
+            contact.phones.length > 0
+        );
+
       const clientData = {
         name: formData.name,
         type: formData.type,
@@ -250,6 +457,7 @@ function AddClientModal({
         phones,
         addresses,
         notes: formData.notes,
+        contacts: cleanedContacts,
       };
 
       if (isEditing) {
@@ -613,6 +821,253 @@ function AddClientModal({
                       Remove
                     </button>
                   )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="form-field">
+            <div className="repeatable-section-header">
+              <label>Contacts</label>
+
+              <button
+                type="button"
+                className="add-item-button"
+                onClick={addContact}
+              >
+                + Add Contact
+              </button>
+            </div>
+
+            {contacts.map((contact, contactIndex) => (
+              <div className="contact-item" key={contactIndex}>
+                <div className="repeatable-section-header">
+                  <strong>
+                    Contact {contactIndex + 1}
+                  </strong>
+
+                  <button
+                    type="button"
+                    className="remove-item-button"
+                    onClick={() => removeContact(contactIndex)}
+                  >
+                    Remove Contact
+                  </button>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Contact name"
+                  value={contact.name}
+                  onChange={(event) =>
+                    handleContactChange(
+                      contactIndex,
+                      "name",
+                      event.target.value
+                    )
+                  }
+                />
+
+                <input
+                  type="text"
+                  placeholder="Relationship / Role"
+                  value={contact.relationship}
+                  onChange={(event) =>
+                    handleContactChange(
+                      contactIndex,
+                      "relationship",
+                      event.target.value
+                    )
+                  }
+                />
+
+                <textarea
+                  placeholder="Contact notes"
+                  value={contact.notes}
+                  onChange={(event) =>
+                    handleContactChange(
+                      contactIndex,
+                      "notes",
+                      event.target.value
+                    )
+                  }
+                  rows="3"
+                />
+
+                {/* Contact Emails */}
+                <div className="form-field">
+                  <div className="repeatable-section-header">
+                    <label>Emails</label>
+
+                    <button
+                      type="button"
+                      className="add-item-button"
+                      onClick={() =>
+                        addContactEmail(contactIndex)
+                      }
+                    >
+                      + Add Email
+                    </button>
+                  </div>
+
+                  {contact.emails.map((email, emailIndex) => (
+                    <div
+                      className="repeatable-item"
+                      key={emailIndex}
+                    >
+                      <div className="repeatable-input-row">
+                        <input
+                          type="email"
+                          placeholder="Email address"
+                          value={email.email}
+                          onChange={(event) =>
+                            handleContactArrayChange(
+                              contactIndex,
+                              "emails",
+                              emailIndex,
+                              "email",
+                              event.target.value
+                            )
+                          }
+                        />
+
+                        <input
+                          type="text"
+                          placeholder="Label"
+                          value={email.label}
+                          onChange={(event) =>
+                            handleContactArrayChange(
+                              contactIndex,
+                              "emails",
+                              emailIndex,
+                              "label",
+                              event.target.value
+                            )
+                          }
+                        />
+                      </div>
+
+                      <div className="repeatable-item-footer">
+                        <label className="primary-label">
+                          <input
+                            type="radio"
+                            name={`primary-contact-email-${contactIndex}`}
+                            checked={email.is_primary}
+                            onChange={() =>
+                              handleContactPrimaryChange(
+                                contactIndex,
+                                "emails",
+                                emailIndex
+                              )
+                            }
+                          />
+                          Primary
+                        </label>
+
+                        <button
+                          type="button"
+                          className="remove-item-button"
+                          onClick={() =>
+                            removeContactItem(
+                              contactIndex,
+                              "emails",
+                              emailIndex
+                            )
+                          }
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Contact Phones */}
+                <div className="form-field">
+                  <div className="repeatable-section-header">
+                    <label>Phones</label>
+
+                    <button
+                      type="button"
+                      className="add-item-button"
+                      onClick={() =>
+                        addContactPhone(contactIndex)
+                      }
+                    >
+                      + Add Phone
+                    </button>
+                  </div>
+
+                  {contact.phones.map((phone, phoneIndex) => (
+                    <div
+                      className="repeatable-item"
+                      key={phoneIndex}
+                    >
+                      <div className="repeatable-input-row">
+                        <input
+                          type="tel"
+                          placeholder="Phone number"
+                          value={phone.phone}
+                          onChange={(event) =>
+                            handleContactArrayChange(
+                              contactIndex,
+                              "phones",
+                              phoneIndex,
+                              "phone",
+                              event.target.value
+                            )
+                          }
+                        />
+
+                        <input
+                          type="text"
+                          placeholder="Label"
+                          value={phone.label}
+                          onChange={(event) =>
+                            handleContactArrayChange(
+                              contactIndex,
+                              "phones",
+                              phoneIndex,
+                              "label",
+                              event.target.value
+                            )
+                          }
+                        />
+                      </div>
+
+                      <div className="repeatable-item-footer">
+                        <label className="primary-label">
+                          <input
+                            type="radio"
+                            name={`primary-contact-phone-${contactIndex}`}
+                            checked={phone.is_primary}
+                            onChange={() =>
+                              handleContactPrimaryChange(
+                                contactIndex,
+                                "phones",
+                                phoneIndex
+                              )
+                            }
+                          />
+                          Primary
+                        </label>
+
+                        <button
+                          type="button"
+                          className="remove-item-button"
+                          onClick={() =>
+                            removeContactItem(
+                              contactIndex,
+                              "phones",
+                              phoneIndex
+                            )
+                          }
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
