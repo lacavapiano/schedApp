@@ -298,3 +298,97 @@ export async function getAppointments() {
 
   return response.json();
 }
+
+export async function createAppointment(appointmentData) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/appointments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(appointmentData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error || "Failed to create appointment"
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateAppointment(
+  appointmentId,
+  appointmentData
+) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/appointments/${appointmentId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(appointmentData),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error || "Failed to update appointment"
+    );
+  }
+
+  return response.json();
+}
+
+export async function deleteAppointment(appointmentId) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/appointments/${appointmentId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error || "Failed to delete appointment"
+    );
+  }
+
+  return true;
+}

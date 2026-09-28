@@ -5,6 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
 import PageLayout from "../components/PageLayout";
+import AppointmentModal from "../components/AppointmentModal";
 import { getAppointments } from "../services/api";
 
 import "../styles/Calendar.css";
@@ -12,6 +13,12 @@ import "../styles/Calendar.css";
 function Calendar() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [showAppointmentModal, setShowAppointmentModal] =
+    useState(false);
+
+  const [editingAppointment, setEditingAppointment] =
+    useState(null);
 
   async function loadAppointments() {
     try {
@@ -36,10 +43,10 @@ function Calendar() {
             return null;
           }
 
-          const manufacturer = item.piano.manufacturer ?? "";
+          const make = item.piano.make ?? "";
           const model = item.piano.model ?? "";
 
-          return `${manufacturer} ${model}`.trim();
+          return `${make} ${model}`.trim();
         })
         .filter(Boolean)
         .join(", ") || "";
@@ -61,6 +68,7 @@ function Calendar() {
       title,
       start: appointment.start_time,
       end: appointment.end_time,
+
       extendedProps: {
         client: appointment.client,
         pianos: appointment.appointment_pianos,
@@ -80,14 +88,26 @@ function Calendar() {
       return;
     }
 
-    console.log("Selected appointment:", appointment);
-
-    // Appointment detail/edit functionality can be added here.
+    setEditingAppointment(appointment);
+    setShowAppointmentModal(true);
   }
 
   function handleNewAppointment() {
-    // Appointment modal/form will be connected here.
-    console.log("New appointment");
+    setEditingAppointment(null);
+    setShowAppointmentModal(true);
+  }
+
+  function handleCloseAppointmentModal() {
+    setShowAppointmentModal(false);
+    setEditingAppointment(null);
+  }
+
+  async function handleAppointmentSaved() {
+    await loadAppointments();
+  }
+
+  async function handleAppointmentDeleted() {
+    await loadAppointments();
   }
 
   if (loading) {
@@ -106,7 +126,9 @@ function Calendar() {
         <div className="calendar-toolbar">
           <div className="calendar-count">
             {appointments.length}{" "}
-            {appointments.length === 1 ? "appointment" : "appointments"}
+            {appointments.length === 1
+              ? "appointment"
+              : "appointments"}
           </div>
 
           <button
@@ -128,7 +150,8 @@ function Calendar() {
             headerToolbar={{
               left: "prev,next today",
               center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay",
+              right:
+                "dayGridMonth,timeGridWeek,timeGridDay",
             }}
             events={events}
             eventClick={handleEventClick}
@@ -145,6 +168,15 @@ function Calendar() {
             }}
           />
         </div>
+
+        {showAppointmentModal && (
+          <AppointmentModal
+            appointment={editingAppointment}
+            onClose={handleCloseAppointmentModal}
+            onSaved={handleAppointmentSaved}
+            onDeleted={handleAppointmentDeleted}
+          />
+        )}
       </div>
     </PageLayout>
   );

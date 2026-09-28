@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getClient } from "../services/api";
 import AddClientModal from "../components/AddClientModal";
+import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/ClientDetail.css";
 
@@ -13,6 +14,7 @@ function ClientDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddPiano, setShowAddPiano] = useState(false);
 
   async function loadClient() {
     try {
@@ -32,6 +34,11 @@ function ClientDetail() {
   async function handleClientSaved() {
     await loadClient();
     setShowEditModal(false);
+  }
+
+  async function handlePianoSaved() {
+    setShowAddPiano(false);
+    await loadClient();
   }
 
   useEffect(() => {
@@ -177,8 +184,7 @@ function ClientDetail() {
                   <div>
                     {primaryAddress.city}
                     {primaryAddress.city &&
-                      (primaryAddress.state ||
-                        primaryAddress.zip) &&
+                      (primaryAddress.state || primaryAddress.zip) &&
                       ", "}
                     {primaryAddress.state}
                     {primaryAddress.state &&
@@ -376,6 +382,13 @@ function ClientDetail() {
         <section className="client-detail-section">
           <div className="section-header">
             <h2>Pianos</h2>
+
+            <button
+              className="client-detail-button"
+              onClick={() => setShowAddPiano(true)}
+            >
+              Add Piano
+            </button>
           </div>
 
           {client.pianos?.length > 0 ? (
@@ -388,8 +401,9 @@ function ClientDetail() {
                 >
                   <div className="client-piano-main">
                     <strong>
-                      {[piano.make, piano.model].filter(Boolean).join(" ") ||
-                        "Unknown piano"}
+                      {[piano.make, piano.model]
+                        .filter(Boolean)
+                        .join(" ") || "Unknown piano"}
                     </strong>
 
                     {piano.serial && (
@@ -407,7 +421,9 @@ function ClientDetail() {
               ))}
             </div>
           ) : (
-            <p className="empty-section">No pianos associated with this client.</p>
+            <p className="empty-section">
+              No pianos associated with this client.
+            </p>
           )}
         </section>
 
@@ -430,6 +446,14 @@ function ClientDetail() {
             client={client}
             onClose={() => setShowEditModal(false)}
             onSaved={handleClientSaved}
+          />
+        )}
+
+        {showAddPiano && (
+          <PianoForm
+            clientId={client.id}
+            onClose={() => setShowAddPiano(false)}
+            onSaved={handlePianoSaved}
           />
         )}
       </div>

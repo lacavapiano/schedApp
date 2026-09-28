@@ -1,0 +1,250 @@
+.appointment-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+  overflow-y: auto;
+}
+
+.appointment-modal {
+  width: 100%;
+  max-width: 760px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.appointment-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.appointment-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.appointment-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+}
+
+.appointment-modal-close:hover {
+  color: #111;
+}
+
+.appointment-modal form {
+  padding: 22px;
+}
+
+.appointment-modal-loading {
+  padding: 40px;
+  text-align: center;
+}
+
+.appointment-modal-error {
+  margin: 18px 22px 0;
+  padding: 10px 12px;
+  border-radius: 5px;
+  background: #fce8e8;
+  color: #a00000;
+  font-size: 14px;
+}
+
+.appointment-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.appointment-form-field label,
+.appointment-section > .appointment-section-header > label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.appointment-form-field input,
+.appointment-form-field select,
+.appointment-form-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  font: inherit;
+}
+
+.appointment-form-field textarea {
+  resize: vertical;
+}
+
+.appointment-form-field input:focus,
+.appointment-form-field select:focus,
+.appointment-form-field textarea:focus {
+  outline: none;
+  border-color: #777;
+}
+
+.appointment-form-row {
+  display: flex;
+  gap: 14px;
+}
+
+.appointment-section {
+  margin: 24px 0;
+  padding-top: 18px;
+  border-top: 1px solid #ddd;
+}
+
+.appointment-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.appointment-add-button {
+  padding: 7px 11px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+.appointment-add-button:hover {
+  background: #eee;
+}
+
+.appointment-add-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.appointment-help-text {
+  margin: 8px 0;
+  color: #777;
+  font-size: 13px;
+}
+
+.appointment-piano {
+  margin-bottom: 14px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.appointment-piano-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.appointment-remove-button {
+  border: none;
+  background: transparent;
+  color: #b00000;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.appointment-remove-button:hover {
+  text-decoration: underline;
+}
+
+.appointment-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #ddd;
+}
+
+.appointment-modal-actions-right {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.appointment-cancel-button,
+.appointment-save-button,
+.appointment-delete-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.appointment-cancel-button {
+  background: #eee;
+}
+
+.appointment-save-button {
+  background: #333;
+  color: #fff;
+}
+
+.appointment-delete-button {
+  background: #f5dddd;
+  color: #a00000;
+}
+
+.appointment-cancel-button:hover,
+.appointment-save-button:hover,
+.appointment-delete-button:hover {
+  opacity: 0.85;
+}
+
+.appointment-cancel-button:disabled,
+.appointment-save-button:disabled,
+.appointment-delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .appointment-modal-overlay {
+    padding: 10px;
+  }
+
+  .appointment-modal {
+    max-height: calc(100vh - 20px);
+  }
+
+  .appointment-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .appointment-modal form {
+    padding: 16px;
+  }
+
+  .appointment-modal-header {
+    padding: 16px;
+  }
+}

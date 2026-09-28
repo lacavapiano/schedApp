@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { createPiano, getClients, updatePiano } from "../services/api";
 
-function PianoForm({ piano = null, onClose, onSaved }) {
+function PianoForm({
+  piano = null,
+  clientId = null,
+  onClose,
+  onSaved,
+}) {
   const [clients, setClients] = useState([]);
   const [loadingClients, setLoadingClients] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    client_id: piano?.client_id ?? "",
+    client_id: piano?.client_id ?? clientId ?? "",
     make: piano?.make ?? "",
     model: piano?.model ?? "",
     serial: piano?.serial ?? "",
@@ -86,6 +91,8 @@ function PianoForm({ piano = null, onClose, onSaved }) {
     }
   }
 
+  const isClientLocked = Boolean(clientId) && !piano;
+
   return (
     <div className="piano-modal-backdrop">
       <div className="piano-modal">
@@ -101,33 +108,44 @@ function PianoForm({ piano = null, onClose, onSaved }) {
           </button>
         </div>
 
-        {error && <div className="piano-form-error">{error}</div>}
+        {error && (
+          <div className="piano-form-error">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="piano-form-grid">
-            <label>
-              Client
-              <select
-                name="client_id"
-                value={formData.client_id}
-                onChange={handleChange}
-                disabled={loadingClients}
-              >
-                <option value="">Unassigned</option>
+            {!isClientLocked && (
+              <label>
+                Client
 
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.name}
-                    {client.type === "institution"
-                      ? " (Institution)"
-                      : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <select
+                  name="client_id"
+                  value={formData.client_id}
+                  onChange={handleChange}
+                  disabled={loadingClients}
+                >
+                  <option value="">Unassigned</option>
+
+                  {clients.map((client) => (
+                    <option
+                      key={client.id}
+                      value={client.id}
+                    >
+                      {client.name}
+                      {client.type === "institution"
+                        ? " (Institution)"
+                        : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
 
             <label>
               Make
+
               <input
                 name="make"
                 value={formData.make}
@@ -137,6 +155,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Model
+
               <input
                 name="model"
                 value={formData.model}
@@ -146,6 +165,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Serial
+
               <input
                 name="serial"
                 value={formData.serial}
@@ -155,6 +175,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Type
+
               <select
                 name="type"
                 value={formData.type}
@@ -169,6 +190,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Location
+
               <input
                 name="location"
                 value={formData.location}
@@ -178,6 +200,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Quiet System
+
               <input
                 name="quiet_system"
                 value={formData.quiet_system}
@@ -187,6 +210,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Climate Control
+
               <input
                 name="climate_control"
                 value={formData.climate_control}
@@ -196,6 +220,7 @@ function PianoForm({ piano = null, onClose, onSaved }) {
 
             <label>
               Tuning Period
+
               <input
                 type="number"
                 min="0"
@@ -207,12 +232,22 @@ function PianoForm({ piano = null, onClose, onSaved }) {
           </div>
 
           <div className="piano-form-actions">
-            <button type="button" onClick={onClose}>
+            <button
+              type="button"
+              onClick={onClose}
+            >
               Cancel
             </button>
 
-            <button type="submit" disabled={saving}>
-              {saving ? "Saving..." : piano ? "Save Changes" : "Add Piano"}
+            <button
+              type="submit"
+              disabled={saving}
+            >
+              {saving
+                ? "Saving..."
+                : piano
+                  ? "Save Changes"
+                  : "Add Piano"}
             </button>
           </div>
         </form>
