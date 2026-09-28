@@ -145,3 +145,130 @@ export async function deleteClient(clientId) {
 
   return true;
 }
+
+export async function getPianos() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/pianos`, {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.error || "Failed to fetch pianos");
+  }
+
+  return response.json();
+}
+
+export async function getPiano(pianoId) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/pianos/${pianoId}`, {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.error || "Failed to fetch piano");
+  }
+
+  return response.json();
+}
+
+export async function createPiano(pianoData) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/pianos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(pianoData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.error || "Failed to create piano");
+  }
+
+  return response.json();
+}
+
+export async function updatePiano(pianoId, pianoData) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/pianos/${pianoId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(pianoData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.error || "Failed to update piano");
+  }
+
+  return response.json();
+}
+
+export async function deletePiano(pianoId) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/pianos/${pianoId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.error || "Failed to delete piano");
+  }
+
+  return true;
+}

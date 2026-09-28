@@ -7,7 +7,8 @@ function Navbar() {
             <Link to="/">Dashboard</Link>{" | "}
             <Link to="/clients">Clients</Link>{" | "}
             <Link to="/calendar">Calendar</Link>{" | "}
-            <Link to="/settings">Settings</Link>
+            <Link to="/settings">Settings</Link>{" | "}
+            <Link to="/pianos">Pianos</Link>
             
         </nav>
     );

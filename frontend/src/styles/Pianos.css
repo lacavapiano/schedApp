@@ -1,0 +1,328 @@
+.pianos-page {
+  width: 100%;
+}
+
+.pianos-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pianos-count {
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.piano-search {
+  flex: 1;
+  max-width: 450px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.piano-search:focus {
+  outline: none;
+  border-color: #555;
+}
+
+.add-piano-button {
+  margin-left: auto;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.add-piano-button:hover {
+  opacity: 0.85;
+}
+
+.piano-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.piano-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  table-layout: fixed;
+}
+
+.piano-table th,
+.piano-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.piano-table th {
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+}
+
+.piano-row {
+  cursor: pointer;
+}
+
+.piano-row:hover {
+  background: #f8f8f8;
+}
+
+.piano-delete-button {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+}
+
+.piano-delete-button:hover {
+  background: #f5f5f5;
+}
+
+.pianos-loading,
+.pianos-empty,
+.piano-detail-error {
+  padding: 40px;
+  text-align: center;
+}
+
+/* Piano detail */
+
+.piano-detail-page {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.piano-detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.piano-back-button {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.piano-back-button:hover {
+  text-decoration: underline;
+}
+
+.piano-edit-button {
+  padding: 9px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.piano-edit-button:hover {
+  background: #f5f5f5;
+}
+
+.piano-detail-header {
+  margin-bottom: 24px;
+}
+
+.piano-detail-header h2 {
+  margin: 0 0 8px;
+  font-size: 26px;
+}
+
+.piano-type-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 5px;
+  background: #f0f0f0;
+  color: #555;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.piano-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.piano-detail-section {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+}
+
+.piano-detail-section h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.piano-detail-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.piano-detail-fields > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.piano-detail-label {
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.piano-client-link {
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: center;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.piano-client-link:hover {
+  text-decoration: underline;
+}
+
+/* Piano form */
+
+.piano-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+}
+
+.piano-modal {
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  border-radius: 8px;
+  background: white;
+  box-sizing: border-box;
+}
+
+.piano-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.piano-modal-header h2 {
+  margin: 0;
+}
+
+.piano-modal-close {
+  border: none;
+  background: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.piano-form-error {
+  margin-bottom: 16px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #f5f5f5;
+}
+
+.piano-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.piano-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.piano-form-grid input,
+.piano-form-grid select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+  font-weight: normal;
+}
+
+.piano-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.piano-form-actions button {
+  padding: 9px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+.piano-form-actions button[type="submit"] {
+  border: none;
+}
+
+.piano-form-actions button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+@media (max-width: 700px) {
+  .pianos-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .piano-search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .piano-detail-grid,
+  .piano-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .piano-detail-toolbar {
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
