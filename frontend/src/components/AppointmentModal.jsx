@@ -21,6 +21,7 @@ const EMPTY_PIANO = {
 
 const EMPTY_FORM = {
   client_id: "",
+  client_address_id: "",
   date: "",
   start_time: "",
   end_time: "",
@@ -88,6 +89,39 @@ function combineDateAndTime(date, time) {
   return result;
 }
 
+function formatAddress(address) {
+  if (!address) {
+    return "";
+  }
+
+  const street = [
+    address.address,
+    address.apt ? `Apt ${address.apt}` : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const cityStateZip = [
+    address.city,
+    address.state,
+    address.zip,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return [street, cityStateZip]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function getAddressLabel(address) {
+  if (address.label) {
+    return `${address.label} — ${formatAddress(address)}`;
+  }
+
+  return formatAddress(address);
+}
+
 function AppointmentModal({
   appointment = null,
   onClose,
@@ -147,36 +181,94 @@ function AppointmentModal({
     }
 
     setFormData({
-      client_id: appointment.client_id || appointment.client?.id || "",
-      date: formatDateForInput(appointment.start_time),
-      start_time: formatTimeForInput(appointment.start_time),
-      end_time: formatTimeForInput(appointment.end_time),
+      client_id:
+        appointment.client_id ||
+        appointment.client?.id ||
+        "",
+
+      client_address_id:
+        appointment.client_address_id ||
+        appointment.client_address?.id ||
+        "",
+
+      date: formatDateForInput(
+        appointment.start_time
+      ),
+
+      start_time: formatTimeForInput(
+        appointment.start_time
+      ),
+
+      end_time: formatTimeForInput(
+        appointment.end_time
+      ),
+
       status: appointment.status || "scheduled",
+
       notes: appointment.notes || "",
+
       payment:
         appointment.payment !== null &&
         appointment.payment !== undefined
           ? String(appointment.payment)
           : "",
-      payment_type: appointment.payment_type || "",
+
+      payment_type:
+        appointment.payment_type || "",
+
       miles:
         appointment.miles !== null &&
         appointment.miles !== undefined
           ? String(appointment.miles)
           : "",
+
       invoice: appointment.invoice || "",
 
       pianos:
-        appointment.appointment_pianos?.map((item) => ({
-          id: item.id,
-          piano_id: item.piano_id || item.piano?.id || "",
-          service: item.service || "tuning",
-          temp: item.temp || "",
-          hum: item.hum || "",
-          notes: item.notes || "",
-        })) || [],
+        appointment.appointment_pianos?.map(
+          (item) => ({
+            id: item.id,
+            piano_id:
+              item.piano_id ||
+              item.piano?.id ||
+              "",
+            service:
+              item.service || "tuning",
+            temp: item.temp || "",
+            hum: item.hum || "",
+            notes: item.notes || "",
+          })
+        ) || [],
     });
   }, [appointment]);
+
+  /*
+   * The selected client's addresses.
+   */
+  const clientAddresses = useMemo(() => {
+    if (!formData.client_id) {
+      return [];
+    }
+
+    const client = clients.find(
+      (item) => item.id === formData.client_id
+    );
+
+    return client?.client_addresses || [];
+  }, [clients, formData.client_id]);
+
+  useEffect(() => {
+    if (!formData.client_id) {
+      return;
+    }
+
+    if (clientAddresses.length === 1) {
+      setFormData((previous) => ({
+        ...previous,
+        client_address_id: clientAddresses[0].id,
+      }));
+    }
+  }, [formData.client_id, clientAddresses]);
 
   /*
    * Pianos belonging to the selected client.
@@ -187,7 +279,8 @@ function AppointmentModal({
     }
 
     return allPianos.filter(
-      (piano) => piano.client_id === formData.client_id
+      (piano) =>
+        piano.client_id === formData.client_id
     );
   }, [allPianos, formData.client_id]);
 
@@ -201,9 +294,8 @@ function AppointmentModal({
   }
 
   /*
-   * Changing the client clears the selected pianos.
-   * This prevents accidentally associating a piano belonging
-   * to a different client.
+   * Changing the client clears the selected
+   * address and pianos.
    */
   function handleClientChange(event) {
     const clientId = event.target.value;
@@ -211,20 +303,26 @@ function AppointmentModal({
     setFormData((previous) => ({
       ...previous,
       client_id: clientId,
+      client_address_id: "",
       pianos: [],
     }));
   }
 
-  function handlePianoChange(index, field, value) {
+  function handlePianoChange(
+    index,
+    field,
+    value
+  ) {
     setFormData((previous) => ({
       ...previous,
-      pianos: previous.pianos.map((piano, pianoIndex) =>
-        pianoIndex === index
-          ? {
-              ...piano,
-              [field]: value,
-            }
-          : piano
+      pianos: previous.pianos.map(
+        (piano, pianoIndex) =>
+          pianoIndex === index
+            ? {
+                ...piano,
+                [field]: value,
+              }
+            : piano
       ),
     }));
   }
@@ -234,7 +332,9 @@ function AppointmentModal({
    */
   function addPiano() {
     if (!formData.client_id) {
-      setError("Select a client before adding a piano.");
+      setError(
+        "Select a client before adding a piano."
+      );
       return;
     }
 
@@ -242,27 +342,38 @@ function AppointmentModal({
 
     setFormData((previous) => ({
       ...previous,
-      pianos: [...previous.pianos, { ...EMPTY_PIANO }],
+      pianos: [
+        ...previous.pianos,
+        { ...EMPTY_PIANO },
+      ],
     }));
 
     /*
      * New tunings default to 2 hours per piano.
-     * Only automatically adjust the end time if both
-     * date and start time have been entered.
      */
-    if (formData.date && formData.start_time) {
+    if (
+      formData.date &&
+      formData.start_time
+    ) {
       const start = combineDateAndTime(
         formData.date,
         formData.start_time
       );
 
       if (start) {
-        const newPianoCount = formData.pianos.length + 1;
-        const end = addHours(start, newPianoCount * 2);
+        const newPianoCount =
+          formData.pianos.length + 1;
+
+        const end = addHours(
+          start,
+          newPianoCount * 2
+        );
 
         setFormData((previous) => ({
           ...previous,
-          end_time: `${String(end.getHours()).padStart(2, "0")}:${String(
+          end_time: `${String(
+            end.getHours()
+          ).padStart(2, "0")}:${String(
             end.getMinutes()
           ).padStart(2, "0")}`,
         }));
@@ -272,9 +383,11 @@ function AppointmentModal({
 
   function removePiano(index) {
     setFormData((previous) => {
-      const updatedPianos = previous.pianos.filter(
-        (_, pianoIndex) => pianoIndex !== index
-      );
+      const updatedPianos =
+        previous.pianos.filter(
+          (_, pianoIndex) =>
+            pianoIndex !== index
+        );
 
       return {
         ...previous,
@@ -283,25 +396,36 @@ function AppointmentModal({
     });
   }
 
-  /*
-   * When the start time or date changes on a new appointment,
-   * automatically calculate the end time based on the number
-   * of pianos.
-   */
-  function updateEndTimeFromPianos(date, startTime, pianoCount) {
-    if (!date || !startTime || pianoCount === 0) {
+  function updateEndTimeFromPianos(
+    date,
+    startTime,
+    pianoCount
+  ) {
+    if (
+      !date ||
+      !startTime ||
+      pianoCount === 0
+    ) {
       return;
     }
 
-    const start = combineDateAndTime(date, startTime);
+    const start = combineDateAndTime(
+      date,
+      startTime
+    );
 
     if (!start) {
       return;
     }
 
-    const end = addHours(start, pianoCount * 2);
+    const end = addHours(
+      start,
+      pianoCount * 2
+    );
 
-    return `${String(end.getHours()).padStart(2, "0")}:${String(
+    return `${String(
+      end.getHours()
+    ).padStart(2, "0")}:${String(
       end.getMinutes()
     ).padStart(2, "0")}`;
   }
@@ -316,11 +440,12 @@ function AppointmentModal({
       };
 
       if (!isEditing) {
-        const calculatedEnd = updateEndTimeFromPianos(
-          date,
-          previous.start_time,
-          previous.pianos.length
-        );
+        const calculatedEnd =
+          updateEndTimeFromPianos(
+            date,
+            previous.start_time,
+            previous.pianos.length
+          );
 
         if (calculatedEnd) {
           updated.end_time = calculatedEnd;
@@ -341,11 +466,12 @@ function AppointmentModal({
       };
 
       if (!isEditing) {
-        const calculatedEnd = updateEndTimeFromPianos(
-          previous.date,
-          startTime,
-          previous.pianos.length
-        );
+        const calculatedEnd =
+          updateEndTimeFromPianos(
+            previous.date,
+            startTime,
+            previous.pianos.length
+          );
 
         if (calculatedEnd) {
           updated.end_time = calculatedEnd;
@@ -356,7 +482,9 @@ function AppointmentModal({
     });
   }
 
-  function handleManualEndTimeChange(event) {
+  function handleManualEndTimeChange(
+    event
+  ) {
     setFormData((previous) => ({
       ...previous,
       end_time: event.target.value,
@@ -373,8 +501,14 @@ function AppointmentModal({
       return;
     }
 
-    if (!formData.date || !formData.start_time || !formData.end_time) {
-      setError("Please enter the date, start time, and end time.");
+    if (
+      !formData.date ||
+      !formData.start_time ||
+      !formData.end_time
+    ) {
+      setError(
+        "Please enter the date, start time, and end time."
+      );
       return;
     }
 
@@ -389,12 +523,16 @@ function AppointmentModal({
     );
 
     if (!start || !end) {
-      setError("The appointment date or time is invalid.");
+      setError(
+        "The appointment date or time is invalid."
+      );
       return;
     }
 
     if (end <= start) {
-      setError("The end time must be after the start time.");
+      setError(
+        "The end time must be after the start time."
+      );
       return;
     }
 
@@ -403,37 +541,60 @@ function AppointmentModal({
     try {
       const appointmentData = {
         client_id: formData.client_id,
-        start_time: start.toISOString(),
-        end_time: end.toISOString(),
+
+        client_address_id:
+          formData.client_address_id || null,
+
+        start_time:
+          start.toISOString(),
+
+        end_time:
+          end.toISOString(),
+
         status: formData.status,
-        notes: formData.notes.trim(),
+
+        notes:
+          formData.notes.trim(),
+
         payment:
           formData.payment.trim() === ""
             ? null
             : Number(formData.payment),
+
         payment_type:
           formData.payment_type.trim() === ""
             ? null
             : formData.payment_type,
+
         miles:
           formData.miles.trim() === ""
             ? null
             : Number(formData.miles),
+
         invoice:
           formData.invoice.trim() === ""
             ? null
             : formData.invoice.trim(),
 
-        pianos: formData.pianos
-          .filter((piano) => piano.piano_id)
-          .map((piano) => ({
-            ...(piano.id ? { id: piano.id } : {}),
-            piano_id: piano.piano_id,
-            service: piano.service || null,
-            temp: piano.temp || null,
-            hum: piano.hum || null,
-            notes: piano.notes || null,
-          })),
+        pianos:
+          formData.pianos
+            .filter(
+              (piano) => piano.piano_id
+            )
+            .map((piano) => ({
+              ...(piano.id
+                ? { id: piano.id }
+                : {}),
+              piano_id: piano.piano_id,
+              service:
+                piano.service || null,
+              temp:
+                piano.temp || null,
+              hum:
+                piano.hum || null,
+              notes:
+                piano.notes || null,
+            })),
       };
 
       if (isEditing) {
@@ -442,7 +603,9 @@ function AppointmentModal({
           appointmentData
         );
       } else {
-        await createAppointment(appointmentData);
+        await createAppointment(
+          appointmentData
+        );
       }
 
       if (onSaved) {
@@ -451,8 +614,15 @@ function AppointmentModal({
 
       onClose();
     } catch (error) {
-      console.error("Failed to save appointment:", error);
-      setError(error.message || "Failed to save appointment.");
+      console.error(
+        "Failed to save appointment:",
+        error
+      );
+
+      setError(
+        error.message ||
+          "Failed to save appointment."
+      );
     } finally {
       setSaving(false);
     }
@@ -475,7 +645,9 @@ function AppointmentModal({
     setError("");
 
     try {
-      await deleteAppointment(appointment.id);
+      await deleteAppointment(
+        appointment.id
+      );
 
       if (onDeleted) {
         await onDeleted();
@@ -483,8 +655,15 @@ function AppointmentModal({
 
       onClose();
     } catch (error) {
-      console.error("Failed to delete appointment:", error);
-      setError(error.message || "Failed to delete appointment.");
+      console.error(
+        "Failed to delete appointment:",
+        error
+      );
+
+      setError(
+        error.message ||
+          "Failed to delete appointment."
+      );
     } finally {
       setDeleting(false);
     }
@@ -494,7 +673,8 @@ function AppointmentModal({
     setShowClientModal(false);
 
     try {
-      const updatedClients = await getClients();
+      const updatedClients =
+        await getClients();
 
       setClients(updatedClients || []);
 
@@ -502,12 +682,19 @@ function AppointmentModal({
         setFormData((previous) => ({
           ...previous,
           client_id: client.id,
+          client_address_id: "",
           pianos: [],
         }));
       }
     } catch (error) {
-      console.error("Failed to reload clients:", error);
-      setError("Client was created, but the client list could not be refreshed.");
+      console.error(
+        "Failed to reload clients:",
+        error
+      );
+
+      setError(
+        "Client was created, but the client list could not be refreshed."
+      );
     }
   }
 
@@ -515,9 +702,12 @@ function AppointmentModal({
     setShowPianoModal(false);
 
     try {
-      const updatedPianos = await getPianos();
+      const updatedPianos =
+        await getPianos();
 
-      setAllPianos(updatedPianos || []);
+      setAllPianos(
+        updatedPianos || []
+      );
 
       if (piano?.id) {
         setFormData((previous) => ({
@@ -535,7 +725,11 @@ function AppointmentModal({
         }));
       }
     } catch (error) {
-      console.error("Failed to reload pianos:", error);
+      console.error(
+        "Failed to reload pianos:",
+        error
+      );
+
       setError(
         "Piano was created, but the piano list could not be refreshed."
       );
@@ -550,7 +744,9 @@ function AppointmentModal({
       >
         <div
           className="appointment-modal"
-          onClick={(event) => event.stopPropagation()}
+          onClick={(event) =>
+            event.stopPropagation()
+          }
         >
           <div className="appointment-modal-header">
             <h2>
@@ -597,8 +793,51 @@ function AppointmentModal({
                       },
                     });
                   }}
-                  onCreateClient={() => setShowClientModal(true)}
+                  onCreateClient={() =>
+                    setShowClientModal(true)
+                  }
                 />
+              </div>
+
+              {/* Location */}
+              <div className="appointment-form-field">
+                <label htmlFor="appointment-location">
+                  Location
+                </label>
+
+                <select
+                  id="appointment-location"
+                  name="client_address_id"
+                  value={
+                    formData.client_address_id
+                  }
+                  onChange={handleChange}
+                  disabled={
+                    !formData.client_id ||
+                    clientAddresses.length === 0
+                  }
+                >
+                  <option value="">
+                    {!formData.client_id
+                      ? "Select a client first"
+                      : clientAddresses.length === 0
+                      ? "No addresses available"
+                      : "Select a location"}
+                  </option>
+
+                  {clientAddresses.map(
+                    (address) => (
+                      <option
+                        key={address.id}
+                        value={address.id}
+                      >
+                        {getAddressLabel(
+                          address
+                        )}
+                      </option>
+                    )
+                  )}
+                </select>
               </div>
 
               {/* Date / Time */}
@@ -625,8 +864,12 @@ function AppointmentModal({
                   <input
                     id="appointment-start"
                     type="time"
-                    value={formData.start_time}
-                    onChange={handleStartTimeChange}
+                    value={
+                      formData.start_time
+                    }
+                    onChange={
+                      handleStartTimeChange
+                    }
                     required
                   />
                 </div>
@@ -639,8 +882,12 @@ function AppointmentModal({
                   <input
                     id="appointment-end"
                     type="time"
-                    value={formData.end_time}
-                    onChange={handleManualEndTimeChange}
+                    value={
+                      formData.end_time
+                    }
+                    onChange={
+                      handleManualEndTimeChange
+                    }
                     required
                   />
                 </div>
@@ -658,9 +905,17 @@ function AppointmentModal({
                   value={formData.status}
                   onChange={handleChange}
                 >
-                  <option value="scheduled">Scheduled</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="scheduled">
+                    Scheduled
+                  </option>
+
+                  <option value="completed">
+                    Completed
+                  </option>
+
+                  <option value="cancelled">
+                    Cancelled
+                  </option>
                 </select>
               </div>
 
@@ -672,158 +927,230 @@ function AppointmentModal({
 
                 {!formData.client_id && (
                   <p className="appointment-help-text">
-                    Select a client to add pianos.
+                    Select a client to add
+                    pianos.
                   </p>
                 )}
 
                 {formData.client_id &&
                   clientPianos.length === 0 && (
                     <p className="appointment-help-text">
-                      This client has no pianos.
+                      This client has no
+                      pianos.
                     </p>
                   )}
 
-                {formData.pianos.map((appointmentPiano, index) => (
-                  <div
-                    className="appointment-piano"
-                    key={
-                      appointmentPiano.id ||
-                      `new-piano-${index}`
-                    }
-                  >
-                    <div className="appointment-piano-header">
-                      <strong>
-                        Piano {index + 1}
-                      </strong>
+                {formData.pianos.map(
+                  (
+                    appointmentPiano,
+                    index
+                  ) => (
+                    <div
+                      className="appointment-piano"
+                      key={
+                        appointmentPiano.id ||
+                        `new-piano-${index}`
+                      }
+                    >
+                      <div className="appointment-piano-header">
+                        <strong>
+                          Piano {index + 1}
+                        </strong>
 
-                      <button
-                        type="button"
-                        className="appointment-remove-button"
-                        onClick={() => removePiano(index)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-
-                    <div className="appointment-form-field">
-                      <label>Piano</label>
-
-                      <select
-                        value={appointmentPiano.piano_id}
-                        onChange={(event) =>
-                          handlePianoChange(
-                            index,
-                            "piano_id",
-                            event.target.value
-                          )
-                        }
-                        required
-                      >
-                        <option value="">
-                          Select a piano
-                        </option>
-
-                        {clientPianos.map((piano) => (
-                          <option key={piano.id} value={piano.id}>
-                            {[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed Piano"}
-                            {piano.serial ? ` — ${piano.serial}` : ""}
-                            {piano.location ? ` — ${piano.location}` : ""}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="appointment-form-row">
-                      <div className="appointment-form-field">
-                        <label>Service</label>
-
-                        <select
-                          value={appointmentPiano.service}
-                          onChange={(event) =>
-                            handlePianoChange(
-                              index,
-                              "service",
-                              event.target.value
+                        <button
+                          type="button"
+                          className="appointment-remove-button"
+                          onClick={() =>
+                            removePiano(
+                              index
                             )
                           }
                         >
-                          <option value="tuning">
-                            Tuning
+                          Remove
+                        </button>
+                      </div>
+
+                      <div className="appointment-form-field">
+                        <label>Piano</label>
+
+                        <select
+                          value={
+                            appointmentPiano.piano_id
+                          }
+                          onChange={(
+                            event
+                          ) =>
+                            handlePianoChange(
+                              index,
+                              "piano_id",
+                              event.target.value
+                            )
+                          }
+                          required
+                        >
+                          <option value="">
+                            Select a piano
                           </option>
-                          <option value="repair">
-                            Repair
-                          </option>
-                          <option value="regulation">
-                            Regulation
-                          </option>
-                          <option value="voicing">
-                            Voicing
-                          </option>
-                          <option value="inspection">
-                            Inspection
-                          </option>
-                          <option value="other">
-                            Other
-                          </option>
+
+                          {clientPianos.map(
+                            (piano) => (
+                              <option
+                                key={
+                                  piano.id
+                                }
+                                value={
+                                  piano.id
+                                }
+                              >
+                                {[
+                                  piano.make,
+                                  piano.model,
+                                ]
+                                  .filter(
+                                    Boolean
+                                  )
+                                  .join(
+                                    " "
+                                  ) ||
+                                  "Unnamed Piano"}
+
+                                {piano.serial
+                                  ? ` — ${piano.serial}`
+                                  : ""}
+
+                                {piano.location
+                                  ? ` — ${piano.location}`
+                                  : ""}
+                              </option>
+                            )
+                          )}
                         </select>
                       </div>
 
-                      <div className="appointment-form-field">
-                        <label>Temp</label>
+                      <div className="appointment-form-row">
+                        <div className="appointment-form-field">
+                          <label>
+                            Service
+                          </label>
 
-                        <input
-                          type="text"
-                          value={appointmentPiano.temp}
-                          onChange={(event) =>
-                            handlePianoChange(
-                              index,
-                              "temp",
-                              event.target.value
-                            )
-                          }
-                        />
+                          <select
+                            value={
+                              appointmentPiano.service
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              handlePianoChange(
+                                index,
+                                "service",
+                                event.target
+                                  .value
+                              )
+                            }
+                          >
+                            <option value="tuning">
+                              Tuning
+                            </option>
+
+                            <option value="repair">
+                              Repair
+                            </option>
+
+                            <option value="regulation">
+                              Regulation
+                            </option>
+
+                            <option value="voicing">
+                              Voicing
+                            </option>
+
+                            <option value="inspection">
+                              Inspection
+                            </option>
+
+                            <option value="other">
+                              Other
+                            </option>
+                          </select>
+                        </div>
+
+                        <div className="appointment-form-field">
+                          <label>Temp</label>
+
+                          <input
+                            type="text"
+                            value={
+                              appointmentPiano.temp
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              handlePianoChange(
+                                index,
+                                "temp",
+                                event.target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
+
+                        <div className="appointment-form-field">
+                          <label>Hum</label>
+
+                          <input
+                            type="text"
+                            value={
+                              appointmentPiano.hum
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              handlePianoChange(
+                                index,
+                                "hum",
+                                event.target
+                                  .value
+                              )
+                            }
+                          />
+                        </div>
                       </div>
 
                       <div className="appointment-form-field">
-                        <label>Hum</label>
+                        <label>
+                          Notes
+                        </label>
 
-                        <input
-                          type="text"
-                          value={appointmentPiano.hum}
-                          onChange={(event) =>
+                        <textarea
+                          rows="3"
+                          value={
+                            appointmentPiano.notes
+                          }
+                          onChange={(
+                            event
+                          ) =>
                             handlePianoChange(
                               index,
-                              "hum",
-                              event.target.value
+                              "notes",
+                              event.target
+                                .value
                             )
                           }
                         />
                       </div>
                     </div>
+                  )
+                )}
 
-                    <div className="appointment-form-field">
-                      <label>Notes</label>
-
-                      <textarea
-                        rows="3"
-                        value={appointmentPiano.notes}
-                        onChange={(event) =>
-                          handlePianoChange(
-                            index,
-                            "notes",
-                            event.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-                ))}
                 <div className="appointment-piano-actions">
                   <button
                     type="button"
                     className="appointment-add-button"
                     onClick={addPiano}
-                    disabled={!formData.client_id}
+                    disabled={
+                      !formData.client_id
+                    }
                   >
                     + Add Existing Piano
                   </button>
@@ -831,8 +1158,12 @@ function AppointmentModal({
                   <button
                     type="button"
                     className="appointment-add-button"
-                    onClick={() => setShowPianoModal(true)}
-                    disabled={!formData.client_id}
+                    onClick={() =>
+                      setShowPianoModal(true)
+                    }
+                    disabled={
+                      !formData.client_id
+                    }
                   >
                     + New Piano
                   </button>
@@ -865,17 +1196,35 @@ function AppointmentModal({
                   <select
                     id="appointment-payment-type"
                     name="payment_type"
-                    value={formData.payment_type}
+                    value={
+                      formData.payment_type
+                    }
                     onChange={handleChange}
                   >
-                    <option value="">Select</option>
-                    <option value="ach">ACH</option>
-                    <option value="cash">Cash</option>
-                    <option value="check">Check</option>
-                    <option value="card">Card</option>
-                    <option value="venmo">Venmo</option>
-                    <option value="paypal">PayPal</option>
-                    <option value="other">Other</option>
+                    <option value="">
+                      Select
+                    </option>
+                    <option value="ach">
+                      ACH
+                    </option>
+                    <option value="cash">
+                      Cash
+                    </option>
+                    <option value="check">
+                      Check
+                    </option>
+                    <option value="card">
+                      Card
+                    </option>
+                    <option value="venmo">
+                      Venmo
+                    </option>
+                    <option value="paypal">
+                      PayPal
+                    </option>
+                    <option value="other">
+                      Other
+                    </option>
                   </select>
                 </div>
               </div>
@@ -907,7 +1256,9 @@ function AppointmentModal({
                     id="appointment-invoice"
                     type="text"
                     name="invoice"
-                    value={formData.invoice}
+                    value={
+                      formData.invoice
+                    }
                     onChange={handleChange}
                   />
                 </div>
@@ -934,10 +1285,17 @@ function AppointmentModal({
                   <button
                     type="button"
                     className="appointment-delete-button"
-                    onClick={handleDelete}
-                    disabled={deleting || saving}
+                    onClick={
+                      handleDelete
+                    }
+                    disabled={
+                      deleting ||
+                      saving
+                    }
                   >
-                    {deleting ? "Deleting..." : "Delete"}
+                    {deleting
+                      ? "Deleting..."
+                      : "Delete"}
                   </button>
                 )}
 
@@ -946,7 +1304,10 @@ function AppointmentModal({
                     type="button"
                     className="appointment-cancel-button"
                     onClick={onClose}
-                    disabled={saving || deleting}
+                    disabled={
+                      saving ||
+                      deleting
+                    }
                   >
                     Cancel
                   </button>
@@ -954,7 +1315,10 @@ function AppointmentModal({
                   <button
                     type="submit"
                     className="appointment-save-button"
-                    disabled={saving || deleting}
+                    disabled={
+                      saving ||
+                      deleting
+                    }
                   >
                     {saving
                       ? "Saving..."
@@ -971,16 +1335,26 @@ function AppointmentModal({
 
       {showClientModal && (
         <AddClientModal
-          onClose={() => setShowClientModal(false)}
-          onClientAdded={handleClientSaved}
+          onClose={() =>
+            setShowClientModal(false)
+          }
+          onClientAdded={
+            handleClientSaved
+          }
         />
       )}
 
       {showPianoModal && (
         <PianoForm
-          clientId={formData.client_id}
-          onClose={() => setShowPianoModal(false)}
-          onSaved={handlePianoSaved}
+          clientId={
+            formData.client_id
+          }
+          onClose={() =>
+            setShowPianoModal(false)
+          }
+          onSaved={
+            handlePianoSaved
+          }
         />
       )}
     </>

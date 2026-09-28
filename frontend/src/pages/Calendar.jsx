@@ -71,13 +71,14 @@ function Calendar() {
 	  end: appointment.end_time,
 
 	  extendedProps: {
-	    client: appointment.client,
-	    pianos: appointment.appointment_pianos,
-	    pianoNames,
-	    service,
-	    services,
-	    status: appointment.status,
-	  },
+      client: appointment.client,
+      clientAddress: appointment.client_address,
+      pianos: appointment.appointment_pianos,
+      pianoNames,
+      service,
+      services,
+      status: appointment.status,
+    },
 	};
   });
 
@@ -113,27 +114,55 @@ function Calendar() {
   }
 
   function renderEventContent(eventInfo) {
-	  const service =
-	    eventInfo.event.extendedProps.service;
+    const {
+      client,
+      service,
+      clientAddress,
+    } = eventInfo.event.extendedProps;
 
-	  return (
-	    <div className="calendar-event-content">
-	      <div className="calendar-event-time">
-	        {eventInfo.timeText}
-	      </div>
+    return (
+      <div className="calendar-event">
+        <div className="calendar-event-time">
+          {eventInfo.timeText}
+        </div>
 
-	      <div className="calendar-event-client">
-	        {eventInfo.event.title}
-	      </div>
+        <div className="calendar-event-client">
+          {client?.name || "Unknown Client"}
+        </div>
 
-	      {service && (
-	        <div className="calendar-event-service">
-	          {service}
-	        </div>
-	      )}
-	    </div>
-	  );
-	}
+        <div className="calendar-event-service">
+          {service || "No service"}
+        </div>
+
+        <div className="calendar-event-address">
+          {formatAddress(clientAddress)}
+        </div>
+      </div>
+    );
+  }
+
+  function formatAddress(address) {
+    if (!address) return "";
+
+    const street = [
+      address.address,
+      address.apt ? `Apt ${address.apt}` : null,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    const cityStateZip = [
+      address.city,
+      address.state,
+      address.zip,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return [street, cityStateZip]
+      .filter(Boolean)
+      .join(", ");
+  }
 
   if (loading) {
     return (

@@ -117,3 +117,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.calendar-event-address {
+  font-size: 11px;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-event {
+  width: 100%;
+}

@@ -49,6 +49,29 @@ function formatStatus(status) {
     );
 }
 
+function formatAddress(address) {
+  if (!address) return "";
+
+  const street = [
+    address.address,
+    address.apt ? `Apt ${address.apt}` : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const cityStateZip = [
+    address.city,
+    address.state,
+    address.zip,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return [street, cityStateZip]
+    .filter(Boolean)
+    .join(", ");
+}
+
 function AppointmentList({
   appointments,
   onAppointmentClick,
@@ -92,6 +115,10 @@ function AppointmentList({
 
             <div className="dashboard-appointment-service">
               {services.join(", ")}
+            </div>
+
+            <div className="dashboard-appointment-address">
+              {formatAddress(appointment.client_address)}
             </div>
 
             <span className={getStatusClass(appointment.status)}>

@@ -4,6 +4,7 @@ const appointmentSelect = `
   id,
   owner_id,
   client_id,
+  client_address_id,
   start_time,
   end_time,
   status,
@@ -19,6 +20,16 @@ const appointmentSelect = `
     id,
     name,
     type
+  ),
+  client_address:client_addresses (
+    id,
+    address,
+    apt,
+    city,
+    state,
+    zip,
+    label,
+    is_primary
   ),
   appointment_pianos (
     id,
@@ -69,8 +80,16 @@ function normalizePianos(pianos) {
     }));
 }
 
-async function validatePianosForClient(supabase, clientId, pianos) {
-  const pianoIds = [...new Set(pianos.map((piano) => piano.piano_id))];
+async function validatePianosForClient(
+  supabase,
+  clientId,
+  pianos
+) {
+  const pianoIds = [
+    ...new Set(
+      pianos.map((piano) => piano.piano_id)
+    ),
+  ];
 
   if (pianoIds.length === 0) {
     return { valid: true };
@@ -90,11 +109,55 @@ async function validatePianosForClient(supabase, clientId, pianos) {
 
   if (
     data.length !== pianoIds.length ||
-    data.some((piano) => piano.client_id !== clientId)
+    data.some(
+      (piano) => piano.client_id !== clientId
+    )
   ) {
     return {
       valid: false,
-      error: "All selected pianos must belong to the selected client",
+      error:
+        "All selected pianos must belong to the selected client",
+    };
+  }
+
+  return { valid: true };
+}
+
+async function validateAddressForClient(
+  supabase,
+  clientId,
+  clientAddressId
+) {
+  // No address selected is valid.
+  if (!clientAddressId) {
+    return { valid: true };
+  }
+
+  const { data, error } = await supabase
+    .from("client_addresses")
+    .select("id, client_id")
+    .eq("id", clientAddressId)
+    .maybeSingle();
+
+  if (error) {
+    return {
+      valid: false,
+      error: error.message,
+    };
+  }
+
+  if (!data) {
+    return {
+      valid: false,
+      error: "Selected address was not found",
+    };
+  }
+
+  if (data.client_id !== clientId) {
+    return {
+      valid: false,
+      error:
+        "Selected address must belong to the selected client",
     };
   }
 
@@ -117,7 +180,9 @@ export async function getAppointments(req, res) {
     let query = supabase
       .from("appointments")
       .select(appointmentSelect)
-      .order("start_time", { ascending: true });
+      .order("start_time", {
+        ascending: true,
+      });
 
     // Optional date-range filtering.
     // This will be useful for the calendar later.
@@ -132,7 +197,10 @@ export async function getAppointments(req, res) {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching appointments:", error);
+      console.error(
+        "Error fetching appointments:",
+        error
+      );
 
       return res.status(500).json({
         error: error.message,
@@ -141,7 +209,10 @@ export async function getAppointments(req, res) {
 
     return res.json(data);
   } catch (error) {
-    console.error("Unexpected error fetching appointments:", error);
+    console.error(
+      "Unexpected error fetching appointments:",
+      error
+    );
 
     return res.status(500).json({
       error: "Unable to fetch appointments",
@@ -174,7 +245,10 @@ export async function getAppointment(req, res) {
         });
       }
 
-      console.error("Error fetching appointment:", error);
+      console.error(
+        "Error fetching appointment:",
+        error
+      );
 
       return res.status(500).json({
         error: error.message,
@@ -183,7 +257,10 @@ export async function getAppointment(req, res) {
 
     return res.json(data);
   } catch (error) {
-    console.error("Unexpected error fetching appointment:", error);
+    console.error(
+      "Unexpected error fetching appointment:",
+      error
+    );
 
     return res.status(500).json({
       error: "Unable to fetch appointment",
@@ -216,6 +293,7 @@ export async function createAppointment(req, res) {
 
     const {
       client_id,
+      client_address_id = null,
       start_time,
       end_time,
       status = "scheduled",
@@ -230,7 +308,8 @@ export async function createAppointment(req, res) {
 
     if (!client_id || !start_time || !end_time) {
       return res.status(400).json({
-        error: "client_id, start_time, and end_time are required",
+        error:
+          "client_id, start_time, and end_time are required",
       });
     }
 
@@ -241,23 +320,44 @@ export async function createAppointment(req, res) {
       });
     }
 
-    const normalizedPianos = normalizePianos(pianos);
+    const addressValidation =
+      await validateAddressForClient(
+        supabase,
+        client_id,
+        client_address_id
+      );
 
-    const uniquePianoIds = new Set(
-      normalizedPianos.map((piano) => piano.piano_id)
-    );
-
-    if (normalizedPianos.length !== uniquePianoIds.size) {
+    if (!addressValidation.valid) {
       return res.status(400).json({
-        error: "A piano can only be added once to an appointment",
+        error: addressValidation.error,
       });
     }
 
-    const pianoValidation = await validatePianosForClient(
-      supabase,
-      client_id,
-      normalizedPianos
+    const normalizedPianos =
+      normalizePianos(pianos);
+
+    const uniquePianoIds = new Set(
+      normalizedPianos.map(
+        (piano) => piano.piano_id
+      )
     );
+
+    if (
+      normalizedPianos.length !==
+      uniquePianoIds.size
+    ) {
+      return res.status(400).json({
+        error:
+          "A piano can only be added once to an appointment",
+      });
+    }
+
+    const pianoValidation =
+      await validatePianosForClient(
+        supabase,
+        client_id,
+        normalizedPianos
+      );
 
     if (!pianoValidation.valid) {
       return res.status(400).json({
@@ -265,11 +365,15 @@ export async function createAppointment(req, res) {
       });
     }
 
-    const { data: appointment, error: appointmentError } = await supabase
+    const {
+      data: appointment,
+      error: appointmentError,
+    } = await supabase
       .from("appointments")
       .insert({
         owner_id: user.id,
         client_id,
+        client_address_id,
         start_time,
         end_time,
         status,
@@ -284,7 +388,10 @@ export async function createAppointment(req, res) {
       .single();
 
     if (appointmentError) {
-      console.error("Error creating appointment:", appointmentError);
+      console.error(
+        "Error creating appointment:",
+        appointmentError
+      );
 
       return res.status(500).json({
         error: "Unable to create appointment",
@@ -292,14 +399,15 @@ export async function createAppointment(req, res) {
     }
 
     if (normalizedPianos.length > 0) {
-      const { error: pianoError } = await supabase
-        .from("appointment_pianos")
-        .insert(
-          normalizedPianos.map((piano) => ({
-            appointment_id: appointment.id,
-            ...piano,
-          }))
-        );
+      const { error: pianoError } =
+        await supabase
+          .from("appointment_pianos")
+          .insert(
+            normalizedPianos.map((piano) => ({
+              appointment_id: appointment.id,
+              ...piano,
+            }))
+          );
 
       if (pianoError) {
         console.error(
@@ -307,14 +415,16 @@ export async function createAppointment(req, res) {
           pianoError
         );
 
-        // Roll back the appointment if its piano records fail.
+        // Roll back the appointment if its
+        // piano records fail.
         await supabase
           .from("appointments")
           .delete()
           .eq("id", appointment.id);
 
         return res.status(500).json({
-          error: "Unable to create appointment pianos",
+          error:
+            "Unable to create appointment pianos",
         });
       }
     }
@@ -327,13 +437,17 @@ export async function createAppointment(req, res) {
 
     if (error) {
       return res.status(500).json({
-        error: "Appointment created but could not be returned",
+        error:
+          "Appointment created but could not be returned",
       });
     }
 
     return res.status(201).json(data);
   } catch (error) {
-    console.error("Unexpected error creating appointment:", error);
+    console.error(
+      "Unexpected error creating appointment:",
+      error
+    );
 
     return res.status(500).json({
       error: "Server error",
@@ -356,6 +470,7 @@ export async function updateAppointment(req, res) {
 
     const {
       client_id,
+      client_address_id = null,
       start_time,
       end_time,
       status = "scheduled",
@@ -370,7 +485,8 @@ export async function updateAppointment(req, res) {
 
     if (!client_id || !start_time || !end_time) {
       return res.status(400).json({
-        error: "client_id, start_time, and end_time are required",
+        error:
+          "client_id, start_time, and end_time are required",
       });
     }
 
@@ -381,23 +497,44 @@ export async function updateAppointment(req, res) {
       });
     }
 
-    const normalizedPianos = normalizePianos(pianos);
+    const addressValidation =
+      await validateAddressForClient(
+        supabase,
+        client_id,
+        client_address_id
+      );
 
-    const uniquePianoIds = new Set(
-      normalizedPianos.map((piano) => piano.piano_id)
-    );
-
-    if (normalizedPianos.length !== uniquePianoIds.size) {
+    if (!addressValidation.valid) {
       return res.status(400).json({
-        error: "A piano can only be added once to an appointment",
+        error: addressValidation.error,
       });
     }
 
-    const pianoValidation = await validatePianosForClient(
-      supabase,
-      client_id,
-      normalizedPianos
+    const normalizedPianos =
+      normalizePianos(pianos);
+
+    const uniquePianoIds = new Set(
+      normalizedPianos.map(
+        (piano) => piano.piano_id
+      )
     );
+
+    if (
+      normalizedPianos.length !==
+      uniquePianoIds.size
+    ) {
+      return res.status(400).json({
+        error:
+          "A piano can only be added once to an appointment",
+      });
+    }
+
+    const pianoValidation =
+      await validatePianosForClient(
+        supabase,
+        client_id,
+        normalizedPianos
+      );
 
     if (!pianoValidation.valid) {
       return res.status(400).json({
@@ -405,25 +542,28 @@ export async function updateAppointment(req, res) {
       });
     }
 
-    const { data: appointment, error: appointmentError } =
-      await supabase
-        .from("appointments")
-        .update({
-          client_id,
-          start_time,
-          end_time,
-          status,
-          notes,
-          payment,
-          payment_type,
-          miles,
-          invoice,
-          google_event_id,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", id)
-        .select("id")
-        .single();
+    const {
+      data: appointment,
+      error: appointmentError,
+    } = await supabase
+      .from("appointments")
+      .update({
+        client_id,
+        client_address_id,
+        start_time,
+        end_time,
+        status,
+        notes,
+        payment,
+        payment_type,
+        miles,
+        invoice,
+        google_event_id,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select("id")
+      .single();
 
     if (appointmentError) {
       if (appointmentError.code === "PGRST116") {
@@ -445,14 +585,14 @@ export async function updateAppointment(req, res) {
     /*
      * Replace the appointment's piano records.
      *
-     * This keeps the update logic simple:
-     * whatever pianos are submitted become the complete
-     * list for this appointment.
+     * Whatever pianos are submitted become the
+     * complete list for this appointment.
      */
-    const { error: deleteError } = await supabase
-      .from("appointment_pianos")
-      .delete()
-      .eq("appointment_id", id);
+    const { error: deleteError } =
+      await supabase
+        .from("appointment_pianos")
+        .delete()
+        .eq("appointment_id", id);
 
     if (deleteError) {
       console.error(
@@ -467,14 +607,15 @@ export async function updateAppointment(req, res) {
     }
 
     if (normalizedPianos.length > 0) {
-      const { error: insertError } = await supabase
-        .from("appointment_pianos")
-        .insert(
-          normalizedPianos.map((piano) => ({
-            appointment_id: appointment.id,
-            ...piano,
-          }))
-        );
+      const { error: insertError } =
+        await supabase
+          .from("appointment_pianos")
+          .insert(
+            normalizedPianos.map((piano) => ({
+              appointment_id: appointment.id,
+              ...piano,
+            }))
+          );
 
       if (insertError) {
         console.error(
@@ -504,7 +645,10 @@ export async function updateAppointment(req, res) {
 
     return res.json(data);
   } catch (error) {
-    console.error("Unexpected error updating appointment:", error);
+    console.error(
+      "Unexpected error updating appointment:",
+      error
+    );
 
     return res.status(500).json({
       error: "Server error",
@@ -530,7 +674,10 @@ export async function deleteAppointment(req, res) {
       .eq("id", req.params.id);
 
     if (error) {
-      console.error("Error deleting appointment:", error);
+      console.error(
+        "Error deleting appointment:",
+        error
+      );
 
       return res.status(500).json({
         error: "Unable to delete appointment",
@@ -539,7 +686,10 @@ export async function deleteAppointment(req, res) {
 
     return res.status(204).send();
   } catch (error) {
-    console.error("Unexpected error deleting appointment:", error);
+    console.error(
+      "Unexpected error deleting appointment:",
+      error
+    );
 
     return res.status(500).json({
       error: "Server error",
