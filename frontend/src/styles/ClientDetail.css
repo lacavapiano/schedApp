@@ -255,6 +255,58 @@
   color: #777;
 }
 
+/* Add Piano button */
+.client-detail-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.client-detail-button:hover {
+  background-color: #1d4ed8;
+}
+
+.client-detail-button:active {
+  background-color: #1e40af;
+}
+
+.client-detail-button:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+.client-detail-button {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.client-detail-button:hover {
+  background-color: #1d4ed8;
+}
+
 @media (max-width: 600px) {
   .client-detail-grid,
   .client-contacts {
