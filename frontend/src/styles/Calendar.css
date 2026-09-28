@@ -1,0 +1,89 @@
+.calendar-page {
+  width: 100%;
+}
+
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.calendar-count {
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.add-appointment-button {
+  margin-left: auto;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.add-appointment-button:hover {
+  opacity: 0.85;
+}
+
+.calendar-container {
+  width: 100%;
+  background: #fff;
+}
+
+/* FullCalendar */
+
+.fc {
+  font-size: 14px;
+}
+
+.fc .fc-toolbar {
+  margin-bottom: 1rem;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.35rem;
+}
+
+.fc .fc-button {
+  border-radius: 6px;
+  box-shadow: none;
+  text-transform: capitalize;
+}
+
+.fc .fc-button:focus {
+  box-shadow: none;
+}
+
+.fc .fc-daygrid-day-number {
+  padding: 8px;
+}
+
+.fc .fc-event {
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.fc .fc-event-time {
+  font-weight: 600;
+}
+
+.fc .fc-event-title {
+  white-space: normal;
+}
+
+.fc .fc-daygrid-event {
+  margin-top: 2px;
+}
+
+.fc .fc-day-today {
+  background: rgba(0, 0, 0, 0.035);
+}
+
+.calendar-loading {
+  padding: 40px;
+  text-align: center;
+}

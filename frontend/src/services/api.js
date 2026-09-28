@@ -272,3 +272,29 @@ export async function deletePiano(pianoId) {
 
   return true;
 }
+
+export async function getAppointments() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(`${API_URL}/api/appointments`, {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error || "Failed to fetch appointments"
+    );
+  }
+
+  return response.json();
+}
