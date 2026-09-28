@@ -6,6 +6,8 @@ import {
   updateAppointment,
   deleteAppointment,
 } from "../services/api";
+import ClientSearchSelect from "./ClientSearchSelect";
+import AddClientModal from "./AddClientModal";
 import "../styles/AppointmentModal.css";
 
 const EMPTY_PIANO = {
@@ -101,6 +103,7 @@ function AppointmentModal({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [showClientModal, setShowClientModal] = useState(false);
 
   /*
    * Load clients and pianos when the modal opens.
@@ -485,6 +488,27 @@ function AppointmentModal({
     }
   }
 
+  async function handleClientSaved(client) {
+    setShowClientModal(false);
+
+    try {
+      const updatedClients = await getClients();
+
+      setClients(updatedClients || []);
+
+      if (client?.id) {
+        setFormData((previous) => ({
+          ...previous,
+          client_id: client.id,
+          pianos: [],
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to reload clients:", error);
+      setError("Client was created, but the client list could not be refreshed.");
+    }
+  }
+
   return (
     <div
       className="appointment-modal-overlay"
@@ -529,21 +553,18 @@ function AppointmentModal({
                 Client *
               </label>
 
-              <select
-                id="appointment-client"
-                name="client_id"
+              <ClientSearchSelect
+                clients={clients}
                 value={formData.client_id}
-                onChange={handleClientChange}
-                required
-              >
-                <option value="">Select a client</option>
-
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(clientId) => {
+                  handleClientChange({
+                    target: {
+                      value: clientId,
+                    },
+                  });
+                }}
+                onCreateClient={() => setShowClientModal(true)}
+              />
             </div>
 
             {/* Date / Time */}
@@ -903,6 +924,24 @@ function AppointmentModal({
         )}
       </div>
     </div>
+  );
+
+  return (
+    <>
+      <div
+        className="appointment-modal-overlay"
+        onClick={onClose}
+      >
+        {/* existing appointment modal contents */}
+      </div>
+
+      {showClientModal && (
+        <AddClientModal
+          onClose={() => setShowClientModal(false)}
+          onSaved={handleClientSaved}
+        />
+      )}
+    </>
   );
 }
 
