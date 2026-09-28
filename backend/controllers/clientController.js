@@ -83,6 +83,8 @@ export async function getClients(req, res) {
 
 export async function getClient(req, res) {
   try {
+    const clientId = req.params.id;
+
     const accessToken = req.headers.authorization?.replace("Bearer ", "");
 
     if (!accessToken) {
@@ -103,18 +105,21 @@ export async function getClient(req, res) {
         name,
         type,
         notes,
+
         client_emails (
           id,
           email,
           label,
           is_primary
         ),
+
         client_phones (
           id,
           phone,
           label,
           is_primary
         ),
+
         client_addresses (
           id,
           address,
@@ -125,6 +130,7 @@ export async function getClient(req, res) {
           label,
           is_primary
         ),
+
         client_contacts (
           id,
           name,
@@ -142,9 +148,21 @@ export async function getClient(req, res) {
             label,
             is_primary
           )
+        ),
+
+        pianos (
+          id,
+          make,
+          model,
+          serial,
+          type,
+          location,
+          quiet_system,
+          climate_control,
+          tuning_period
         )
       `)
-      .eq("id", id)
+      .eq("id", clientId)
       .single();
 
     if (error) {

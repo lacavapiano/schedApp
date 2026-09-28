@@ -374,6 +374,44 @@ function ClientDetail() {
         </section>
 
         <section className="client-detail-section">
+          <div className="section-header">
+            <h2>Pianos</h2>
+          </div>
+
+          {client.pianos?.length > 0 ? (
+            <div className="client-pianos-list">
+              {client.pianos.map((piano) => (
+                <div
+                  key={piano.id}
+                  className="client-piano-row"
+                  onClick={() => navigate(`/pianos/${piano.id}`)}
+                >
+                  <div className="client-piano-main">
+                    <strong>
+                      {[piano.make, piano.model].filter(Boolean).join(" ") ||
+                        "Unknown piano"}
+                    </strong>
+
+                    {piano.serial && (
+                      <span className="client-piano-serial">
+                        Serial: {piano.serial}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="client-piano-details">
+                    {piano.type && <span>{piano.type}</span>}
+                    {piano.location && <span>{piano.location}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="empty-section">No pianos associated with this client.</p>
+          )}
+        </section>
+
+        <section className="client-detail-section">
           <h3>Notes</h3>
 
           {client.notes ? (

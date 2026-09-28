@@ -209,7 +209,53 @@
   padding: 40px;
 }
 
-@media (max-width: 700px) {
+.client-pianos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-piano-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.client-piano-row:hover {
+  background: #f7f7f7;
+}
+
+.client-piano-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+}
+
+.client-piano-serial {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.client-piano-details {
+  display: flex;
+  gap: 20px;
+  color: #666;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.empty-section {
+  color: #777;
+}
+
+@media (max-width: 600px) {
   .client-detail-grid,
   .client-contacts {
     grid-template-columns: 1fr;
@@ -228,5 +274,15 @@
   .client-detail-item-meta {
     flex-wrap: wrap;
   }
+
+    .client-piano-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .client-piano-details {
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+  }
 }
-```
