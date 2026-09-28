@@ -416,16 +416,6 @@ function AddClientModal({
         item.zip.trim() !== ""
     );
 
-    if (
-      phones.length === 0 &&
-      emails.length === 0
-    ) {
-      setError(
-        "Please provide either a phone number or an email address."
-      );
-      return;
-    }
-
     setError("");
 
     try {
@@ -467,10 +457,10 @@ function AddClientModal({
           await onSaved();
         }
       } else {
-        await createClient(clientData);
+        const createdClient = await createClient(clientData);
 
         if (onClientAdded) {
-          await onClientAdded();
+          await onClientAdded(createdClient);
         }
       }
 

@@ -76,11 +76,15 @@ function PianoForm({
             : Number(formData.tuning_period),
       };
 
+      let savedPiano;
+
       if (piano) {
-        await updatePiano(piano.id, data);
+        savedPiano = await updatePiano(piano.id, data);
       } else {
-        await createPiano(data);
+        savedPiano = await createPiano(data);
       }
+
+      await onSaved(savedPiano);
 
       await onSaved();
     } catch (error) {

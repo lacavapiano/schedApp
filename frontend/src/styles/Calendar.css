@@ -62,6 +62,7 @@
 }
 
 .fc .fc-event {
+  border: 1px solid #999;
   border-radius: 4px;
   padding: 2px 4px;
   cursor: pointer;
@@ -86,4 +87,33 @@
 .calendar-loading {
   padding: 40px;
   text-align: center;
+}
+
+.calendar-event-content {
+  padding: 2px 4px;
+  line-height: 1.25;
+  overflow: hidden;
+}
+
+.calendar-event-time {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calendar-event-client {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-event-service {
+  font-size: 12px;
+  margin-top: 2px;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

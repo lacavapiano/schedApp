@@ -51,32 +51,34 @@ function Calendar() {
         .filter(Boolean)
         .join(", ") || "";
 
-    const services =
-      appointment.appointment_pianos
-        ?.map((item) => item.service)
-        .filter(Boolean)
-        .join(", ") || "";
+    const services = [
+	  ...new Set(
+	    appointment.appointment_pianos
+	      ?.map((item) => item.service)
+	      .filter(Boolean)
+	  ),
+	];
 
-    let title = appointment.client?.name || "Appointment";
+	const service = services[0] || "";
 
-    if (services) {
-      title += ` — ${services}`;
-    }
+	const clientName =
+	  appointment.client?.name || "Appointment";
 
     return {
-      id: appointment.id,
-      title,
-      start: appointment.start_time,
-      end: appointment.end_time,
+	  id: appointment.id,
+	  title: clientName,
+	  start: appointment.start_time,
+	  end: appointment.end_time,
 
-      extendedProps: {
-        client: appointment.client,
-        pianos: appointment.appointment_pianos,
-        pianoNames,
-        services,
-        status: appointment.status,
-      },
-    };
+	  extendedProps: {
+	    client: appointment.client,
+	    pianos: appointment.appointment_pianos,
+	    pianoNames,
+	    service,
+	    services,
+	    status: appointment.status,
+	  },
+	};
   });
 
   function handleEventClick(info) {
@@ -109,6 +111,29 @@ function Calendar() {
   async function handleAppointmentDeleted() {
     await loadAppointments();
   }
+
+  function renderEventContent(eventInfo) {
+	  const service =
+	    eventInfo.event.extendedProps.service;
+
+	  return (
+	    <div className="calendar-event-content">
+	      <div className="calendar-event-time">
+	        {eventInfo.timeText}
+	      </div>
+
+	      <div className="calendar-event-client">
+	        {eventInfo.event.title}
+	      </div>
+
+	      {service && (
+	        <div className="calendar-event-service">
+	          {service}
+	        </div>
+	      )}
+	    </div>
+	  );
+	}
 
   if (loading) {
     return (
@@ -155,6 +180,7 @@ function Calendar() {
             }}
             events={events}
             eventClick={handleEventClick}
+            eventContent={renderEventContent}
             height="auto"
             dayMaxEvents={3}
             nowIndicator={true}

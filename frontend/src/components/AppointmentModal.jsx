@@ -8,6 +8,7 @@ import {
 } from "../services/api";
 import ClientSearchSelect from "./ClientSearchSelect";
 import AddClientModal from "./AddClientModal";
+import PianoForm from "./PianoForm";
 import "../styles/AppointmentModal.css";
 
 const EMPTY_PIANO = {
@@ -104,6 +105,7 @@ function AppointmentModal({
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
   const [showClientModal, setShowClientModal] = useState(false);
+  const [showPianoModal, setShowPianoModal] = useState(false);
 
   /*
    * Load clients and pianos when the modal opens.
@@ -509,422 +511,36 @@ function AppointmentModal({
     }
   }
 
-  return (
-    <div
-      className="appointment-modal-overlay"
-      onClick={onClose}
-    >
-      <div
-        className="appointment-modal"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="appointment-modal-header">
-          <h2>
-            {isEditing
-              ? "Edit Appointment"
-              : "New Appointment"}
-          </h2>
+  async function handlePianoSaved(piano) {
+    setShowPianoModal(false);
 
-          <button
-            type="button"
-            className="appointment-modal-close"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            ×
-          </button>
-        </div>
+    try {
+      const updatedPianos = await getPianos();
 
-        {error && (
-          <div className="appointment-modal-error">
-            {error}
-          </div>
-        )}
+      setAllPianos(updatedPianos || []);
 
-        {loadingData ? (
-          <div className="appointment-modal-loading">
-            Loading...
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            {/* Client */}
-            <div className="appointment-form-field">
-              <label htmlFor="appointment-client">
-                Client *
-              </label>
-
-              <ClientSearchSelect
-                clients={clients}
-                value={formData.client_id}
-                onChange={(clientId) => {
-                  handleClientChange({
-                    target: {
-                      value: clientId,
-                    },
-                  });
-                }}
-                onCreateClient={() => setShowClientModal(true)}
-              />
-            </div>
-
-            {/* Date / Time */}
-            <div className="appointment-form-row">
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-date">
-                  Date *
-                </label>
-
-                <input
-                  id="appointment-date"
-                  type="date"
-                  value={formData.date}
-                  onChange={handleDateChange}
-                  required
-                />
-              </div>
-
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-start">
-                  Start *
-                </label>
-
-                <input
-                  id="appointment-start"
-                  type="time"
-                  value={formData.start_time}
-                  onChange={handleStartTimeChange}
-                  required
-                />
-              </div>
-
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-end">
-                  End *
-                </label>
-
-                <input
-                  id="appointment-end"
-                  type="time"
-                  value={formData.end_time}
-                  onChange={handleManualEndTimeChange}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Status */}
-            <div className="appointment-form-field">
-              <label htmlFor="appointment-status">
-                Status
-              </label>
-
-              <select
-                id="appointment-status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                <option value="scheduled">Scheduled</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
-            {/* Pianos */}
-            <div className="appointment-section">
-              <div className="appointment-section-header">
-                <label>Pianos</label>
-
-                <button
-                  type="button"
-                  className="appointment-add-button"
-                  onClick={addPiano}
-                  disabled={!formData.client_id}
-                >
-                  + Add Piano
-                </button>
-              </div>
-
-              {!formData.client_id && (
-                <p className="appointment-help-text">
-                  Select a client to add pianos.
-                </p>
-              )}
-
-              {formData.client_id &&
-                clientPianos.length === 0 && (
-                  <p className="appointment-help-text">
-                    This client has no pianos.
-                  </p>
-                )}
-
-              {formData.pianos.map((appointmentPiano, index) => (
-                <div
-                  className="appointment-piano"
-                  key={
-                    appointmentPiano.id ||
-                    `new-piano-${index}`
-                  }
-                >
-                  <div className="appointment-piano-header">
-                    <strong>
-                      Piano {index + 1}
-                    </strong>
-
-                    <button
-                      type="button"
-                      className="appointment-remove-button"
-                      onClick={() => removePiano(index)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-
-                  <div className="appointment-form-field">
-                    <label>Piano</label>
-
-                    <select
-                      value={appointmentPiano.piano_id}
-                      onChange={(event) =>
-                        handlePianoChange(
-                          index,
-                          "piano_id",
-                          event.target.value
-                        )
-                      }
-                      required
-                    >
-                      <option value="">
-                        Select a piano
-                      </option>
-
-                      {clientPianos.map((piano) => (
-                        <option key={piano.id} value={piano.id}>
-                          {[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed Piano"}
-                          {piano.serial ? ` — ${piano.serial}` : ""}
-                          {piano.location ? ` — ${piano.location}` : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="appointment-form-row">
-                    <div className="appointment-form-field">
-                      <label>Service</label>
-
-                      <select
-                        value={appointmentPiano.service}
-                        onChange={(event) =>
-                          handlePianoChange(
-                            index,
-                            "service",
-                            event.target.value
-                          )
-                        }
-                      >
-                        <option value="tuning">
-                          Tuning
-                        </option>
-                        <option value="repair">
-                          Repair
-                        </option>
-                        <option value="regulation">
-                          Regulation
-                        </option>
-                        <option value="voicing">
-                          Voicing
-                        </option>
-                        <option value="inspection">
-                          Inspection
-                        </option>
-                        <option value="other">
-                          Other
-                        </option>
-                      </select>
-                    </div>
-
-                    <div className="appointment-form-field">
-                      <label>Temp</label>
-
-                      <input
-                        type="text"
-                        value={appointmentPiano.temp}
-                        onChange={(event) =>
-                          handlePianoChange(
-                            index,
-                            "temp",
-                            event.target.value
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="appointment-form-field">
-                      <label>Hum</label>
-
-                      <input
-                        type="text"
-                        value={appointmentPiano.hum}
-                        onChange={(event) =>
-                          handlePianoChange(
-                            index,
-                            "hum",
-                            event.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="appointment-form-field">
-                    <label>Notes</label>
-
-                    <textarea
-                      rows="3"
-                      value={appointmentPiano.notes}
-                      onChange={(event) =>
-                        handlePianoChange(
-                          index,
-                          "notes",
-                          event.target.value
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Payment */}
-            <div className="appointment-form-row">
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-payment">
-                  Payment
-                </label>
-
-                <input
-                  id="appointment-payment"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  name="payment"
-                  value={formData.payment}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-payment-type">
-                  Payment Type
-                </label>
-
-                <select
-                  id="appointment-payment-type"
-                  name="payment_type"
-                  value={formData.payment_type}
-                  onChange={handleChange}
-                >
-                  <option value="">Select</option>
-                  <option value="ach">ACH</option>
-                  <option value="cash">Cash</option>
-                  <option value="check">Check</option>
-                  <option value="card">Card</option>
-                  <option value="venmo">Venmo</option>
-                  <option value="paypal">PayPal</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Miles / Invoice */}
-            <div className="appointment-form-row">
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-miles">
-                  Miles
-                </label>
-
-                <input
-                  id="appointment-miles"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  name="miles"
-                  value={formData.miles}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-invoice">
-                  Invoice
-                </label>
-
-                <input
-                  id="appointment-invoice"
-                  type="text"
-                  name="invoice"
-                  value={formData.invoice}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            {/* Appointment Notes */}
-            <div className="appointment-form-field">
-              <label htmlFor="appointment-notes">
-                Notes
-              </label>
-
-              <textarea
-                id="appointment-notes"
-                name="notes"
-                rows="4"
-                value={formData.notes}
-                onChange={handleChange}
-              />
-            </div>
-
-            {/* Actions */}
-            <div className="appointment-modal-actions">
-              {isEditing && (
-                <button
-                  type="button"
-                  className="appointment-delete-button"
-                  onClick={handleDelete}
-                  disabled={deleting || saving}
-                >
-                  {deleting ? "Deleting..." : "Delete"}
-                </button>
-              )}
-
-              <div className="appointment-modal-actions-right">
-                <button
-                  type="button"
-                  className="appointment-cancel-button"
-                  onClick={onClose}
-                  disabled={saving || deleting}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="appointment-save-button"
-                  disabled={saving || deleting}
-                >
-                  {saving
-                    ? "Saving..."
-                    : isEditing
-                    ? "Save Changes"
-                    : "Save Appointment"}
-                </button>
-              </div>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
-  );
+      if (piano?.id) {
+        setFormData((previous) => ({
+          ...previous,
+          pianos: [
+            ...previous.pianos,
+            {
+              piano_id: piano.id,
+              service: "tuning",
+              temp: "",
+              hum: "",
+              notes: "",
+            },
+          ],
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to reload pianos:", error);
+      setError(
+        "Piano was created, but the piano list could not be refreshed."
+      );
+    }
+  }
 
   return (
     <>
@@ -932,13 +548,439 @@ function AppointmentModal({
         className="appointment-modal-overlay"
         onClick={onClose}
       >
-        {/* existing appointment modal contents */}
+        <div
+          className="appointment-modal"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="appointment-modal-header">
+            <h2>
+              {isEditing
+                ? "Edit Appointment"
+                : "New Appointment"}
+            </h2>
+
+            <button
+              type="button"
+              className="appointment-modal-close"
+              onClick={onClose}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          {error && (
+            <div className="appointment-modal-error">
+              {error}
+            </div>
+          )}
+
+          {loadingData ? (
+            <div className="appointment-modal-loading">
+              Loading...
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              {/* Client */}
+              <div className="appointment-form-field">
+                <label htmlFor="appointment-client">
+                  Client *
+                </label>
+
+                <ClientSearchSelect
+                  clients={clients}
+                  value={formData.client_id}
+                  onChange={(clientId) => {
+                    handleClientChange({
+                      target: {
+                        value: clientId,
+                      },
+                    });
+                  }}
+                  onCreateClient={() => setShowClientModal(true)}
+                />
+              </div>
+
+              {/* Date / Time */}
+              <div className="appointment-form-row">
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-date">
+                    Date *
+                  </label>
+
+                  <input
+                    id="appointment-date"
+                    type="date"
+                    value={formData.date}
+                    onChange={handleDateChange}
+                    required
+                  />
+                </div>
+
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-start">
+                    Start *
+                  </label>
+
+                  <input
+                    id="appointment-start"
+                    type="time"
+                    value={formData.start_time}
+                    onChange={handleStartTimeChange}
+                    required
+                  />
+                </div>
+
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-end">
+                    End *
+                  </label>
+
+                  <input
+                    id="appointment-end"
+                    type="time"
+                    value={formData.end_time}
+                    onChange={handleManualEndTimeChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className="appointment-form-field">
+                <label htmlFor="appointment-status">
+                  Status
+                </label>
+
+                <select
+                  id="appointment-status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                >
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+
+              {/* Pianos */}
+              <div className="appointment-section">
+                <div className="appointment-section-header">
+                  <label>Pianos</label>
+                </div>
+
+                {!formData.client_id && (
+                  <p className="appointment-help-text">
+                    Select a client to add pianos.
+                  </p>
+                )}
+
+                {formData.client_id &&
+                  clientPianos.length === 0 && (
+                    <p className="appointment-help-text">
+                      This client has no pianos.
+                    </p>
+                  )}
+
+                {formData.pianos.map((appointmentPiano, index) => (
+                  <div
+                    className="appointment-piano"
+                    key={
+                      appointmentPiano.id ||
+                      `new-piano-${index}`
+                    }
+                  >
+                    <div className="appointment-piano-header">
+                      <strong>
+                        Piano {index + 1}
+                      </strong>
+
+                      <button
+                        type="button"
+                        className="appointment-remove-button"
+                        onClick={() => removePiano(index)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="appointment-form-field">
+                      <label>Piano</label>
+
+                      <select
+                        value={appointmentPiano.piano_id}
+                        onChange={(event) =>
+                          handlePianoChange(
+                            index,
+                            "piano_id",
+                            event.target.value
+                          )
+                        }
+                        required
+                      >
+                        <option value="">
+                          Select a piano
+                        </option>
+
+                        {clientPianos.map((piano) => (
+                          <option key={piano.id} value={piano.id}>
+                            {[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed Piano"}
+                            {piano.serial ? ` — ${piano.serial}` : ""}
+                            {piano.location ? ` — ${piano.location}` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="appointment-form-row">
+                      <div className="appointment-form-field">
+                        <label>Service</label>
+
+                        <select
+                          value={appointmentPiano.service}
+                          onChange={(event) =>
+                            handlePianoChange(
+                              index,
+                              "service",
+                              event.target.value
+                            )
+                          }
+                        >
+                          <option value="tuning">
+                            Tuning
+                          </option>
+                          <option value="repair">
+                            Repair
+                          </option>
+                          <option value="regulation">
+                            Regulation
+                          </option>
+                          <option value="voicing">
+                            Voicing
+                          </option>
+                          <option value="inspection">
+                            Inspection
+                          </option>
+                          <option value="other">
+                            Other
+                          </option>
+                        </select>
+                      </div>
+
+                      <div className="appointment-form-field">
+                        <label>Temp</label>
+
+                        <input
+                          type="text"
+                          value={appointmentPiano.temp}
+                          onChange={(event) =>
+                            handlePianoChange(
+                              index,
+                              "temp",
+                              event.target.value
+                            )
+                          }
+                        />
+                      </div>
+
+                      <div className="appointment-form-field">
+                        <label>Hum</label>
+
+                        <input
+                          type="text"
+                          value={appointmentPiano.hum}
+                          onChange={(event) =>
+                            handlePianoChange(
+                              index,
+                              "hum",
+                              event.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="appointment-form-field">
+                      <label>Notes</label>
+
+                      <textarea
+                        rows="3"
+                        value={appointmentPiano.notes}
+                        onChange={(event) =>
+                          handlePianoChange(
+                            index,
+                            "notes",
+                            event.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+                <div className="appointment-piano-actions">
+                  <button
+                    type="button"
+                    className="appointment-add-button"
+                    onClick={addPiano}
+                    disabled={!formData.client_id}
+                  >
+                    + Add Existing Piano
+                  </button>
+
+                  <button
+                    type="button"
+                    className="appointment-add-button"
+                    onClick={() => setShowPianoModal(true)}
+                    disabled={!formData.client_id}
+                  >
+                    + New Piano
+                  </button>
+                </div>
+              </div>
+
+              {/* Payment */}
+              <div className="appointment-form-row">
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-payment">
+                    Payment
+                  </label>
+
+                  <input
+                    id="appointment-payment"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    name="payment"
+                    value={formData.payment}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-payment-type">
+                    Payment Type
+                  </label>
+
+                  <select
+                    id="appointment-payment-type"
+                    name="payment_type"
+                    value={formData.payment_type}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    <option value="ach">ACH</option>
+                    <option value="cash">Cash</option>
+                    <option value="check">Check</option>
+                    <option value="card">Card</option>
+                    <option value="venmo">Venmo</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Miles / Invoice */}
+              <div className="appointment-form-row">
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-miles">
+                    Miles
+                  </label>
+
+                  <input
+                    id="appointment-miles"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    name="miles"
+                    value={formData.miles}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="appointment-form-field">
+                  <label htmlFor="appointment-invoice">
+                    Invoice
+                  </label>
+
+                  <input
+                    id="appointment-invoice"
+                    type="text"
+                    name="invoice"
+                    value={formData.invoice}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* Appointment Notes */}
+              <div className="appointment-form-field">
+                <label htmlFor="appointment-notes">
+                  Notes
+                </label>
+
+                <textarea
+                  id="appointment-notes"
+                  name="notes"
+                  rows="4"
+                  value={formData.notes}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="appointment-modal-actions">
+                {isEditing && (
+                  <button
+                    type="button"
+                    className="appointment-delete-button"
+                    onClick={handleDelete}
+                    disabled={deleting || saving}
+                  >
+                    {deleting ? "Deleting..." : "Delete"}
+                  </button>
+                )}
+
+                <div className="appointment-modal-actions-right">
+                  <button
+                    type="button"
+                    className="appointment-cancel-button"
+                    onClick={onClose}
+                    disabled={saving || deleting}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="appointment-save-button"
+                    disabled={saving || deleting}
+                  >
+                    {saving
+                      ? "Saving..."
+                      : isEditing
+                      ? "Save Changes"
+                      : "Save Appointment"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
 
       {showClientModal && (
         <AddClientModal
           onClose={() => setShowClientModal(false)}
-          onSaved={handleClientSaved}
+          onClientAdded={handleClientSaved}
+        />
+      )}
+
+      {showPianoModal && (
+        <PianoForm
+          clientId={formData.client_id}
+          onClose={() => setShowPianoModal(false)}
+          onSaved={handlePianoSaved}
         />
       )}
     </>
