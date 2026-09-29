@@ -392,3 +392,177 @@ export async function deleteAppointment(appointmentId) {
 
   return true;
 }
+
+export async function getSettings() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/settings`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error || "Failed to fetch settings"
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateSettings(settingsData) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/settings`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(settingsData),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error || "Failed to update settings"
+    );
+  }
+
+  return response.json();
+}
+
+export async function getGoogleStatus() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/google/status`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error ||
+        "Failed to fetch Google connection status"
+    );
+  }
+
+  return response.json();
+}
+
+export async function connectGoogle() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/google/connect`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error ||
+        "Failed to start Google authorization"
+    );
+  }
+
+  const data = await response.json();
+
+  if (!data.auth_url) {
+    throw new Error(
+      "Google authorization URL was not returned"
+    );
+  }
+
+  const width = 600;
+  const height = 700;
+
+  const left =
+    window.screenX +
+    (window.outerWidth - width) / 2;
+
+  const top =
+    window.screenY +
+    (window.outerHeight - height) / 2;
+
+  return window.open(
+    data.auth_url,
+    "google-calendar-auth",
+    `width=${width},height=${height},left=${left},top=${top}`
+  );
+}
+
+export async function getGoogleCalendars() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error("You must be logged in");
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/google/calendars`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(
+      error.error ||
+        "Failed to fetch Google calendars"
+    );
+  }
+
+  return response.json();
+}
