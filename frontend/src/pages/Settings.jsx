@@ -360,7 +360,7 @@ function Settings() {
 					  <label>Default appointment color</label>
 
 					  <p className="settings-color-help">
-					    Choose the color schedApp will use for appointments
+					    Choose the color the client manager will use for appointments
 					    created in Google Calendar.
 					  </p>
 

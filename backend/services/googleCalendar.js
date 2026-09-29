@@ -97,10 +97,12 @@ function buildEvent(appointment, eventColorId) {
     .filter(Boolean);
 
   const primaryService =
-    services[0] || "Appointment";
+    services[0] || "Tuning";
 
   const summary =
-    `${clientName} ${primaryService.toLowerCase()}`;
+    `${clientName} Piano ${primaryService
+      ? primaryService.charAt(0).toUpperCase() + primaryService.slice(1)
+      : ""}`;
 
   const pianoDetails = pianos
     .map((appointmentPiano) => {
@@ -113,11 +115,8 @@ function buildEvent(appointment, eventColorId) {
       const pianoParts = [
         piano.make,
         piano.model,
+        piano.serial
       ].filter(Boolean);
-
-      if (piano.serial) {
-        pianoParts.push(`Serial: ${piano.serial}`);
-      }
 
       const pianoName =
         pianoParts.length > 0
@@ -128,13 +127,15 @@ function buildEvent(appointment, eventColorId) {
 
       if (appointmentPiano.service) {
         details.push(
-          `Service: ${appointmentPiano.service}`
+          `Service: ${appointmentPiano.service
+            ? appointmentPiano.service.charAt(0).toUpperCase() + appointmentPiano.service.slice(1)
+            : ""}`
         );
       }
 
-      if (appointmentPiano.location) {
+      if (piano.location) {
         details.push(
-          `Location: ${appointmentPiano.location}`
+          `Location: ${piano.location}`
         );
       }
 
@@ -218,7 +219,7 @@ export async function createGoogleCalendarEvent(
     appointment,
     googleClient.eventColorId
   );
-  
+
   const response =
     await googleClient.calendar.events.insert({
       calendarId: googleClient.calendarId,

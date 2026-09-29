@@ -1,8 +1,6 @@
-Automatically add scheduled events to google calendar.
 Option to send confirmation email to client when event is created.
 Option to send confirmation email to client when event is completed.
 Automatically generate invoices for completed appointments.
-Sync google account for emailing and calendar in settings.
 Dashboard showing revenue.
 Style navbar.
 Style login.

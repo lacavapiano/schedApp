@@ -2,7 +2,8 @@ import { getSupabaseForUser } from "../services/supabase.js";
 
 export async function getSettings(req, res) {
   try {
-    const accessToken = req.headers.authorization?.replace("Bearer ", "");
+    const accessToken =
+      req.headers.authorization?.replace("Bearer ", "");
 
     if (!accessToken) {
       return res.status(401).json({
@@ -25,7 +26,9 @@ export async function getSettings(req, res) {
 
     const { data, error } = await supabase
       .from("user_settings")
-      .select("user_id, google_calendar_id, google_calendar_name")
+      .select(
+        "user_id, google_calendar_id, google_calendar_name, google_calendar_event_color_id"
+      )
       .eq("user_id", user.id)
       .maybeSingle();
 
@@ -43,6 +46,7 @@ export async function getSettings(req, res) {
         user_id: user.id,
         google_calendar_id: null,
         google_calendar_name: null,
+        google_calendar_event_color_id: null,
       });
     }
 
@@ -58,7 +62,8 @@ export async function getSettings(req, res) {
 
 export async function updateSettings(req, res) {
   try {
-    const accessToken = req.headers.authorization?.replace("Bearer ", "");
+    const accessToken =
+      req.headers.authorization?.replace("Bearer ", "");
 
     if (!accessToken) {
       return res.status(401).json({
@@ -85,10 +90,65 @@ export async function updateSettings(req, res) {
       google_calendar_event_color_id,
     } = req.body;
 
-    const { data, error } = await supabase
-      .from("user_settings")
-      .upsert(
-        {
+    /*
+     * Only update fields that were actually supplied.
+     * This prevents changing one setting from clearing
+     * the other settings.
+     */
+    const updates = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (google_calendar_id !== undefined) {
+      updates.google_calendar_id = google_calendar_id;
+    }
+
+    if (google_calendar_name !== undefined) {
+      updates.google_calendar_name = google_calendar_name;
+    }
+
+    if (google_calendar_event_color_id !== undefined) {
+      updates.google_calendar_event_color_id =
+        google_calendar_event_color_id;
+    }
+
+    /*
+     * Check whether the user already has a settings row.
+     */
+    const { data: existingSettings, error: existingError } =
+      await supabase
+        .from("user_settings")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (existingError) {
+      console.error(
+        "Error checking existing settings:",
+        existingError
+      );
+
+      return res.status(500).json({
+        error: "Failed to update settings",
+      });
+    }
+
+    let data;
+    let error;
+
+    if (existingSettings) {
+      // Existing row: update only the supplied fields.
+      ({ data, error } = await supabase
+        .from("user_settings")
+        .update(updates)
+        .eq("user_id", user.id)
+        .select()
+        .single());
+    } else {
+      // First settings update: create the row.
+      ({ data, error } = await supabase
+        .from("user_settings")
+        .insert({
           user_id: user.id,
           google_calendar_id:
             google_calendar_id ?? null,
@@ -97,13 +157,10 @@ export async function updateSettings(req, res) {
           google_calendar_event_color_id:
             google_calendar_event_color_id ?? null,
           updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "user_id",
-        }
-      )
-      .select()
-      .single();
+        })
+        .select()
+        .single());
+    }
 
     if (error) {
       console.error("Error updating settings:", error);
