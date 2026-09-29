@@ -1,4 +1,9 @@
 import { getSupabaseForUser } from "../services/supabase.js";
+import {
+  createGoogleCalendarEvent,
+  updateGoogleCalendarEvent,
+  deleteGoogleCalendarEvent,
+} from "../services/googleCalendar.js";
 
 const appointmentSelect = `
   id,
@@ -302,7 +307,6 @@ export async function createAppointment(req, res) {
       payment_type = null,
       miles = null,
       invoice = null,
-      google_event_id = null,
       pianos = [],
     } = req.body;
 
@@ -382,7 +386,7 @@ export async function createAppointment(req, res) {
         payment_type,
         miles,
         invoice,
-        google_event_id,
+        google_event_id: null,
       })
       .select("id")
       .single();
@@ -415,8 +419,6 @@ export async function createAppointment(req, res) {
           pianoError
         );
 
-        // Roll back the appointment if its
-        // piano records fail.
         await supabase
           .from("appointments")
           .delete()
@@ -427,6 +429,63 @@ export async function createAppointment(req, res) {
             "Unable to create appointment pianos",
         });
       }
+    }
+
+    const {
+      data: completeAppointment,
+      error: completeAppointmentError,
+    } = await supabase
+      .from("appointments")
+      .select(appointmentSelect)
+      .eq("id", appointment.id)
+      .single();
+
+    if (completeAppointmentError) {
+      console.error(
+        "Error retrieving created appointment:",
+        completeAppointmentError
+      );
+
+      return res.status(500).json({
+        error:
+          "Appointment created but could not be returned",
+      });
+    }
+
+    try {
+      const googleEvent =
+        await createGoogleCalendarEvent(
+          user.id,
+          completeAppointment
+        );
+
+      if (googleEvent?.id) {
+        const { error: googleIdError } =
+          await supabase
+            .from("appointments")
+            .update({
+              google_event_id: googleEvent.id,
+              updated_at:
+                new Date().toISOString(),
+            })
+            .eq("id", appointment.id);
+
+        if (googleIdError) {
+          console.error(
+            "Google event created but Google event ID could not be saved:",
+            googleIdError
+          );
+        } else {
+          completeAppointment.google_event_id =
+            googleEvent.id;
+        }
+      }
+    } catch (googleError) {
+
+      console.error(
+        "Google Calendar event creation failed:",
+        googleError
+      );
     }
 
     const { data, error } = await supabase
@@ -468,6 +527,37 @@ export async function updateAppointment(req, res) {
     const supabase = getSupabaseForUser(accessToken);
     const { id } = req.params;
 
+    /*
+     * Get the existing appointment first so we preserve
+     * its google_event_id rather than accepting one from
+     * the frontend.
+     */
+    const {
+      data: existingAppointment,
+      error: existingError,
+    } = await supabase
+      .from("appointments")
+      .select("id, google_event_id")
+      .eq("id", id)
+      .single();
+
+    if (existingError) {
+      if (existingError.code === "PGRST116") {
+        return res.status(404).json({
+          error: "Appointment not found",
+        });
+      }
+
+      console.error(
+        "Error retrieving existing appointment:",
+        existingError
+      );
+
+      return res.status(500).json({
+        error: "Unable to retrieve appointment",
+      });
+    }
+
     const {
       client_id,
       client_address_id = null,
@@ -479,7 +569,6 @@ export async function updateAppointment(req, res) {
       payment_type = null,
       miles = null,
       invoice = null,
-      google_event_id = null,
       pianos = [],
     } = req.body;
 
@@ -542,6 +631,10 @@ export async function updateAppointment(req, res) {
       });
     }
 
+    /*
+     * Update the appointment while preserving
+     * google_event_id.
+     */
     const {
       data: appointment,
       error: appointmentError,
@@ -558,20 +651,13 @@ export async function updateAppointment(req, res) {
         payment_type,
         miles,
         invoice,
-        google_event_id,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
-      .select("id")
+      .select("id, google_event_id")
       .single();
 
     if (appointmentError) {
-      if (appointmentError.code === "PGRST116") {
-        return res.status(404).json({
-          error: "Appointment not found",
-        });
-      }
-
       console.error(
         "Error updating appointment:",
         appointmentError
@@ -584,20 +670,17 @@ export async function updateAppointment(req, res) {
 
     /*
      * Replace the appointment's piano records.
-     *
-     * Whatever pianos are submitted become the
-     * complete list for this appointment.
      */
-    const { error: deleteError } =
+    const { error: deletePianosError } =
       await supabase
         .from("appointment_pianos")
         .delete()
         .eq("appointment_id", id);
 
-    if (deleteError) {
+    if (deletePianosError) {
       console.error(
         "Error replacing appointment pianos:",
-        deleteError
+        deletePianosError
       );
 
       return res.status(500).json({
@@ -607,7 +690,7 @@ export async function updateAppointment(req, res) {
     }
 
     if (normalizedPianos.length > 0) {
-      const { error: insertError } =
+      const { error: insertPianosError } =
         await supabase
           .from("appointment_pianos")
           .insert(
@@ -617,10 +700,10 @@ export async function updateAppointment(req, res) {
             }))
           );
 
-      if (insertError) {
+      if (insertPianosError) {
         console.error(
           "Error inserting appointment pianos:",
-          insertError
+          insertPianosError
         );
 
         return res.status(500).json({
@@ -630,6 +713,86 @@ export async function updateAppointment(req, res) {
       }
     }
 
+    /*
+     * Retrieve the complete updated appointment for
+     * Google Calendar synchronization.
+     */
+    const {
+      data: completeAppointment,
+      error: completeAppointmentError,
+    } = await supabase
+      .from("appointments")
+      .select(appointmentSelect)
+      .eq("id", id)
+      .single();
+
+    if (completeAppointmentError) {
+      return res.status(500).json({
+        error:
+          "Appointment updated but could not be returned",
+      });
+    }
+
+    /*
+     * Synchronize the Google Calendar event.
+     *
+     * If the appointment already has a Google event,
+     * update it.
+     *
+     * If it doesn't have one, attempt to create one.
+     * This also handles appointments that existed before
+     * Google Calendar was connected.
+     */
+    try {
+      if (existingAppointment.google_event_id) {
+        await updateGoogleCalendarEvent(
+          completeAppointment.owner_id,
+          existingAppointment.google_event_id,
+          completeAppointment
+        );
+      } else {
+        const googleEvent =
+          await createGoogleCalendarEvent(
+            completeAppointment.owner_id,
+            completeAppointment
+          );
+
+        if (googleEvent?.id) {
+          const { error: googleIdError } =
+            await supabase
+              .from("appointments")
+              .update({
+                google_event_id: googleEvent.id,
+                updated_at:
+                  new Date().toISOString(),
+              })
+              .eq("id", id);
+
+          if (googleIdError) {
+            console.error(
+              "Google event created but Google event ID could not be saved:",
+              googleIdError
+            );
+          } else {
+            completeAppointment.google_event_id =
+              googleEvent.id;
+          }
+        }
+      }
+    } catch (googleError) {
+      /*
+       * Don't fail the schedApp update just because
+       * Google synchronization failed.
+       */
+      console.error(
+        "Google Calendar event synchronization failed:",
+        googleError
+      );
+    }
+
+    /*
+     * Return the final appointment.
+     */
     const { data, error } = await supabase
       .from("appointments")
       .select(appointmentSelect)
@@ -667,11 +830,76 @@ export async function deleteAppointment(req, res) {
     }
 
     const supabase = getSupabaseForUser(accessToken);
+    const { id } = req.params;
 
+    /*
+     * Get the appointment before deleting it so we know
+     * whether there is a Google Calendar event to remove.
+     */
+    const {
+      data: appointment,
+      error: appointmentError,
+    } = await supabase
+      .from("appointments")
+      .select(
+        "id, owner_id, google_event_id"
+      )
+      .eq("id", id)
+      .single();
+
+    if (appointmentError) {
+      if (appointmentError.code === "PGRST116") {
+        return res.status(404).json({
+          error: "Appointment not found",
+        });
+      }
+
+      console.error(
+        "Error retrieving appointment for deletion:",
+        appointmentError
+      );
+
+      return res.status(500).json({
+        error: "Unable to retrieve appointment",
+      });
+    }
+
+    /*
+     * Remove the Google Calendar event first.
+     *
+     * A 404 from Google is treated as success by
+     * deleteGoogleCalendarEvent(), since the event is
+     * already gone.
+     */
+    if (appointment.google_event_id) {
+      try {
+        await deleteGoogleCalendarEvent(
+          appointment.owner_id,
+          appointment.google_event_id
+        );
+      } catch (googleError) {
+        console.error(
+          "Google Calendar event deletion failed:",
+          googleError
+        );
+
+        return res.status(500).json({
+          error:
+            "The appointment could not be deleted because its Google Calendar event could not be removed",
+        });
+      }
+    }
+
+    /*
+     * Now delete the schedApp appointment.
+     *
+     * appointment_pianos should be removed by your
+     * existing database foreign-key cascade if configured.
+     */
     const { error } = await supabase
       .from("appointments")
       .delete()
-      .eq("id", req.params.id);
+      .eq("id", id);
 
     if (error) {
       console.error(

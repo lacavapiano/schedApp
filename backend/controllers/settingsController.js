@@ -82,6 +82,7 @@ export async function updateSettings(req, res) {
     const {
       google_calendar_id,
       google_calendar_name,
+      google_calendar_event_color_id,
     } = req.body;
 
     const { data, error } = await supabase
@@ -89,15 +90,19 @@ export async function updateSettings(req, res) {
       .upsert(
         {
           user_id: user.id,
-          google_calendar_id: google_calendar_id ?? null,
-          google_calendar_name: google_calendar_name ?? null,
+          google_calendar_id:
+            google_calendar_id ?? null,
+          google_calendar_name:
+            google_calendar_name ?? null,
+          google_calendar_event_color_id:
+            google_calendar_event_color_id ?? null,
           updated_at: new Date().toISOString(),
         },
         {
           onConflict: "user_id",
         }
       )
-      .select("user_id, google_calendar_id, google_calendar_name")
+      .select()
       .single();
 
     if (error) {

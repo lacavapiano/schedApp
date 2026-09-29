@@ -24,7 +24,23 @@ function Settings() {
   const [savingCalendar, setSavingCalendar] =
     useState(false);
 
-  const [error, setError] = useState("");
+	const [savingColor, setSavingColor] = useState(false);
+
+  	const [error, setError] = useState("");
+
+  	const GOOGLE_CALENDAR_COLORS = [
+	  { id: "1", name: "Lavender", color: "#7986cb" },
+	  { id: "2", name: "Sage", color: "#33b679" },
+	  { id: "3", name: "Grape", color: "#8e24aa" },
+	  { id: "4", name: "Flamingo", color: "#e67c73" },
+	  { id: "5", name: "Banana", color: "#f6c026" },
+	  { id: "6", name: "Tangerine", color: "#f4511e" },
+	  { id: "7", name: "Peacock", color: "#039be5" },
+	  { id: "8", name: "Graphite", color: "#616161" },
+	  { id: "9", name: "Blueberry", color: "#3f51b5" },
+	  { id: "10", name: "Basil", color: "#0b8043" },
+	  { id: "11", name: "Tomato", color: "#d50000" },
+	];
 
   async function loadSettings() {
     try {
@@ -118,6 +134,28 @@ function Settings() {
       setSavingCalendar(false);
     }
   }
+
+  async function handleCalendarColorChange(colorId) {
+	  try {
+	    setSavingColor(true);
+	    setError("");
+
+	    const updatedSettings = await updateSettings({
+	      google_calendar_event_color_id: colorId,
+	    });
+
+	    setSettings(updatedSettings);
+	  } catch (error) {
+	    console.error(
+	      "Failed to save calendar event color:",
+	      error
+	    );
+
+	    setError(error.message);
+	  } finally {
+	    setSavingColor(false);
+	  }
+	}
 
   async function handleConnectGoogle() {
     let popup = null;
@@ -317,6 +355,77 @@ function Settings() {
                         )
                       )}
                     </select>
+
+                    <div className="settings-field settings-color-field">
+					  <label>Default appointment color</label>
+
+					  <p className="settings-color-help">
+					    Choose the color schedApp will use for appointments
+					    created in Google Calendar.
+					  </p>
+
+					  <div className="settings-color-options">
+					    {GOOGLE_CALENDAR_COLORS.map((color) => {
+					      const selected =
+					        settings?.google_calendar_event_color_id ===
+					        color.id;
+
+					      return (
+					        <button
+					          key={color.id}
+					          type="button"
+					          className={`settings-color-option ${
+					            selected
+					              ? "settings-color-option-selected"
+					              : ""
+					          }`}
+					          onClick={() =>
+					            handleCalendarColorChange(color.id)
+					          }
+					          disabled={savingColor}
+					          title={color.name}
+					          aria-label={`Use ${color.name} for calendar events`}
+					          aria-pressed={selected}
+					        >
+					          <span
+					            className="settings-color-swatch"
+					            style={{
+					              backgroundColor: color.color,
+					            }}
+					          />
+
+					          {selected && (
+					            <span className="settings-color-check">
+					              ✓
+					            </span>
+					          )}
+					        </button>
+					      );
+					    })}
+					  </div>
+
+					  {savingColor && (
+					    <span className="settings-saving">
+					      Saving...
+					    </span>
+					  )}
+
+					  {settings?.google_calendar_event_color_id && (
+					    <p className="settings-selected-help">
+					      New Google Calendar appointments will use{" "}
+					      <strong>
+					        {
+					          GOOGLE_CALENDAR_COLORS.find(
+					            (color) =>
+					              color.id ===
+					              settings.google_calendar_event_color_id
+					          )?.name
+					        }
+					      </strong>
+					      .
+					    </p>
+					  )}
+					</div>
 
                     {savingCalendar && (
                       <span className="settings-saving">
