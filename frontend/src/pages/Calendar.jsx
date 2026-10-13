@@ -29,7 +29,7 @@ function Calendar() {
   useEffect(() => {
     const calendarApi = calendarRef.current?.getApi();
     if (calendarApi) {
-      calendarApi.changeView(isMobile ? "listWeek" : "dayGridMonth");
+      calendarApi.changeView(isMobile ? "timeGridDay" : "dayGridMonth");
     }
   }, [isMobile]);
 
@@ -228,7 +228,7 @@ function Calendar() {
               left: isMobile ? "prev,next" : "prev,next today",
               center: "title",
               right: isMobile
-                ? "listWeek,dayGridMonth"
+                ? "timeGridDay,dayGridMonth"
                 : "dayGridMonth,timeGridWeek,timeGridDay",
             }}
             events={events}
