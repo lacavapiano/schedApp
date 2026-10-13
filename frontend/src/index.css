@@ -584,3 +584,428 @@ textarea {
     color: var(--text-primary) !important;
   }
 }
+
+
+
+/* Responsive layout: keep controls and content usable on phones. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#root {
+  max-width: 100%;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@media (max-width: 700px) {
+  #root {
+    border-inline: 0;
+    text-align: left;
+  }
+
+  main,
+  .page-layout,
+  .page-content,
+  .clients-page,
+  .pianos-page,
+  .dashboard,
+  .client-detail-page,
+  .piano-detail-page,
+  .settings-page {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .page-layout,
+  .page-content,
+  main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  h1 {
+    font-size: clamp(25px, 7vw, 34px);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    overflow-wrap: anywhere;
+    margin: 18px 0;
+  }
+
+  h2 {
+    overflow-wrap: anywhere;
+  }
+
+  .clients-header,
+  .client-detail-toolbar,
+  .piano-detail-toolbar,
+  .dashboard-section-header,
+  .settings-section-header {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .clients-header {
+    align-items: flex-start;
+  }
+
+  .clients-toolbar,
+  .pianos-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .client-search,
+  .piano-search {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .add-client-button,
+  .add-piano-button {
+    margin-left: 0;
+    min-height: 42px;
+    flex: 1 1 auto;
+  }
+
+  /* Keep wide data tables intact and let the table area scroll, rather than
+     compressing columns and overlapping text/actions. */
+  .client-table-wrapper,
+  .piano-table-wrapper {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .client-table {
+    width: max-content;
+    min-width: 700px;
+  }
+
+  .piano-table {
+    width: max-content;
+    min-width: 680px;
+    table-layout: auto;
+  }
+
+  .client-table th,
+  .client-table td,
+  .piano-table th,
+  .piano-table td {
+    padding: 10px 12px;
+  }
+
+  .table-action-button,
+  .piano-delete-button,
+  .client-detail-button,
+  .piano-edit-button,
+  .settings-button,
+  .settings-secondary-button,
+  .appointment-add-button {
+    min-height: 40px;
+    white-space: normal;
+    flex-shrink: 0;
+  }
+
+  .dashboard-appointment {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    align-items: start;
+    padding: 14px 12px;
+  }
+
+  .dashboard-appointment-date,
+  .dashboard-appointment-time,
+  .dashboard-appointment-client,
+  .dashboard-appointment-service,
+  .dashboard-appointment-address,
+  .dashboard-appointment-status {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-appointment-date {
+    grid-column: 1;
+  }
+
+  .dashboard-appointment-time {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  .dashboard-appointment-client,
+  .dashboard-appointment-service,
+  .dashboard-appointment-address {
+    grid-column: 1 / -1;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .dashboard-appointment-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .dashboard-section-header {
+    padding: 14px 12px;
+  }
+
+  .client-detail-grid,
+  .piano-detail-grid,
+  .client-contacts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .client-detail-section,
+  .piano-detail-section {
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .client-detail-section-header {
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .client-detail-list-item,
+  .client-piano-row {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .client-detail-item-meta,
+  .client-piano-details {
+    max-width: 100%;
+    flex-wrap: wrap;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .client-piano-main {
+    width: 100%;
+  }
+
+  .settings-section-header {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .settings-section-body {
+    padding: 14px;
+  }
+
+  .settings-field {
+    align-items: stretch;
+    min-width: 0;
+  }
+
+  .settings-calendar-select,
+  .settings-selected-calendar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .settings-selected-calendar-id {
+    overflow-wrap: anywhere;
+  }
+
+  .settings-color-options {
+    gap: 8px;
+  }
+
+  .settings-color-option {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Form grids collapse to one column; all controls stay inside the modal. */
+  .piano-form-grid,
+  .appointment-form-grid,
+  .client-form-grid,
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .piano-form-grid > *,
+  .appointment-form-grid > *,
+  .client-form-grid > *,
+  .form-grid > * {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .piano-modal-backdrop,
+  .client-modal-backdrop,
+  .appointment-modal-backdrop,
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .piano-modal,
+  .client-modal,
+  .appointment-modal,
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92dvh;
+    margin: 0;
+    padding: 16px;
+    border-radius: 16px 16px 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .piano-modal-header,
+  .client-modal-header,
+  .appointment-modal-header {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .appointment-modal-actions,
+  .client-modal-actions,
+  .piano-modal-actions,
+  .modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .appointment-modal-actions > *,
+  .client-modal-actions > *,
+  .piano-modal-actions > *,
+  .modal-actions > * {
+    flex: 1 1 120px;
+    min-width: 0;
+  }
+
+  .appointment-section,
+  .repeatable-item,
+  .appointment-piano {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .repeatable-section-header {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .fc .fc-toolbar {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .fc .fc-toolbar-chunk {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.1rem;
+    white-space: normal;
+  }
+
+  .fc .fc-button {
+    min-height: 36px;
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+
+  .fc .fc-timegrid-event,
+  .fc .fc-daygrid-event {
+    overflow-wrap: anywhere;
+  }
+
+  .login-card {
+    width: calc(100% - 24px);
+    max-width: 440px;
+    margin: 12px auto;
+    padding: 22px 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .navbar-inner {
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 8px;
+  }
+
+  .navbar-brand {
+    gap: 7px;
+    font-size: 16px;
+  }
+
+  .navbar-brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .navbar-toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .client-table th,
+  .client-table td,
+  .piano-table th,
+  .piano-table td {
+    padding: 9px 10px;
+  }
+
+  .client-detail-button,
+  .piano-edit-button,
+  .settings-button,
+  .settings-secondary-button {
+    padding: 9px 10px;
+    font-size: 13px;
+  }
+}
