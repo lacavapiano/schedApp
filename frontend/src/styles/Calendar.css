@@ -483,3 +483,51 @@
     padding: 24px 12px;
   }
 }
+
+
+@media (max-width: 700px) {
+  .calendar-container .fc .fc-timegrid-event {
+    min-width: 0;
+    padding: 2px 3px;
+  }
+
+  .calendar-container .fc .fc-timegrid-event .fc-event-main {
+    min-width: 0;
+    padding: 2px;
+  }
+
+  .calendar-container .fc .fc-timegrid-event .calendar-event {
+    justify-content: flex-start;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .calendar-container .fc .fc-timegrid-event .calendar-event div {
+    font-size: 11px;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .calendar-container .fc .fc-timegrid-event .calendar-event-address {
+    display: none;
+  }
+
+  .calendar-container .fc .fc-timegrid-axis-cushion,
+  .calendar-container .fc .fc-timegrid-slot-label-cushion {
+    font-size: 11px;
+  }
+
+  .calendar-container .fc .fc-daygrid-day-number {
+    padding: 5px;
+    font-size: 12px;
+  }
+
+  .calendar-container .fc .fc-daygrid-event {
+    padding: 1px 2px;
+  }
+
+  .calendar-container .fc .fc-daygrid-event .calendar-event div {
+    font-size: 10px;
+  }
+}
