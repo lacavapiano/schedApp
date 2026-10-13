@@ -321,51 +321,41 @@
 }
 
 
-/* Ensure the piano cards and every control inside them remain readable in dark mode. */
-:root[data-theme="dark"] .appointment-piano,
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .appointment-piano {
-    background-color: var(--surface-muted, #2b2f38) !important;
-    color: var(--text-primary, #f3f4f6) !important;
-    border-color: #484d58 !important;
-  }
-}
 
+/* Ensure the piano cards and every control inside them remain readable in dark mode. */
 :root[data-theme="dark"] .appointment-piano,
 :root[data-theme="dark"] .appointment-piano strong,
 :root[data-theme="dark"] .appointment-piano label,
 :root[data-theme="dark"] .appointment-piano .appointment-piano-header,
 :root[data-theme="dark"] .appointment-piano .appointment-form-field {
+  background-color: var(--surface-muted, #2b2f38);
   color: var(--text-primary, #f3f4f6) !important;
+}
+
+:root[data-theme="dark"] .appointment-piano {
+  border-color: #484d58 !important;
 }
 
 :root[data-theme="dark"] .appointment-piano input,
 :root[data-theme="dark"] .appointment-piano select,
-:root[data-theme="dark"] .appointment-piano textarea,
-:root:not([data-theme="light"]) .appointment-piano input,
-:root:not([data-theme="light"]) .appointment-piano select,
-:root:not([data-theme="light"]) .appointment-piano textarea {
+:root[data-theme="dark"] .appointment-piano textarea {
   background-color: #191c22 !important;
   color: #f3f4f6 !important;
   border-color: #555b67 !important;
   -webkit-text-fill-color: #f3f4f6;
 }
 
-:root[data-theme="dark"] .appointment-piano select option,
-:root:not([data-theme="light"]) .appointment-piano select option {
+:root[data-theme="dark"] .appointment-piano select option {
   background-color: #191c22;
   color: #f3f4f6;
 }
 
-:root[data-theme="dark"] .appointment-piano .appointment-remove-button,
-:root:not([data-theme="light"]) .appointment-piano .appointment-remove-button {
+:root[data-theme="dark"] .appointment-piano .appointment-remove-button {
   color: #ff9292 !important;
 }
 
 :root[data-theme="dark"] .appointment-piano input::placeholder,
-:root[data-theme="dark"] .appointment-piano textarea::placeholder,
-:root:not([data-theme="light"]) .appointment-piano input::placeholder,
-:root:not([data-theme="light"]) .appointment-piano textarea::placeholder {
+:root[data-theme="dark"] .appointment-piano textarea::placeholder {
   color: #aeb5c2 !important;
   opacity: 1;
 }
@@ -382,5 +372,29 @@
   :root:not([data-theme="light"]) .appointment-piano .appointment-piano-header,
   :root:not([data-theme="light"]) .appointment-piano .appointment-form-field {
     color: var(--text-primary, #f3f4f6) !important;
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano input,
+  :root:not([data-theme="light"]) .appointment-piano select,
+  :root:not([data-theme="light"]) .appointment-piano textarea {
+    background-color: #191c22 !important;
+    color: #f3f4f6 !important;
+    border-color: #555b67 !important;
+    -webkit-text-fill-color: #f3f4f6;
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano select option {
+    background-color: #191c22;
+    color: #f3f4f6;
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano .appointment-remove-button {
+    color: #ff9292 !important;
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano input::placeholder,
+  :root:not([data-theme="light"]) .appointment-piano textarea::placeholder {
+    color: #aeb5c2 !important;
+    opacity: 1;
   }
 }
