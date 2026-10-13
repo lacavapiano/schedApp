@@ -171,3 +171,154 @@
 .calendar-event-address {
   opacity: 0.85;
 }
+
+
+/*
+ * Explicit dark-mode overrides for FullCalendar.
+ * FullCalendar applies its own surface colors to nested table and grid elements,
+ * so set those elements directly instead of relying on inherited variables.
+ */
+:root[data-theme="dark"] .calendar-page,
+:root[data-theme="dark"] .calendar-container,
+:root[data-theme="dark"] .calendar-container .fc,
+:root[data-theme="dark"] .calendar-container .fc-scrollgrid,
+:root[data-theme="dark"] .calendar-container .fc-scrollgrid-section,
+:root[data-theme="dark"] .calendar-container .fc-scrollgrid-section > *,
+:root[data-theme="dark"] .calendar-container .fc-daygrid-body,
+:root[data-theme="dark"] .calendar-container .fc-daygrid-day,
+:root[data-theme="dark"] .calendar-container .fc-daygrid-day-frame,
+:root[data-theme="dark"] .calendar-container .fc-timegrid-body,
+:root[data-theme="dark"] .calendar-container .fc-timegrid-slot,
+:root[data-theme="dark"] .calendar-container .fc-timegrid-col,
+:root[data-theme="dark"] .calendar-container .fc-timegrid-axis,
+:root[data-theme="dark"] .calendar-container .fc-col-header-cell,
+:root[data-theme="dark"] .calendar-container .fc-list,
+:root[data-theme="dark"] .calendar-container .fc-list-table,
+:root[data-theme="dark"] .calendar-container .fc-list-table td,
+:root[data-theme="dark"] .calendar-container .fc-list-table th {
+  background-color: #20232a !important;
+  color: #f3f4f6 !important;
+  border-color: #454b56 !important;
+}
+
+:root[data-theme="dark"] .calendar-container .fc-daygrid-day-number,
+:root[data-theme="dark"] .calendar-container .fc-col-header-cell-cushion,
+:root[data-theme="dark"] .calendar-container .fc-timegrid-axis-cushion,
+:root[data-theme="dark"] .calendar-container .fc-timegrid-slot-label-cushion,
+:root[data-theme="dark"] .calendar-container .fc-list-day-text,
+:root[data-theme="dark"] .calendar-container .fc-list-day-side-text,
+:root[data-theme="dark"] .calendar-container .fc-toolbar-title {
+  color: #f3f4f6 !important;
+}
+
+:root[data-theme="dark"] .calendar-container .fc-day-other .fc-daygrid-day-number {
+  color: #aeb6c2 !important;
+}
+
+:root[data-theme="dark"] .calendar-container .fc-day-today,
+:root[data-theme="dark"] .calendar-container .fc-day-today .fc-daygrid-day-frame {
+  background-color: #2b3544 !important;
+}
+
+:root[data-theme="dark"] .calendar-container .fc-button {
+  background: #343a46 !important;
+  color: #f3f4f6 !important;
+  border-color: #545c69 !important;
+}
+
+:root[data-theme="dark"] .calendar-container .fc-button:hover,
+:root[data-theme="dark"] .calendar-container .fc-button:focus,
+:root[data-theme="dark"] .calendar-container .fc-button-primary:not(:disabled).fc-button-active {
+  background: #454d5b !important;
+  color: #ffffff !important;
+  border-color: #697384 !important;
+}
+
+:root[data-theme="dark"] .calendar-container .fc-list-event:hover td {
+  background-color: #343a46 !important;
+}
+
+:root[data-theme="dark"] .calendar-count,
+:root[data-theme="dark"] .calendar-loading {
+  color: #d1d5db !important;
+}
+
+:root[data-theme="dark"] .add-appointment-button {
+  background: #343a46 !important;
+  color: #f3f4f6 !important;
+  border-color: #545c69 !important;
+}
+
+/* Respect the operating-system dark preference when no light theme is forced. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .calendar-page,
+  :root:not([data-theme="light"]) .calendar-container,
+  :root:not([data-theme="light"]) .calendar-container .fc,
+  :root:not([data-theme="light"]) .calendar-container .fc-scrollgrid,
+  :root:not([data-theme="light"]) .calendar-container .fc-scrollgrid-section,
+  :root:not([data-theme="light"]) .calendar-container .fc-scrollgrid-section > *,
+  :root:not([data-theme="light"]) .calendar-container .fc-daygrid-body,
+  :root:not([data-theme="light"]) .calendar-container .fc-daygrid-day,
+  :root:not([data-theme="light"]) .calendar-container .fc-daygrid-day-frame,
+  :root:not([data-theme="light"]) .calendar-container .fc-timegrid-body,
+  :root:not([data-theme="light"]) .calendar-container .fc-timegrid-slot,
+  :root:not([data-theme="light"]) .calendar-container .fc-timegrid-col,
+  :root:not([data-theme="light"]) .calendar-container .fc-timegrid-axis,
+  :root:not([data-theme="light"]) .calendar-container .fc-col-header-cell,
+  :root:not([data-theme="light"]) .calendar-container .fc-list,
+  :root:not([data-theme="light"]) .calendar-container .fc-list-table,
+  :root:not([data-theme="light"]) .calendar-container .fc-list-table td,
+  :root:not([data-theme="light"]) .calendar-container .fc-list-table th {
+    background-color: #20232a !important;
+    color: #f3f4f6 !important;
+    border-color: #454b56 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-container .fc-daygrid-day-number,
+  :root:not([data-theme="light"]) .calendar-container .fc-col-header-cell-cushion,
+  :root:not([data-theme="light"]) .calendar-container .fc-timegrid-axis-cushion,
+  :root:not([data-theme="light"]) .calendar-container .fc-timegrid-slot-label-cushion,
+  :root:not([data-theme="light"]) .calendar-container .fc-list-day-text,
+  :root:not([data-theme="light"]) .calendar-container .fc-list-day-side-text,
+  :root:not([data-theme="light"]) .calendar-container .fc-toolbar-title {
+    color: #f3f4f6 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-container .fc-day-other .fc-daygrid-day-number {
+    color: #aeb6c2 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-container .fc-day-today,
+  :root:not([data-theme="light"]) .calendar-container .fc-day-today .fc-daygrid-day-frame {
+    background-color: #2b3544 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-container .fc-button {
+    background: #343a46 !important;
+    color: #f3f4f6 !important;
+    border-color: #545c69 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-container .fc-button:hover,
+  :root:not([data-theme="light"]) .calendar-container .fc-button:focus,
+  :root:not([data-theme="light"]) .calendar-container .fc-button-primary:not(:disabled).fc-button-active {
+    background: #454d5b !important;
+    color: #ffffff !important;
+    border-color: #697384 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-container .fc-list-event:hover td {
+    background-color: #343a46 !important;
+  }
+
+  :root:not([data-theme="light"]) .calendar-count,
+  :root:not([data-theme="light"]) .calendar-loading {
+    color: #d1d5db !important;
+  }
+
+  :root:not([data-theme="light"]) .add-appointment-button {
+    background: #343a46 !important;
+    color: #f3f4f6 !important;
+    border-color: #545c69 !important;
+  }
+}
