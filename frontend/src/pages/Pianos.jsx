@@ -101,52 +101,73 @@ function Pianos() {
           </button>
         </div>
 
-        <div className="piano-table-wrapper">
-          <table className="piano-table">
-            <thead>
-              <tr>
-                <th>Make</th>
-                <th>Model</th>
-                <th>Serial</th>
-                <th>Type</th>
-                <th>Location</th>
-                <th>Client</th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredPianos.map((piano) => (
-                <tr
-                  key={piano.id}
-                  onClick={() => navigate(`/pianos/${piano.id}`)}
-                  className="piano-row"
-                >
-                  <td>{piano.make || "—"}</td>
-                  <td>{piano.model || "—"}</td>
-                  <td>{piano.serial || "—"}</td>
-                  <td>{piano.type || "—"}</td>
-                  <td>{piano.location || "—"}</td>
-                  <td>{piano.client?.name || "Unassigned"}</td>
-                  <td>
+        {filteredPianos.length > 0 ? (
+          <section className="piano-panel-grid" aria-label="Pianos">
+            {filteredPianos.map((piano) => (
+              <article
+                className="piano-panel"
+                key={piano.id}
+                onClick={() => navigate(`/pianos/${piano.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    navigate(`/pianos/${piano.id}`);
+                  }
+                }}
+                role="link"
+                tabIndex={0}
+              >
+                <div className="piano-panel-main">
+                  <div className="piano-panel-heading">
                     <button
-                      className="piano-delete-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(piano);
+                      type="button"
+                      className="piano-panel-name"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(`/pianos/${piano.id}`);
                       }}
                     >
-                      Delete
+                      {[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed piano"}
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    {piano.type && <span className="piano-panel-type">{piano.type}</span>}
+                  </div>
 
-        {filteredPianos.length === 0 && (
-          <div className="pianos-empty">No pianos found.</div>
+                  <div className="piano-panel-details">
+                    <div className="piano-panel-detail">
+                      <span className="piano-panel-label">Serial</span>
+                      <span className="piano-panel-value">{piano.serial || "Not provided"}</span>
+                    </div>
+                    <div className="piano-panel-detail">
+                      <span className="piano-panel-label">Location</span>
+                      <span className="piano-panel-value">{piano.location || "Not provided"}</span>
+                    </div>
+                    <div className="piano-panel-detail">
+                      <span className="piano-panel-label">Client</span>
+                      <span className="piano-panel-value">{piano.client?.name || "Unassigned"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="piano-panel-actions">
+                  <button
+                    type="button"
+                    className="piano-delete-button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(piano);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </article>
+            ))}
+          </section>
+        ) : (
+          <div className="pianos-empty">
+            <p>No pianos found.</p>
+            <span>Try another search or add a piano.</span>
+          </div>
         )}
 
         {showForm && (
