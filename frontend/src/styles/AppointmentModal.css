@@ -293,3 +293,29 @@
   .appointment-modal-actions > *,
   .appointment-modal-actions-right > * { flex: 1 1 120px; min-width: 0; }
 }
+
+
+@media (max-width: 700px) {
+  /* Keep Delete, Cancel, and Save the same width on mobile. */
+  .appointment-modal-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .appointment-modal-actions-right {
+    display: contents;
+  }
+
+  .appointment-modal-actions > .appointment-delete-button,
+  .appointment-modal-actions-right > .appointment-cancel-button,
+  .appointment-modal-actions-right > .appointment-save-button {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    padding: 10px 6px;
+    white-space: nowrap;
+    text-align: center;
+  }
+}
