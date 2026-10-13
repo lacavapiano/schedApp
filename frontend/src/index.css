@@ -198,3 +198,389 @@ textarea {
   border-color: var(--border-color);
 }
 
+
+
+/* Application-wide dark surfaces and contrast fixes. Keep these color-only. */
+:root[data-theme="dark"] {
+  --text: #d1d5db;
+  --text-h: #f9fafb;
+  --bg: #17191e;
+  --border: #3b404a;
+  --code-bg: #242832;
+  --app-bg: #17191e;
+  --surface: #20232a;
+  --surface-muted: #2b2f38;
+  --text-primary: #f3f4f6;
+  --text-secondary: #c0c6d0;
+  --border-color: #454b56;
+  --input-bg: #20232a;
+  --input-text: #f3f4f6;
+  --hover-bg: #343a46;
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] #root {
+  background: var(--app-bg) !important;
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .app-navbar,
+:root[data-theme="dark"] .client-modal,
+:root[data-theme="dark"] .appointment-modal,
+:root[data-theme="dark"] .piano-modal,
+:root[data-theme="dark"] .dashboard-section,
+:root[data-theme="dark"] .client-detail-section,
+:root[data-theme="dark"] .piano-detail-section,
+:root[data-theme="dark"] .settings-section,
+:root[data-theme="dark"] .client-table,
+:root[data-theme="dark"] .piano-table,
+:root[data-theme="dark"] .client-search-dropdown,
+:root[data-theme="dark"] .client-search-option,
+:root[data-theme="dark"] .client-search-create,
+:root[data-theme="dark"] .settings-selected-calendar {
+  background-color: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .app-navbar,
+:root[data-theme="dark"] .navbar-brand,
+:root[data-theme="dark"] .navbar-brand:hover,
+:root[data-theme="dark"] .navbar-link,
+:root[data-theme="dark"] .navbar-link.active,
+:root[data-theme="dark"] .navbar-link:hover,
+:root[data-theme="dark"] .navbar-logout,
+:root[data-theme="dark"] .navbar-logout:hover:not(:disabled),
+:root[data-theme="dark"] .navbar-toggle span,
+:root[data-theme="dark"] .client-detail-page,
+:root[data-theme="dark"] .piano-detail-page,
+:root[data-theme="dark"] .client-detail-section h3,
+:root[data-theme="dark"] .piano-detail-section h3,
+:root[data-theme="dark"] .client-name-button,
+:root[data-theme="dark"] .piano-client-link,
+:root[data-theme="dark"] .settings-section-header h2,
+:root[data-theme="dark"] .settings-selected-calendar-name {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .navbar-link:hover,
+:root[data-theme="dark"] .navbar-link.active,
+:root[data-theme="dark"] .navbar-logout:hover:not(:disabled),
+:root[data-theme="dark"] .client-table tbody tr:hover,
+:root[data-theme="dark"] .piano-row:hover,
+:root[data-theme="dark"] .client-search-option:hover,
+:root[data-theme="dark"] .client-search-option.selected,
+:root[data-theme="dark"] .client-search-create:hover,
+:root[data-theme="dark"] .client-detail-list-item:hover,
+:root[data-theme="dark"] .client-piano-row:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+:root[data-theme="dark"] .navbar-logout,
+:root[data-theme="dark"] .navbar-toggle,
+:root[data-theme="dark"] .client-detail-button,
+:root[data-theme="dark"] .piano-edit-button,
+:root[data-theme="dark"] .table-action-button,
+:root[data-theme="dark"] .piano-delete-button,
+:root[data-theme="dark"] .settings-secondary-button,
+:root[data-theme="dark"] .appointment-add-button,
+:root[data-theme="dark"] .client-detail-list-item,
+:root[data-theme="dark"] .client-contact-card,
+:root[data-theme="dark"] .client-piano-row,
+:root[data-theme="dark"] .settings-selected-calendar,
+:root[data-theme="dark"] .settings-empty-state,
+:root[data-theme="dark"] .repeatable-item,
+:root[data-theme="dark"] .appointment-piano {
+  background-color: var(--surface-muted) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .client-table th,
+:root[data-theme="dark"] .client-table td,
+:root[data-theme="dark"] .piano-table th,
+:root[data-theme="dark"] .piano-table td,
+:root[data-theme="dark"] .client-table-wrapper,
+:root[data-theme="dark"] .piano-table-wrapper,
+:root[data-theme="dark"] .client-detail-section,
+:root[data-theme="dark"] .client-detail-list-item,
+:root[data-theme="dark"] .client-contact-card,
+:root[data-theme="dark"] .client-contact-notes,
+:root[data-theme="dark"] .piano-detail-section,
+:root[data-theme="dark"] .settings-section,
+:root[data-theme="dark"] .settings-section-header,
+:root[data-theme="dark"] .appointment-section,
+:root[data-theme="dark"] .appointment-modal-actions,
+:root[data-theme="dark"] .repeatable-section-header,
+:root[data-theme="dark"] .form-field:has(.repeatable-section-header) {
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .client-detail-label,
+:root[data-theme="dark"] .client-detail-item-label,
+:root[data-theme="dark"] .client-contact-relationship,
+:root[data-theme="dark"] .client-detail-empty,
+:root[data-theme="dark"] .client-detail-loading,
+:root[data-theme="dark"] .client-detail-item-meta,
+:root[data-theme="dark"] .piano-detail-label,
+:root[data-theme="dark"] .clients-count,
+:root[data-theme="dark"] .pianos-count,
+:root[data-theme="dark"] .settings-loading,
+:root[data-theme="dark"] .settings-section-header p,
+:root[data-theme="dark"] .settings-help-text,
+:root[data-theme="dark"] .settings-calendar-loading,
+:root[data-theme="dark"] .settings-saving,
+:root[data-theme="dark"] .settings-selected-help,
+:root[data-theme="dark"] .settings-color-help,
+:root[data-theme="dark"] .settings-selected-calendar-id,
+:root[data-theme="dark"] .settings-empty-state span,
+:root[data-theme="dark"] .appointment-help-text,
+:root[data-theme="dark"] .client-search-option small,
+:root[data-theme="dark"] .client-search-empty,
+:root[data-theme="dark"] .client-search-toggle,
+:root[data-theme="dark"] .appointment-modal-close,
+:root[data-theme="dark"] .client-modal-close {
+  color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] .client-search,
+:root[data-theme="dark"] .piano-search,
+:root[data-theme="dark"] .settings-calendar-select,
+:root[data-theme="dark"] .appointment-form-field input,
+:root[data-theme="dark"] .appointment-form-field select,
+:root[data-theme="dark"] .appointment-form-field textarea,
+:root[data-theme="dark"] .form-field input,
+:root[data-theme="dark"] .form-field select,
+:root[data-theme="dark"] .form-field textarea,
+:root[data-theme="dark"] .login-field input {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder,
+:root[data-theme="dark"] .client-search::placeholder,
+:root[data-theme="dark"] .piano-search::placeholder {
+  color: #aeb6c2 !important;
+}
+
+:root[data-theme="dark"] .client-modal-header,
+:root[data-theme="dark"] .appointment-modal-header {
+  background-color: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .client-modal-header h2,
+:root[data-theme="dark"] .appointment-modal-header h2,
+:root[data-theme="dark"] .appointment-form-field label,
+:root[data-theme="dark"] .appointment-section > .appointment-section-header > label,
+:root[data-theme="dark"] .form-field > label,
+:root[data-theme="dark"] .repeatable-section-header label,
+:root[data-theme="dark"] .repeatable-section-header strong,
+:root[data-theme="dark"] .settings-field > label {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .client-modal,
+:root[data-theme="dark"] .appointment-modal,
+:root[data-theme="dark"] .piano-modal {
+  background-color: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .client-type-badge,
+:root[data-theme="dark"] .piano-type-badge,
+:root[data-theme="dark"] .client-detail-primary {
+  background-color: #343a46 !important;
+  color: #f3f4f6 !important;
+}
+
+:root[data-theme="dark"] .settings-empty-state p,
+:root[data-theme="dark"] .settings-selected-calendar-name,
+:root[data-theme="dark"] .client-detail-address,
+:root[data-theme="dark"] .client-detail-notes,
+:root[data-theme="dark"] .client-contact-notes p {
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .settings-button,
+:root[data-theme="dark"] .login-submit {
+  background: #f3f4f6 !important;
+  color: #17191e !important;
+  border-color: #f3f4f6 !important;
+}
+
+:root[data-theme="dark"] .login-page,
+:root[data-theme="dark"] .login-card {
+  background: var(--app-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .login-title,
+:root[data-theme="dark"] .login-field label,
+:root[data-theme="dark"] .login-text-button,
+:root[data-theme="dark"] .login-back-button,
+:root[data-theme="dark"] .login-password-toggle {
+  color: var(--text-primary) !important;
+}
+
+/* Match the same fixes to OS-driven dark mode when light mode is not forced. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --text: #d1d5db;
+    --text-h: #f9fafb;
+    --bg: #17191e;
+    --border: #3b404a;
+    --code-bg: #242832;
+    --app-bg: #17191e;
+    --surface: #20232a;
+    --surface-muted: #2b2f38;
+    --text-primary: #f3f4f6;
+    --text-secondary: #c0c6d0;
+    --border-color: #454b56;
+    --input-bg: #20232a;
+    --input-text: #f3f4f6;
+    --hover-bg: #343a46;
+  }
+
+  :root:not([data-theme="light"]) body,
+  :root:not([data-theme="light"]) #root {
+    background: var(--app-bg) !important;
+    color: var(--text-primary);
+  }
+
+  :root:not([data-theme="light"]) .app-navbar,
+  :root:not([data-theme="light"]) .client-modal,
+  :root:not([data-theme="light"]) .appointment-modal,
+  :root:not([data-theme="light"]) .piano-modal,
+  :root:not([data-theme="light"]) .dashboard-section,
+  :root:not([data-theme="light"]) .client-detail-section,
+  :root:not([data-theme="light"]) .piano-detail-section,
+  :root:not([data-theme="light"]) .settings-section,
+  :root:not([data-theme="light"]) .client-table,
+  :root:not([data-theme="light"]) .piano-table,
+  :root:not([data-theme="light"]) .client-search-dropdown,
+  :root:not([data-theme="light"]) .client-search-option,
+  :root:not([data-theme="light"]) .client-search-create,
+  :root:not([data-theme="light"]) .settings-selected-calendar {
+    background-color: var(--surface) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color);
+  }
+
+  :root:not([data-theme="light"]) .navbar-brand,
+  :root:not([data-theme="light"]) .navbar-brand:hover,
+  :root:not([data-theme="light"]) .navbar-link,
+  :root:not([data-theme="light"]) .navbar-link.active,
+  :root:not([data-theme="light"]) .navbar-link:hover,
+  :root:not([data-theme="light"]) .navbar-logout,
+  :root:not([data-theme="light"]) .navbar-logout:hover:not(:disabled),
+  :root:not([data-theme="light"]) .navbar-toggle span,
+  :root:not([data-theme="light"]) .client-detail-section h3,
+  :root:not([data-theme="light"]) .piano-detail-section h3,
+  :root:not([data-theme="light"]) .client-name-button,
+  :root:not([data-theme="light"]) .piano-client-link,
+  :root:not([data-theme="light"]) .settings-section-header h2,
+  :root:not([data-theme="light"]) .settings-selected-calendar-name {
+    color: var(--text-primary) !important;
+  }
+
+  :root:not([data-theme="light"]) .navbar-link:hover,
+  :root:not([data-theme="light"]) .navbar-link.active,
+  :root:not([data-theme="light"]) .navbar-logout:hover:not(:disabled),
+  :root:not([data-theme="light"]) .client-table tbody tr:hover,
+  :root:not([data-theme="light"]) .piano-row:hover,
+  :root:not([data-theme="light"]) .client-search-option:hover,
+  :root:not([data-theme="light"]) .client-search-option.selected,
+  :root:not([data-theme="light"]) .client-search-create:hover {
+    background-color: var(--hover-bg) !important;
+  }
+
+  :root:not([data-theme="light"]) .client-detail-label,
+  :root:not([data-theme="light"]) .client-detail-item-label,
+  :root:not([data-theme="light"]) .client-contact-relationship,
+  :root:not([data-theme="light"]) .client-detail-empty,
+  :root:not([data-theme="light"]) .piano-detail-label,
+  :root:not([data-theme="light"]) .clients-count,
+  :root:not([data-theme="light"]) .pianos-count,
+  :root:not([data-theme="light"]) .settings-loading,
+  :root:not([data-theme="light"]) .settings-section-header p,
+  :root:not([data-theme="light"]) .settings-help-text,
+  :root:not([data-theme="light"]) .settings-calendar-loading,
+  :root:not([data-theme="light"]) .settings-saving,
+  :root:not([data-theme="light"]) .settings-selected-help,
+  :root:not([data-theme="light"]) .settings-color-help,
+  :root:not([data-theme="light"]) .settings-selected-calendar-id,
+  :root:not([data-theme="light"]) .appointment-help-text {
+    color: var(--text-secondary) !important;
+  }
+
+  :root:not([data-theme="light"]) input,
+  :root:not([data-theme="light"]) select,
+  :root:not([data-theme="light"]) textarea,
+  :root:not([data-theme="light"]) .client-search,
+  :root:not([data-theme="light"]) .piano-search,
+  :root:not([data-theme="light"]) .settings-calendar-select,
+  :root:not([data-theme="light"]) .appointment-form-field input,
+  :root:not([data-theme="light"]) .appointment-form-field select,
+  :root:not([data-theme="light"]) .appointment-form-field textarea,
+  :root:not([data-theme="light"]) .form-field input,
+  :root:not([data-theme="light"]) .form-field select,
+  :root:not([data-theme="light"]) .form-field textarea {
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  :root:not([data-theme="light"]) .client-modal-header,
+  :root:not([data-theme="light"]) .appointment-modal-header {
+    background-color: var(--surface) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  :root:not([data-theme="light"]) .client-modal-header h2,
+  :root:not([data-theme="light"]) .appointment-modal-header h2,
+  :root:not([data-theme="light"]) .appointment-form-field label,
+  :root:not([data-theme="light"]) .form-field > label,
+  :root:not([data-theme="light"]) .repeatable-section-header label,
+  :root:not([data-theme="light"]) .repeatable-section-header strong,
+  :root:not([data-theme="light"]) .settings-field > label {
+    color: var(--text-primary) !important;
+  }
+
+  :root:not([data-theme="light"]) .client-type-badge,
+  :root:not([data-theme="light"]) .piano-type-badge,
+  :root:not([data-theme="light"]) .client-detail-primary {
+    background-color: #343a46 !important;
+    color: #f3f4f6 !important;
+  }
+
+  :root:not([data-theme="light"]) .settings-button,
+  :root:not([data-theme="light"]) .login-submit {
+    background: #f3f4f6 !important;
+    color: #17191e !important;
+    border-color: #f3f4f6 !important;
+  }
+
+  :root:not([data-theme="light"]) .login-page,
+  :root:not([data-theme="light"]) .login-card {
+    background: var(--app-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  :root:not([data-theme="light"]) .login-title,
+  :root:not([data-theme="light"]) .login-field label,
+  :root:not([data-theme="light"]) .login-text-button,
+  :root:not([data-theme="light"]) .login-back-button,
+  :root:not([data-theme="light"]) .login-password-toggle {
+    color: var(--text-primary) !important;
+  }
+}
