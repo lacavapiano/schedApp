@@ -260,3 +260,36 @@
     padding: 16px;
   }
 }
+
+@media (max-width: 700px) {
+  .appointment-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .appointment-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92dvh;
+    border-radius: 16px 16px 0 0;
+    overflow-x: hidden;
+  }
+  .appointment-modal-header {
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .appointment-modal-header h2 { min-width: 0; overflow-wrap: anywhere; }
+  .appointment-modal form { padding: 14px 16px; }
+  .appointment-form-row { flex-direction: column; gap: 0; }
+  .appointment-section-header,
+  .appointment-piano-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .appointment-section-actions,
+  .appointment-piano-actions { flex-wrap: wrap; }
+  .appointment-modal-actions { align-items: stretch; flex-wrap: wrap; }
+  .appointment-modal-actions-right { margin-left: 0; flex-wrap: wrap; }
+  .appointment-modal-actions > *,
+  .appointment-modal-actions-right > * { flex: 1 1 120px; min-width: 0; }
+}
