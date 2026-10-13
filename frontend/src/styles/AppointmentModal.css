@@ -35,13 +35,16 @@
 .appointment-modal-header {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 20;
+  isolation: isolate;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 18px 22px;
-  background: #fff;
+  background-color: #fff;
   border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .appointment-modal-header h2 {
