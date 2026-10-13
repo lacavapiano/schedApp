@@ -10,9 +10,7 @@ function Navbar() {
 
   useEffect(() => {
     function handleKeyDown(event) {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-      }
+      if (event.key === "Escape") setMenuOpen(false);
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -25,7 +23,6 @@ function Navbar() {
 
   async function handleLogout() {
     setLoggingOut(true);
-
     const { error } = await supabase.auth.signOut();
 
     if (error) {
@@ -56,7 +53,6 @@ function Navbar() {
           onClick={closeMenu}
           aria-label="SchedApp home"
         >
-          <span className="navbar-brand-icon" aria-hidden="true">S</span>
           <span className="navbar-brand-text">SchedApp</span>
         </NavLink>
 
