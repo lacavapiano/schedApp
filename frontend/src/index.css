@@ -109,3 +109,92 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/*
+ * Application theme support.
+ * Keep layout rules unchanged; use these tokens for colors throughout the app.
+ */
+:root {
+  color-scheme: light;
+  --app-bg: #f7f8fa;
+  --surface: #ffffff;
+  --surface-muted: #f1f3f5;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+  --input-text: #212529;
+  --hover-bg: #f1f3f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --app-bg: #17191e;
+    --surface: #22252c;
+    --surface-muted: #2b2f38;
+    --text-primary: #f1f3f5;
+    --text-secondary: #adb5bd;
+    --border-color: #3b404a;
+    --input-bg: #22252c;
+    --input-text: #f1f3f5;
+    --hover-bg: #303540;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --app-bg: #17191e;
+  --surface: #22252c;
+  --surface-muted: #2b2f38;
+  --text-primary: #f1f3f5;
+  --text-secondary: #adb5bd;
+  --border-color: #3b404a;
+  --input-bg: #22252c;
+  --input-text: #f1f3f5;
+  --hover-bg: #303540;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--app-bg);
+  color: var(--text-primary);
+}
+
+#root {
+  background-color: var(--app-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Shared controls use theme colors without changing their dimensions. */
+input,
+select,
+textarea {
+  color: var(--input-text);
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+  background-color: var(--input-bg);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] table th,
+:root[data-theme="dark"] table td {
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] hr {
+  border-color: var(--border-color);
+}
+
