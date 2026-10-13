@@ -1009,3 +1009,33 @@ textarea {
     font-size: 13px;
   }
 }
+
+
+/* Restore consistent outer margins and page gutters for the main app. */
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+main {
+  width: 100%;
+  max-width: 1126px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  #root {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  main {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem 12px;
+  }
+}
