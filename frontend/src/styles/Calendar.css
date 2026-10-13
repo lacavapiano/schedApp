@@ -531,3 +531,49 @@
     font-size: 10px;
   }
 }
+
+/* Compact month cells on phones: prioritize the client and time over extra details. */
+@media (max-width: 700px) {
+  .calendar-container .fc .fc-daygrid-day-frame {
+    min-height: 72px;
+  }
+
+  .calendar-container .fc .fc-daygrid-day-events {
+    margin: 2px 2px 0;
+  }
+
+  .calendar-container .fc .fc-daygrid-event {
+    margin-top: 2px;
+    padding: 2px 3px;
+    border-radius: 4px;
+  }
+
+  .calendar-container .fc .calendar-event-compact {
+    display: block;
+    min-width: 0;
+    line-height: 1.2;
+  }
+
+  .calendar-container .fc .calendar-event-compact div {
+    padding: 0;
+    font-size: 10px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .calendar-container .fc .calendar-event-compact .calendar-event-client {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .calendar-container .fc .fc-daygrid-more-link {
+    display: block;
+    padding: 2px;
+    color: var(--text-primary);
+    font-size: 10px;
+    font-weight: 700;
+  }
+}
+
