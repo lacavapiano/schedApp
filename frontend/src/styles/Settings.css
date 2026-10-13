@@ -292,3 +292,13 @@
     max-width: none;
   }
 }
+
+@media (max-width: 700px) {
+  .settings-section-header { align-items: flex-start; text-align: left; padding: 16px; gap: 12px; }
+  .settings-section-body { padding: 14px; }
+  .settings-field { align-items: stretch; min-width: 0; }
+  .settings-calendar-select,
+  .settings-selected-calendar { width: 100%; max-width: 100%; min-width: 0; }
+  .settings-selected-calendar-id { overflow-wrap: anywhere; }
+  .settings-status { white-space: normal; }
+}
