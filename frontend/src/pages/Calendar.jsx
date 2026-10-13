@@ -223,7 +223,7 @@ function Calendar() {
               timeGridPlugin,
               interactionPlugin,
             ]}
-            initialView={isMobile ? "listWeek" : "dayGridMonth"}
+            initialView={isMobile ? "timeGridDay" : "dayGridMonth"}
             headerToolbar={{
               left: isMobile ? "prev,next" : "prev,next today",
               center: "title",
