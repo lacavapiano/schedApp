@@ -142,8 +142,10 @@ function Calendar() {
       clientAddress,
     } = eventInfo.event.extendedProps;
 
+    const compactMonth = isMobile && eventInfo.view.type === "dayGridMonth";
+
     return (
-      <div className="calendar-event">
+      <div className={`calendar-event${compactMonth ? " calendar-event-compact" : ""}`}>
         <div className="calendar-event-time">
           {eventInfo.timeText}
         </div>
@@ -152,13 +154,17 @@ function Calendar() {
           {client?.name || "Unknown Client"}
         </div>
 
-        <div className="calendar-event-service">
-          {service || "No service"}
-        </div>
+        {!compactMonth && (
+          <>
+            <div className="calendar-event-service">
+              {service || "No service"}
+            </div>
 
-        <div className="calendar-event-address">
-          {formatAddress(clientAddress)}
-        </div>
+            <div className="calendar-event-address">
+              {formatAddress(clientAddress)}
+            </div>
+          </>
+        )}
       </div>
     );
   }
