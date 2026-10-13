@@ -326,3 +326,18 @@
     gap: 16px;
   }
 }
+
+@media (max-width: 700px) {
+  .pianos-toolbar { flex-wrap: wrap; align-items: stretch; gap: 10px; }
+  .piano-search { flex: 1 1 100%; width: 100%; max-width: none; }
+  .add-piano-button { margin-left: 0; min-height: 42px; }
+  .piano-table-wrapper { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .piano-table { width: max-content; min-width: 680px; table-layout: auto; }
+  .piano-detail-toolbar { gap: 10px; flex-wrap: wrap; }
+  .piano-detail-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .piano-detail-section { min-width: 0; padding: 14px; }
+  .piano-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .piano-form-grid > * { min-width: 0; }
+  .piano-modal-backdrop { align-items: flex-end; padding: 0; }
+  .piano-modal { width: 100%; max-width: 100%; max-height: 92dvh; padding: 16px; border-radius: 16px 16px 0 0; }
+}
