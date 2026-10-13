@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -11,6 +11,28 @@ import { getAppointments } from "../services/api";
 import "../styles/Calendar.css";
 
 function Calendar() {
+  const calendarRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.matchMedia("(max-width: 700px)").matches
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 700px)");
+    const handleChange = (event) => setIsMobile(event.matches);
+
+    setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    const calendarApi = calendarRef.current?.getApi();
+    if (calendarApi) {
+      calendarApi.changeView(isMobile ? "listWeek" : "dayGridMonth");
+    }
+  }, [isMobile]);
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -195,17 +217,19 @@ function Calendar() {
 
         <div className="calendar-container">
           <FullCalendar
+            ref={calendarRef}
             plugins={[
               dayGridPlugin,
               timeGridPlugin,
               interactionPlugin,
             ]}
-            initialView="dayGridMonth"
+            initialView={isMobile ? "listWeek" : "dayGridMonth"}
             headerToolbar={{
-              left: "prev,next today",
+              left: isMobile ? "prev,next" : "prev,next today",
               center: "title",
-              right:
-                "dayGridMonth,timeGridWeek,timeGridDay",
+              right: isMobile
+                ? "listWeek,dayGridMonth"
+                : "dayGridMonth,timeGridWeek,timeGridDay",
             }}
             events={events}
             eventClick={handleEventClick}
