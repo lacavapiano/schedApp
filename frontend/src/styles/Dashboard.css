@@ -244,3 +244,18 @@
     margin-top: 4px;
   }
 }
+
+
+@media (max-width: 700px) {
+  .dashboard-appointment {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    padding: 14px 12px;
+  }
+  .dashboard-appointment-date { grid-column: 1; }
+  .dashboard-appointment-time { grid-column: 2; grid-row: 1; text-align: right; }
+  .dashboard-appointment-client,
+  .dashboard-appointment-service,
+  .dashboard-appointment-address { grid-column: 1 / -1; white-space: normal; overflow-wrap: anywhere; }
+  .dashboard-appointment-status { grid-column: 1 / -1; justify-self: start; white-space: normal; }
+}
