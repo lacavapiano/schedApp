@@ -99,13 +99,13 @@
 }
 
 .navbar-link:hover {
-  color: var(--text-h, #08060d);
+  color: #111;
   background: #f1f1f1;
 }
 
 .navbar-link.active {
-  color: var(--accent, #aa3bff);
-  background: var(--accent-bg, rgba(170, 59, 255, 0.1));
+  color: #111;
+  background: #f1f1f1;
   font-weight: 700;
 }
 
@@ -135,7 +135,7 @@
   border: 1px solid #dedede;
   border-radius: 9px;
   background: transparent;
-  color: var(--text, #6b6375);
+  color: #555;
   font: inherit;
   font-size: 13px;
   font-weight: 650;
@@ -176,7 +176,7 @@
   width: 20px;
   height: 2px;
   border-radius: 2px;
-  background: var(--text-h, #08060d);
+  background: #111;
   transition: transform 180ms ease, opacity 180ms ease;
 }
 
