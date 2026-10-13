@@ -502,3 +502,168 @@
     align-self: flex-start;
   }
 }
+
+
+/* Theme-aware colors for the piano list, detail view, and form. */
+.pianos-count,
+.piano-table th,
+.piano-detail-label {
+  color: var(--text-secondary, #666);
+}
+
+.piano-search,
+.piano-form-grid input,
+.piano-form-grid select {
+  color: var(--text-primary, #212529);
+  background: var(--surface, #fff);
+  border-color: var(--border-color, #ccc);
+}
+
+.piano-search::placeholder,
+.piano-form-grid input::placeholder {
+  color: var(--text-secondary, #6c757d);
+  opacity: 1;
+}
+
+.piano-search:focus,
+.piano-form-grid input:focus,
+.piano-form-grid select:focus {
+  border-color: var(--text-secondary, #777);
+  outline: 2px solid var(--border-color, #ccc);
+  outline-offset: 1px;
+}
+
+.add-piano-button,
+.piano-edit-button,
+.piano-delete-button,
+.piano-form-actions button {
+  color: var(--text-primary, #212529);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border-color, #ccc);
+}
+
+.add-piano-button {
+  background: var(--text-primary, #212529);
+  color: var(--surface, #fff);
+  border-color: var(--text-primary, #212529);
+}
+
+.piano-table {
+  color: var(--text-primary, #212529);
+  background: var(--surface, #fff);
+}
+
+.piano-table th,
+.piano-table td {
+  border-bottom-color: var(--border-color, #eee);
+}
+
+.piano-row:hover,
+.piano-delete-button:hover,
+.piano-edit-button:hover,
+.piano-form-actions button:hover {
+  background: var(--surface-muted, #f5f5f5);
+}
+
+.piano-back-button,
+.piano-client-link,
+.piano-modal-close {
+  color: var(--text-primary, #212529);
+}
+
+.piano-type-badge {
+  background: var(--surface-muted, #f0f0f0);
+  color: var(--text-secondary, #555);
+}
+
+.piano-detail-section {
+  background: var(--surface, #fff);
+  border-color: var(--border-color, #ddd);
+  color: var(--text-primary, #212529);
+}
+
+.piano-modal {
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+  border: 1px solid var(--border-color, #ddd);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+}
+
+.piano-modal-header h2,
+.piano-detail-header h2,
+.piano-detail-section h3 {
+  color: var(--text-primary, #212529);
+}
+
+.piano-form-error {
+  color: var(--text-primary, #212529);
+  background: var(--surface-muted, #f5f5f5);
+  border: 1px solid var(--border-color, #ddd);
+}
+
+.piano-form-grid label {
+  color: var(--text-primary, #212529);
+}
+
+.piano-form-actions button[type="submit"] {
+  background: var(--text-primary, #212529);
+  color: var(--surface, #fff);
+}
+
+.piano-form-actions button:disabled {
+  opacity: 0.6;
+}
+
+/* Respect system dark mode when the app theme is not explicitly configured. */
+@media (prefers-color-scheme: dark) {
+  .pianos-page,
+  .piano-detail-page {
+    color: var(--text-primary, #f1f1f1);
+  }
+
+  .pianos-count,
+  .piano-table th,
+  .piano-detail-label {
+    color: var(--text-secondary, #b8b8b8);
+  }
+
+  .piano-search,
+  .piano-form-grid input,
+  .piano-form-grid select,
+  .piano-table,
+  .piano-detail-section,
+  .piano-modal,
+  .piano-delete-button,
+  .piano-edit-button,
+  .piano-form-actions button {
+    color: var(--text-primary, #f1f1f1);
+    background: var(--surface, #202020);
+    border-color: var(--border-color, #444);
+  }
+
+  .piano-type-badge,
+  .piano-form-error,
+  .piano-row:hover,
+  .piano-delete-button:hover,
+  .piano-edit-button:hover,
+  .piano-form-actions button:hover {
+    color: var(--text-secondary, #d0d0d0);
+    background: var(--surface-muted, #2b2b2b);
+  }
+
+  .piano-back-button,
+  .piano-client-link,
+  .piano-modal-close,
+  .piano-detail-header h2,
+  .piano-detail-section h3,
+  .piano-form-grid label {
+    color: var(--text-primary, #f1f1f1);
+  }
+
+  .add-piano-button,
+  .piano-form-actions button[type="submit"] {
+    color: var(--surface, #202020);
+    background: var(--text-primary, #f1f1f1);
+    border-color: var(--text-primary, #f1f1f1);
+  }
+}
