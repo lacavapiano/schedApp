@@ -424,3 +424,28 @@
     width: 100%;
   }
 }
+
+
+@media (max-width: 700px) {
+  .client-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .client-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92dvh;
+    padding: 18px 16px;
+    border-radius: 16px 16px 0 0;
+    overflow-x: hidden;
+  }
+  .client-modal-header { gap: 10px; margin-bottom: 18px; }
+  .client-modal-header h2 { min-width: 0; font-size: 21px; overflow-wrap: anywhere; }
+  .repeatable-input-row,
+  .address-input-row { grid-template-columns: minmax(0, 1fr); }
+  .repeatable-section-header,
+  .repeatable-item-footer { align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+  .contact-item { padding: 12px; }
+  .modal-actions { flex-wrap: wrap; }
+  .modal-actions > * { flex: 1 1 120px; min-width: 0; }
+}
