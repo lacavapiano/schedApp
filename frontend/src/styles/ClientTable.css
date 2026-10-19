@@ -8,7 +8,7 @@
 
 .client-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: 16px;
   min-width: 0;
@@ -27,7 +27,12 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.055);
 }
 
-.client-panel:focus-visible {\n  outline: 2px solid var(--text-secondary, #777);\n  outline-offset: 2px;\n}\n\n.client-panel-main {
+.client-panel:focus-visible {
+  outline: 2px solid var(--text-secondary, #777);
+  outline-offset: 2px;
+}
+
+.client-panel-main {
   display: grid;
   grid-template-columns: minmax(190px, 0.9fr) minmax(0, 1.6fr);
   align-items: center;
