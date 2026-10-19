@@ -5,7 +5,7 @@ import AddClientModal from "../components/AddClientModal";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/ClientDetail.css";
-import "../styles/DetailActions.css";
+import "../styles/ActionButtons.css";
 
 function ClientDetail() {
   const { id } = useParams();
@@ -180,13 +180,13 @@ function ClientDetail() {
 
           <div className="client-detail-toolbar-actions detail-action-toolbar-actions">
             <button
-              className="client-detail-button detail-action-button"
+              className="client-detail-button action-button action-button--primary"
               onClick={() => setShowEditModal(true)}
             >
               Edit Client
             </button>
             <button
-              className="client-detail-delete-button detail-action-delete-button"
+              className="client-detail-delete-button action-button action-button--danger"
               onClick={handleDeleteClient}
               disabled={deletingClient}
             >
@@ -195,7 +195,7 @@ function ClientDetail() {
           </div>
         </div>
 
-        {deleteError && <p className="client-detail-delete-error" role="alert">{deleteError}</p>}
+        {deleteError && <p className="client-detail-delete-error action-button-error" role="alert">{deleteError}</p>}
 
         <div className="client-detail-header">
           <span className="client-type-badge">
