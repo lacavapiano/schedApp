@@ -1,9 +1,47 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deletePiano, getPianos } from "../services/api";
+import { deletePiano, getAppointments, getClients, getPianos } from "../services/api";
 import PageLayout from "../components/PageLayout";
 import PianoForm from "../components/PianoForm";
 import "../styles/Pianos.css";
+
+function formatDate(date) {
+  if (!date) return "Not recorded";
+  return new Date(date).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function getPrimaryValue(items = [], field) {
+  return items.find((item) => item.is_primary)?.[field] || items[0]?.[field] || "";
+}
+
+function getClientSummary(client) {
+  if (!client) return "Unassigned";
+
+  const phone = getPrimaryValue(client.client_phones, "phone");
+  const email = getPrimaryValue(client.client_emails, "email");
+  const address = client.client_addresses?.find((item) => item.is_primary) ||
+    client.client_addresses?.[0];
+  const town = [address?.city, address?.state].filter(Boolean).join(", ");
+
+  return [
+    client.type === "institution" ? "Institution" : "Individual",
+    phone,
+    town,
+    email,
+  ].filter(Boolean).join(" · ");
+}
+
+function getNextTuningDate(lastTunedAt, tuningPeriod) {
+  if (!lastTunedAt || !Number(tuningPeriod) || Number(tuningPeriod) <= 0) return null;
+
+  const nextDate = new Date(lastTunedAt);
+  nextDate.setMonth(nextDate.getMonth() + Number(tuningPeriod));
+  return nextDate;
+}
 
 function Pianos() {
   const navigate = useNavigate();
@@ -16,10 +54,49 @@ function Pianos() {
   async function loadPianos() {
     try {
       setLoading(true);
-      const data = await getPianos();
-      setPianos(data);
+
+      const [pianoResult, appointmentResult, clientResult] = await Promise.allSettled([
+        getPianos(),
+        getAppointments(),
+        getClients(),
+      ]);
+
+      if (pianoResult.status === "rejected") throw pianoResult.reason;
+
+      const pianoData = pianoResult.value;
+      const appointments = appointmentResult.status === "fulfilled" ? appointmentResult.value : [];
+      const clients = clientResult.status === "fulfilled" ? clientResult.value : [];
+      const clientsById = new Map(clients.map((client) => [String(client.id), client]));
+      const lastTunedByPiano = new Map();
+
+      appointments.forEach((appointment) => {
+        if (String(appointment.status || "").toLowerCase() !== "completed") return;
+        const appointmentDate = new Date(appointment.start_time);
+        if (Number.isNaN(appointmentDate.getTime())) return;
+
+        (appointment.appointment_pianos || []).forEach((item) => {
+          if (!item.piano_id || !/tun/i.test(item.service || "")) return;
+          const key = String(item.piano_id);
+          const previous = lastTunedByPiano.get(key);
+          if (!previous || appointmentDate > previous) lastTunedByPiano.set(key, appointmentDate);
+        });
+      });
+
+      setPianos(pianoData.map((piano) => {
+        const lastTunedAt = lastTunedByPiano.get(String(piano.id)) || null;
+        const client = clientsById.get(String(piano.client_id)) || piano.client || null;
+
+        return {
+          ...piano,
+          client,
+          clientSummary: getClientSummary(client),
+          lastTunedAt,
+          nextTuningDue: getNextTuningDate(lastTunedAt, piano.tuning_period),
+        };
+      }));
     } catch (error) {
       console.error(error);
+      alert(error.message || "Unable to load pianos.");
     } finally {
       setLoading(false);
     }
@@ -30,21 +107,14 @@ function Pianos() {
   }, []);
 
   async function handleDelete(piano) {
-    const description = [
-      piano.make,
-      piano.model,
-      piano.serial ? `(${piano.serial})` : null,
-    ]
+    const description = [piano.make, piano.model, piano.serial ? `(${piano.serial})` : null]
       .filter(Boolean)
       .join(" ");
 
     const confirmed = window.confirm(
       `Are you sure you want to delete ${description || "this piano"}?`
     );
-
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       await deletePiano(piano.id);
@@ -64,7 +134,10 @@ function Pianos() {
       (piano.serial ?? "").toLowerCase().includes(search) ||
       (piano.type ?? "").toLowerCase().includes(search) ||
       (piano.location ?? "").toLowerCase().includes(search) ||
-      (piano.client?.name ?? "").toLowerCase().includes(search)
+      (piano.client?.name ?? "").toLowerCase().includes(search) ||
+      (piano.clientSummary ?? "").toLowerCase().includes(search) ||
+      formatDate(piano.lastTunedAt).toLowerCase().includes(search) ||
+      formatDate(piano.nextTuningDue).toLowerCase().includes(search)
     );
   });
 
@@ -81,8 +154,7 @@ function Pianos() {
       <div className="pianos-page">
         <div className="pianos-toolbar">
           <div className="pianos-count">
-            {filteredPianos.length}{" "}
-            {filteredPianos.length === 1 ? "piano" : "pianos"}
+            {filteredPianos.length} {filteredPianos.length === 1 ? "piano" : "pianos"}
           </div>
 
           <input
@@ -93,10 +165,7 @@ function Pianos() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <button
-            className="add-piano-button"
-            onClick={() => setShowForm(true)}
-          >
+          <button className="add-piano-button" onClick={() => setShowForm(true)}>
             + Add Piano
           </button>
         </div>
@@ -135,16 +204,44 @@ function Pianos() {
                   <div className="piano-panel-details">
                     <div className="piano-panel-detail">
                       <span className="piano-panel-label">Serial</span>
-                      <span className="piano-panel-value">{piano.serial || "Not provided"}</span>
+                      <span className="piano-panel-value">{piano.serial || "—"}</span>
                     </div>
                     <div className="piano-panel-detail">
                       <span className="piano-panel-label">Location</span>
-                      <span className="piano-panel-value">{piano.location || "Not provided"}</span>
+                      <span className="piano-panel-value">{piano.location || "—"}</span>
+                    </div>
+                    <div className="piano-panel-detail piano-panel-client">
+                      <span className="piano-panel-label">Client</span>
+                      {piano.client ? (
+                        <button
+                          type="button"
+                          className="piano-panel-client-link"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            navigate(`/clients/${piano.client.id}`);
+                          }}
+                        >
+                          {piano.client.name}
+                        </button>
+                      ) : (
+                        <span className="piano-panel-value">Unassigned</span>
+                      )}
+                      {piano.clientSummary && piano.client && (
+                        <span className="piano-panel-client-summary">{piano.clientSummary}</span>
+                      )}
                     </div>
                     <div className="piano-panel-detail">
-                      <span className="piano-panel-label">Client</span>
-                      <span className="piano-panel-value">{piano.client?.name || "Unassigned"}</span>
+                      <span className="piano-panel-label">Last tuning</span>
+                      <span className="piano-panel-value">{formatDate(piano.lastTunedAt)}</span>
                     </div>
+                    {piano.tuning_period ? (
+                      <div className="piano-panel-detail">
+                        <span className="piano-panel-label">Next tuning due</span>
+                        <span className="piano-panel-value">
+                          {piano.nextTuningDue ? formatDate(piano.nextTuningDue) : "No tuning history"}
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
