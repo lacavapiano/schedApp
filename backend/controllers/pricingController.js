@@ -193,6 +193,43 @@ export async function createClientDiscount(req, res) {
       if (serviceError || !service) return res.status(400).json({ error: "Selected service type was not found" });
     }
 
+    if (discount_type === "one_time") {
+      if (applies_to_appointment_id && applies_to_appointment_piano_id) {
+        return res.status(400).json({ error: "Choose either a whole appointment or a specific appointment service, not both" });
+      }
+
+      if (applies_to_appointment_id) {
+        const { data: targetAppointment, error: targetError } = await supabase
+          .from("appointments")
+          .select("id, client_id")
+          .eq("id", applies_to_appointment_id)
+          .maybeSingle();
+        if (targetError || !targetAppointment || targetAppointment.client_id !== client_id) {
+          return res.status(400).json({ error: "The selected appointment must belong to this client" });
+        }
+      }
+
+      if (applies_to_appointment_piano_id) {
+        const { data: targetService, error: targetServiceError } = await supabase
+          .from("appointment_pianos")
+          .select("id, appointment_id")
+          .eq("id", applies_to_appointment_piano_id)
+          .maybeSingle();
+        if (targetServiceError || !targetService) {
+          return res.status(400).json({ error: "The selected appointment service was not found" });
+        }
+
+        const { data: targetAppointment, error: targetAppointmentError } = await supabase
+          .from("appointments")
+          .select("id, client_id")
+          .eq("id", targetService.appointment_id)
+          .maybeSingle();
+        if (targetAppointmentError || !targetAppointment || targetAppointment.client_id !== client_id) {
+          return res.status(400).json({ error: "The selected service must belong to an appointment for this client" });
+        }
+      }
+    }
+
     const { data, error } = await supabase.from("client_discounts").insert({
       owner_id: user.id,
       client_id,
