@@ -6,7 +6,7 @@ import {
 } from "../services/api";
 import "../styles/ServiceCatalog.css";
 
-const emptyForm = { name: "", pricing_method: "flat_rate", price: "", default_service_minutes: "120" };
+const emptyForm = { name: "", pricing_method: "flat_rate", price: "", default_service_minutes: "" };
 
 function formatPrice(value) {
   return new Intl.NumberFormat("en-US", {
