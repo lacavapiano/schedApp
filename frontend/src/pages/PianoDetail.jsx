@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deletePiano, getAppointments, getAppointmentCharges, getPiano } from "../services/api";
+import { deletePiano, getAppointments, getAppointmentCharges, getPiano, getServiceTypes } from "../services/api";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
@@ -37,13 +37,17 @@ function getClientSummary(client) {
 }
 
 function getServiceName(item) {
-  if (typeof item?.service === "string") return item.service;
+  if (typeof item?.service === "string") return item.service.trim();
   return item?.service?.name || item?.service_type?.name ||
     item?.serviceType?.name || item?.service_type_name || "";
 }
 
-function isTuningService(item) {
-  return /tun/i.test(getServiceName(item));
+function isTuningService(item, serviceTypes = []) {
+  const serviceName = getServiceName(item).trim().toLocaleLowerCase();
+  if (!serviceName) return false;
+  const catalogService = serviceTypes.find((service) => String(service.name || "").trim().toLocaleLowerCase() === serviceName);
+  if (catalogService) return catalogService.is_tuning === true;
+  return /tuning|tune|concert|pitch\s*correction|standard\s+service\s+visit/i.test(serviceName);
 }
 
 function formatCurrency(value) {
@@ -81,7 +85,7 @@ function PianoDetail() {
       let history = [];
 
       try {
-        const appointments = await getAppointments();
+        const [appointments, serviceTypes] = await Promise.all([getAppointments(), getServiceTypes()]);
         history = (appointments || [])
           .filter((appointment) => String(appointment.status || "").toLowerCase() === "completed")
           .flatMap((appointment) => {
@@ -94,7 +98,7 @@ function PianoDetail() {
           })
           .sort((a, b) => b.appointmentDate - a.appointmentDate);
 
-        const latestTuning = history.find(({ item }) => isTuningService(item));
+        const latestTuning = history.find(({ item }) => isTuningService(item, serviceTypes || []));
         lastTunedAt = latestTuning?.appointmentDate || null;
 
         // Charge snapshots contain the actual billed amounts and discounts. Fetch
