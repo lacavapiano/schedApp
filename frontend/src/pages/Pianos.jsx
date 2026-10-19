@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAppointments, getClients, getPianos } from "../services/api";
+import { getAppointments, getClients, getPianos, getServiceTypes } from "../services/api";
 import PageLayout from "../components/PageLayout";
 import PianoForm from "../components/PianoForm";
 import "../styles/Pianos.css";
@@ -37,6 +37,20 @@ function getClientSummary(client) {
   ].filter(Boolean).join(" · ");
 }
 
+function getServiceName(item) {
+  if (typeof item?.service === "string") return item.service.trim();
+  return item?.service?.name || item?.service_type?.name ||
+    item?.serviceType?.name || item?.service_type_name || "";
+}
+
+function isTuningService(item, serviceTypes = []) {
+  const serviceName = getServiceName(item).trim().toLocaleLowerCase();
+  if (!serviceName) return false;
+  const catalogService = serviceTypes.find((service) => String(service.name || "").trim().toLocaleLowerCase() === serviceName);
+  if (catalogService) return catalogService.is_tuning === true;
+  return /tuning|tune|concert|pitch\s*correction|standard\s+service\s+visit/i.test(serviceName);
+}
+
 function getNextTuningDate(lastTunedAt, tuningPeriod) {
   if (!lastTunedAt || !Number(tuningPeriod) || Number(tuningPeriod) <= 0) return null;
 
@@ -61,10 +75,11 @@ function Pianos() {
     try {
       setLoading(true);
 
-      const [pianoResult, appointmentResult, clientResult] = await Promise.allSettled([
+      const [pianoResult, appointmentResult, clientResult, serviceTypeResult] = await Promise.allSettled([
         getPianos(),
         getAppointments(),
         getClients(),
+        getServiceTypes({ includeInactive: true }),
       ]);
 
       if (pianoResult.status === "rejected") throw pianoResult.reason;
@@ -72,6 +87,7 @@ function Pianos() {
       const pianoData = pianoResult.value;
       const appointments = appointmentResult.status === "fulfilled" ? appointmentResult.value : [];
       const clients = clientResult.status === "fulfilled" ? clientResult.value : [];
+      const serviceTypes = serviceTypeResult.status === "fulfilled" ? serviceTypeResult.value : [];
       const clientsById = new Map(clients.map((client) => [String(client.id), client]));
       const lastTunedByPiano = new Map();
 
@@ -81,8 +97,9 @@ function Pianos() {
         if (Number.isNaN(appointmentDate.getTime())) return;
 
         (appointment.appointment_pianos || []).forEach((item) => {
-          if (!item.piano_id || !/tun/i.test(item.service || "")) return;
-          const key = String(item.piano_id);
+          const pianoId = item.piano_id ?? item.piano?.id;
+          if (!pianoId || !isTuningService(item, serviceTypes, appointment.appointment_charges)) return;
+          const key = String(pianoId);
           const previous = lastTunedByPiano.get(key);
           if (!previous || appointmentDate > previous) lastTunedByPiano.set(key, appointmentDate);
         });

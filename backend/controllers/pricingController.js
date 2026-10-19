@@ -39,7 +39,7 @@ export async function getServiceTypes(req, res) {
     const { supabase } = context;
 
     let query = supabase.from("service_types")
-      .select("id, owner_id, name, pricing_method, price, default_service_minutes, is_active, created_at, updated_at")
+      .select("id, owner_id, name, pricing_method, price, default_service_minutes, is_tuning, is_active, created_at, updated_at")
       .order("name", { ascending: true });
     if (req.query.include_inactive !== "true") query = query.eq("is_active", true);
 
@@ -69,6 +69,7 @@ export async function createServiceType(req, res) {
       pricing_method: req.body.pricing_method,
       price: Number(req.body.price).toFixed(2),
       default_service_minutes: req.body.pricing_method === "flat_rate" && req.body.default_service_minutes != null && req.body.default_service_minutes !== "" ? Number(req.body.default_service_minutes) : null,
+      is_tuning: req.body.is_tuning === true,
       is_active: req.body.is_active !== false,
     };
     const { data, error } = await supabase.from("service_types")
@@ -124,6 +125,7 @@ export async function updateServiceType(req, res) {
       }
     }
     if (req.body.pricing_method === "hourly") updates.default_service_minutes = null;
+    if (req.body.is_tuning !== undefined) updates.is_tuning = Boolean(req.body.is_tuning);
     if (req.body.is_active !== undefined) updates.is_active = Boolean(req.body.is_active);
     updates.updated_at = new Date().toISOString();
 

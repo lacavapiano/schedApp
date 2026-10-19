@@ -51,6 +51,11 @@ const appointmentSelect = `
       type,
       location
     )
+  ),
+  appointment_charges (
+    appointment_piano_id,
+    service_type_id,
+    service_name
   )
 `;
 

@@ -1,0 +1,123 @@
+/* Piano climate readings chart */
+.piano-climate-history {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.piano-climate-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.piano-climate-heading h3 {
+  margin: 0 0 4px;
+}
+.piano-climate-heading p {
+  margin: 0;
+  color: var(--text-secondary, #6c757d);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.piano-climate-count {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 999px;
+  color: var(--text-secondary, #6c757d);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.piano-climate-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 14px 0 4px;
+  color: var(--text-secondary, #6c757d);
+  font-size: 12px;
+}
+.piano-climate-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.piano-climate-key {
+  display: inline-block;
+  width: 17px;
+  height: 3px;
+  border-radius: 2px;
+}
+.piano-climate-key--temp { background: #d97706; }
+.piano-climate-key--hum { background: #1683a5; }
+.piano-climate-chart-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+.piano-climate-chart {
+  display: block;
+  width: 100%;
+  min-width: 360px;
+  height: auto;
+  overflow: visible;
+}
+.piano-climate-gridline {
+  stroke: var(--border-color, #e5e7eb);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.piano-climate-axis-label,
+.piano-climate-date-label {
+  fill: var(--text-secondary, #6c757d);
+  font-size: 11px;
+}
+.piano-climate-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.piano-climate-line--temp { stroke: #d97706; }
+.piano-climate-line--hum { stroke: #1683a5; }
+.piano-climate-point {
+  stroke: var(--surface, #fff);
+  stroke-width: 1.5;
+}
+.piano-climate-point--temp { fill: #d97706; }
+.piano-climate-point--hum { fill: #1683a5; }
+.piano-climate-empty {
+  padding: 14px 0 2px;
+  color: var(--text-secondary, #6c757d);
+  font-size: 13px;
+}
+@media (max-width: 560px) {
+  .piano-climate-history { padding: 12px; }
+  .piano-climate-heading { gap: 8px; }
+  .piano-climate-heading p { max-width: 240px; }
+  .piano-climate-count { padding: 3px 7px; }
+}
+:root[data-theme="dark"] .piano-climate-axis-label,
+:root[data-theme="dark"] .piano-climate-date-label {
+  fill: var(--text-secondary, #b8bec8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .piano-climate-axis-label,
+  :root:not([data-theme="light"]) .piano-climate-date-label {
+    fill: var(--text-secondary, #b8bec8);
+  }
+}
+
+.piano-climate-chart--stacked {
+  min-width: 420px;
+}
+.piano-climate-axis-title {
+  fill: var(--text-secondary, #6c757d);
+  font-size: 11px;
+  font-weight: 600;
+}
+:root[data-theme="dark"] .piano-climate-axis-title {
+  fill: var(--text-secondary, #b8bec8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .piano-climate-axis-title {
+    fill: var(--text-secondary, #b8bec8);
+  }
+}
