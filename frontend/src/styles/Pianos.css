@@ -1130,158 +1130,317 @@
 
 
 /* Service history: compact visit cards with a consistent information hierarchy. */
+
+/* Completed service history on piano details. */
 .piano-service-history-section {
-  grid-column: 1 / -1;
-  margin-top: 0;
+  margin-top: 12px;
 }
-.piano-service-history-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-.piano-service-history-heading h3 { margin: 0; }
-.piano-service-history-heading p {
-  margin: 4px 0 0;
-  color: var(--text-secondary, #6c757d);
-  font-size: 12px;
-}
-.piano-service-history-count {
-  flex: 0 0 auto;
-  padding: 4px 9px;
-  border: 1px solid var(--border-color, #d7dbe0);
-  border-radius: 999px;
-  color: var(--text-secondary, #6c757d);
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.piano-service-history-list {
-  display: grid;
-  gap: 8px;
-}
-.piano-service-history-entry {
-  min-width: 0;
-  padding: 13px 14px;
-  border: 1px solid var(--border-color, #e0e3e7);
-  border-radius: 8px;
-  background: var(--surface-muted, #fafafa);
-}
+
+.piano-service-history-heading,
 .piano-service-history-entry-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
-.piano-service-history-entry-top > div {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
+
+.piano-service-history-heading {
+  margin-bottom: 14px;
 }
-.piano-service-history-date {
+
+.piano-service-history-heading h3 {
+  margin-bottom: 4px;
+}
+
+.piano-service-history-heading p {
+  margin: 0;
   color: var(--text-secondary, #6c757d);
-  font-size: 11px;
+  font-size: 13px;
 }
-.piano-service-history-service {
-  color: var(--text-primary, #212529);
-  font-size: 14px;
-  font-weight: 650;
-  overflow-wrap: anywhere;
-}
+
+.piano-service-history-count,
 .piano-service-history-status {
   flex: 0 0 auto;
+  padding: 3px 8px;
+  border: 1px solid var(--border-color, #d7dbe0);
+  border-radius: 999px;
   color: var(--text-secondary, #6c757d);
   font-size: 11px;
+  font-weight: 600;
 }
-.piano-service-history-measurements {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  margin-top: 10px;
-}
-.piano-service-history-measurements > div {
-  display: flex;
-  align-items: baseline;
-  gap: 5px;
-  min-width: 0;
-}
-.piano-service-history-measurements .piano-detail-label,
-.piano-service-history-billing .piano-detail-label,
-.piano-service-history-notes .piano-detail-label {
-  color: var(--text-secondary, #6c757d);
-  font-size: 10px;
-  font-weight: 650;
-  letter-spacing: 0.035em;
-}
-.piano-service-history-measurements > div > span:last-child {
-  color: var(--text-primary, #212529);
-  font-size: 12px;
-}
-.piano-service-history-notes {
-  margin-top: 10px;
-  padding-top: 9px;
-  border-top: 1px solid var(--border-color, #e1e4e8);
-}
-.piano-service-history-notes p {
-  margin: 4px 0 0;
-  color: var(--text-primary, #212529);
-  font-size: 12px;
-  line-height: 1.45;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.piano-service-history-billing {
+
+.piano-service-history-list {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px 14px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-color, #e1e4e8);
+  gap: 10px;
 }
-.piano-service-history-billing > div {
+
+.piano-service-history-entry {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+}
+
+.piano-service-history-entry-top > div {
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+
+.piano-service-history-date {
+  color: var(--text-secondary, #6c757d);
+  font-size: 12px;
+}
+
+.piano-service-history-service {
+  color: var(--text-primary, #212529);
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.piano-service-history-measurements {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.piano-service-history-measurements > div,
+.piano-service-history-billing > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
 }
+
+.piano-service-history-measurements > div > span:last-child {
+  color: var(--text-primary, #212529);
+  font-size: 13px;
+}
+
+.piano-service-history-notes {
+  margin-top: 14px;
+}
+
+.piano-service-history-notes p {
+  margin: 5px 0 0;
+  color: var(--text-primary, #212529);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.piano-service-history-billing {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #dee2e6);
+}
+
 .piano-service-history-billing strong,
 .piano-service-history-charge strong {
   color: var(--text-primary, #212529);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
-.piano-service-history-charges { margin-top: 8px; }
+
+.piano-service-history-charges {
+  margin-top: 12px;
+}
+
 .piano-service-history-charge {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 6px 0;
+  padding: 7px 0;
   border-bottom: 1px solid var(--border-color, #e6e8eb);
   color: var(--text-primary, #212529);
-  font-size: 11px;
+  font-size: 12px;
 }
-.piano-service-history-charge:last-child { border-bottom: 0; }
+
+.piano-service-history-charge:last-child {
+  border-bottom: 0;
+}
+
 .piano-service-history-empty {
-  padding: 20px 14px;
-  border: 1px dashed var(--border-color, #d7dbe0);
+  padding: 18px 12px;
+  border: 1px dashed var(--border-color, #dee2e6);
   border-radius: 8px;
   color: var(--text-secondary, #6c757d);
   font-size: 13px;
   text-align: center;
 }
-@media (max-width: 700px) {
-  .piano-service-history-section { grid-column: auto; }
-  .piano-service-history-entry { padding: 11px; }
+
+@media (max-width: 600px) {
+  .piano-service-history-entry {
+    padding: 12px;
+  }
+
   .piano-service-history-billing {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
   }
-  .piano-service-history-measurements { gap: 7px 12px; }
+
+  .piano-service-history-heading {
+    align-items: flex-start;
+  }
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .piano-service-history-entry {
-    background: var(--surface-muted, #22252a);
+
+
+/* Service history: clearer grouping with a tighter, more readable rhythm. */
+.piano-service-history-section {
+  margin-top: 10px;
+  padding: 14px;
+}
+
+.piano-service-history-heading {
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.piano-service-history-heading h3 {
+  margin: 0 0 3px;
+}
+
+.piano-service-history-heading p {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.piano-service-history-list {
+  gap: 8px;
+}
+
+.piano-service-history-entry {
+  padding: 12px;
+  border-radius: 7px;
+  background: var(--surface-muted, #f8f9fa);
+}
+
+.piano-service-history-entry-top {
+  align-items: center;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border-color, #dee2e6);
+}
+
+.piano-service-history-entry-top > div {
+  gap: 2px;
+}
+
+.piano-service-history-date {
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.piano-service-history-service {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.piano-service-history-status {
+  padding: 2px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.piano-service-history-measurements {
+  grid-template-columns: repeat(2, minmax(0, 120px));
+  gap: 8px 16px;
+  margin-top: 10px;
+}
+
+.piano-service-history-measurements > div,
+.piano-service-history-billing > div {
+  gap: 2px;
+}
+
+.piano-service-history-section .piano-detail-label {
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.025em;
+}
+
+.piano-service-history-measurements > div > span:last-child,
+.piano-service-history-notes p,
+.piano-service-history-billing strong,
+.piano-service-history-charge strong {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.piano-service-history-notes {
+  margin-top: 10px;
+  padding: 9px 10px;
+  border-left: 2px solid var(--border-color, #cbd0d6);
+  border-radius: 0 5px 5px 0;
+  background: var(--surface, #fff);
+}
+
+.piano-service-history-notes p {
+  margin-top: 3px;
+}
+
+.piano-service-history-billing {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.piano-service-history-charges {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border-color, #dee2e6);
+}
+
+.piano-service-history-charges > .piano-detail-label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.piano-service-history-charge {
+  align-items: baseline;
+  padding: 5px 0;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+:root[data-theme="dark"] .piano-service-history-entry {
+  background: var(--surface-muted, #292d34);
+}
+
+:root[data-theme="dark"] .piano-service-history-notes {
+  background: var(--surface, #20232a);
+}
+
+@media (max-width: 600px) {
+  .piano-service-history-section {
+    padding: 12px;
+  }
+
+  .piano-service-history-entry {
+    padding: 10px;
+  }
+
+  .piano-service-history-measurements {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+  }
+
+  .piano-service-history-billing {
+    gap: 10px 12px;
+  }
+
+  .piano-service-history-heading {
+    gap: 8px;
+  }
+
+  .piano-service-history-heading p {
+    max-width: 34ch;
   }
 }
