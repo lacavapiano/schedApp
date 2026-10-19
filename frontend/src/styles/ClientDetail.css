@@ -350,3 +350,47 @@
   .client-piano-details { max-width: 100%; flex-wrap: wrap; text-align: left; overflow-wrap: anywhere; }
   .client-piano-main { width: 100%; }
 }
+
+
+.client-detail-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.client-detail-delete-button {
+  padding: 7px 12px;
+  border: 1px solid #b91c1c;
+  border-radius: 6px;
+  background: transparent;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.client-detail-delete-button:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.client-detail-delete-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.client-detail-delete-error {
+  margin: 0 0 16px;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+:root[data-theme="dark"] .client-detail-delete-button:hover:not(:disabled) {
+  background: #3a2024;
+}
+
+@media (max-width: 700px) {
+  .client-detail-toolbar-actions {
+    width: 100%;
+  }
+}
