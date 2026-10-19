@@ -6,7 +6,7 @@ import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
 import "../styles/ActionButtons.css";
 import "../styles/RecordDetailLayout.css";
-import "../styles/PianoClimateHistory.css";
+import "../styles/PianoClimateHistory.css"; // Chart styles are committed alongside this page.
 
 function formatDate(date) {
   if (!date) return "Not recorded";
