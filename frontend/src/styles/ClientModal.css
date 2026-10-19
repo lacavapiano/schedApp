@@ -623,3 +623,204 @@
     color: var(--text-primary, #f3f4f6);
   }
 }
+
+
+/* Client piano summary and transfer actions */
+.client-modal-pianos {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.client-modal-pianos-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.client-modal-pianos-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.client-modal-pianos-header > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.client-modal-pianos-empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.client-modal-piano-list {
+  display: grid;
+  gap: 9px;
+}
+
+.client-modal-piano {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.client-modal-piano-info {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.client-modal-piano-info strong {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.client-modal-piano-info > span {
+  color: #6b7280;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.client-modal-piano-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.client-modal-piano-action,
+.client-modal-transfer-confirm {
+  width: auto;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #111827;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.client-modal-piano-action:hover {
+  background: #f3f4f6;
+}
+
+.client-modal-transfer {
+  display: grid;
+  gap: 8px;
+}
+
+.client-modal-transfer label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.client-modal-transfer select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #111827;
+  font: inherit;
+}
+
+.client-modal-transfer-confirm {
+  justify-self: start;
+  border-color: #111827;
+  background: #111827;
+  color: #fff;
+}
+
+.client-modal-transfer-confirm:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.client-modal-piano-error {
+  margin: 0 0 10px;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+/* Keep Delete Client a compact secondary action on small screens. */
+@media (max-width: 700px) {
+  .modal-actions .modal-delete-client {
+    align-self: flex-start;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 32px;
+    padding: 5px 9px;
+    font-size: 12px;
+  }
+}
+
+:root[data-theme="dark"] .client-modal-pianos {
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-modal-pianos-header h3 {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-modal-pianos-header > span {
+  background: var(--hover-bg, #343a46);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-modal-piano {
+  background: var(--surface-muted, #292d36);
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-modal-piano-info > span,
+:root[data-theme="dark"] .client-modal-pianos-empty {
+  color: var(--text-secondary, #b8bec8);
+}
+
+:root[data-theme="dark"] .client-modal-piano-action,
+:root[data-theme="dark"] .client-modal-transfer select {
+  background: var(--surface, #20232a);
+  border-color: var(--border-color, #545c69);
+  color: var(--text-primary, #f3f4f6);
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] .client-modal-transfer-confirm {
+  background: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #111827;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .client-modal-piano {
+    background: var(--surface-muted, #292d36);
+    border-color: var(--border-color, #454b56);
+  }
+
+  :root:not([data-theme="light"]) .client-modal-piano-action,
+  :root:not([data-theme="light"]) .client-modal-transfer select {
+    background: var(--surface, #20232a);
+    border-color: var(--border-color, #545c69);
+    color: var(--text-primary, #f3f4f6);
+    color-scheme: dark;
+  }
+}
