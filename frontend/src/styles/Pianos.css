@@ -967,3 +967,27 @@
 .piano-detail-owner .piano-client-link {
   align-self: stretch;
 }
+
+/* Explicitly center the Client field contents in Location & Ownership. */
+.piano-detail-fields > .piano-detail-owner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+.piano-detail-fields > .piano-detail-owner > .piano-detail-label,
+.piano-detail-fields > .piano-detail-owner > .piano-detail-client-summary {
+  width: 100%;
+  text-align: center;
+}
+
+.piano-detail-fields > .piano-detail-owner > .piano-client-link {
+  display: block;
+  align-self: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
