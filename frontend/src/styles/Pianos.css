@@ -922,3 +922,32 @@
     font-size: 11px;
   }
 }
+
+
+/* Final desktop column sizing: keep all five detail fields on one row and
+   treat the client name like a compact value, not a headline. */
+@media (min-width: 901px) {
+  .piano-panel-details {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.85fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.05fr);
+    gap: 8px 10px;
+  }
+
+  .piano-panel-client {
+    grid-column: auto;
+  }
+
+  .piano-panel-client .piano-panel-label {
+    white-space: nowrap;
+    font-size: 9px;
+  }
+
+  .piano-panel-client-link {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .piano-panel-details > .piano-panel-detail:last-child .piano-panel-label {
+    white-space: nowrap;
+  }
+}
