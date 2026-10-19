@@ -47,7 +47,7 @@ function ClientTable({ clients, onEdit }) {
         const email = getPrimaryEmail(client);
         const phone = getPrimaryPhone(client);
         const townZip = getTownZip(client);
-        const pianoCount = Number(client.piano_count ?? client.pianos?.length ?? 0);
+        const pianoCount = client.piano_count;
         const isInstitution = client.type === "institution";
 
         return (
