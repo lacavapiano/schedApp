@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deletePiano, getAppointments, getClients, getPianos } from "../services/api";
+import { getAppointments, getClients, getPianos } from "../services/api";
 import PageLayout from "../components/PageLayout";
 import PianoForm from "../components/PianoForm";
 import "../styles/Pianos.css";
 import "../styles/ActionButtons.css";
+import "../styles/RecordListToolbar.css";
 
 function formatDate(date) {
   if (!date) return "Not recorded";
@@ -107,24 +108,6 @@ function Pianos() {
     loadPianos();
   }, []);
 
-  async function handleDelete(piano) {
-    const description = [piano.make, piano.model, piano.serial ? `(${piano.serial})` : null]
-      .filter(Boolean)
-      .join(" ");
-
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${description || "this piano"}?`
-    );
-    if (!confirmed) return;
-
-    try {
-      await deletePiano(piano.id);
-      await loadPianos();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  }
 
   const filteredPianos = pianos.filter((piano) => {
     const search = searchTerm.toLowerCase();
@@ -153,13 +136,13 @@ function Pianos() {
   return (
     <PageLayout title="Pianos">
       <div className="pianos-page">
-        <div className="pianos-toolbar">
-          <div className="pianos-count">
+        <div className="record-list-toolbar">
+          <div className="record-list-count">
             {filteredPianos.length} {filteredPianos.length === 1 ? "piano" : "pianos"}
           </div>
 
           <input
-            className="piano-search"
+            className="record-list-search"
             type="text"
             placeholder="Search pianos..."
             value={searchTerm}
@@ -246,18 +229,7 @@ function Pianos() {
                   </div>
                 </div>
 
-                <div className="piano-panel-actions">
-                  <button
-                    type="button"
-                    className="action-button action-button--danger"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleDelete(piano);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
+
               </article>
             ))}
           </section>
