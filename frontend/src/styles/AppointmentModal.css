@@ -379,3 +379,32 @@
 :root[data-theme="dark"] .appointment-price-preview, :root[data-theme="dark"] .appointment-pricing-summary { background: var(--surface-muted, #2b2f38); color: var(--text-primary, #f3f4f6); border-color: var(--border-color, #484d58); }
 :root[data-theme="dark"] .appointment-price-preview-heading span, :root[data-theme="dark"] .appointment-price-discount { color: var(--text-secondary, #b9c0cc); }
 @media (max-width: 700px) { .appointment-service-field { min-width: 0; } .appointment-price-preview { padding: 10px 12px; } }
+
+
+/* Appointment status and completion action */
+.appointment-status-readout {
+  margin: 4px 0 18px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  background: var(--surface-muted, #f7f7f7);
+  color: var(--text-primary, #222);
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.appointment-complete-button {
+  white-space: nowrap;
+}
+
+:root[data-theme="dark"] .appointment-status-readout {
+  background: var(--surface-muted, #2b2f38);
+  border-color: var(--border-color, #484d58);
+  color: var(--text-primary, #f3f4f6);
+}
+
+@media (max-width: 700px) {
+  .appointment-complete-button {
+    white-space: normal;
+  }
+}
