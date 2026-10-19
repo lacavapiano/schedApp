@@ -520,3 +520,42 @@
     margin-top: 0;
   }
 }
+
+
+/* Explicit responsive layout for the tuning checkbox in the service form. */
+.service-catalog .service-catalog-fields > label.service-tuning-checkbox {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+
+.service-catalog .service-catalog-fields > label.service-tuning-checkbox > span {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.service-catalog .service-catalog-fields > label.service-tuning-checkbox input[type="checkbox"] {
+  flex: 0 0 16px;
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
+  margin: 2px 0 0;
+}
+
+@media (max-width: 700px) {
+  .service-catalog .service-catalog-fields > label.service-tuning-checkbox {
+    flex-direction: column !important;
+    gap: 8px;
+  }
+
+  .service-catalog .service-catalog-fields > label.service-tuning-checkbox input[type="checkbox"] {
+    margin-top: 0;
+  }
+}
