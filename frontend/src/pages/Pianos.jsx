@@ -148,6 +148,12 @@ function Pianos() {
       else comparison = aTime - bTime;
     }
 
+    if (sortBy !== "client") {
+      const field = sortBy === "lastTuned" ? "lastTunedAt" : "nextTuningDue";
+      if (!a[field] && b[field]) return 1;
+      if (a[field] && !b[field]) return -1;
+    }
+
     return sortDirection === "asc" ? comparison : -comparison;
   });
 
