@@ -262,3 +262,33 @@
   .dashboard-appointment-address { grid-column: 1 / -1; white-space: normal; overflow-wrap: anywhere; }
   .dashboard-appointment-status { grid-column: 1 / -1; justify-self: start; white-space: normal; }
 }
+
+
+.dashboard-cancelled-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dashboard-cancelled-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dashboard-cancelled-toggle input {
+  margin: 0;
+  accent-color: var(--text-primary);
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .dashboard-cancelled-header {
+    align-items: flex-start;
+  }
+}
