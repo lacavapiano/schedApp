@@ -10,6 +10,7 @@ import ClientSearchSelect from "./ClientSearchSelect";
 import AddClientModal from "./AddClientModal";
 import PianoForm from "./PianoForm";
 import "../styles/AppointmentModal.css";
+import "../styles/ActionButtons.css";
 
 const EMPTY_PIANO = {
   piano_id: "",
@@ -1284,7 +1285,7 @@ function AppointmentModal({
                 {isEditing && (
                   <button
                     type="button"
-                    className="appointment-delete-button"
+                    className="appointment-delete-button action-button action-button--danger"
                     onClick={
                       handleDelete
                     }
@@ -1302,7 +1303,7 @@ function AppointmentModal({
                 <div className="appointment-modal-actions-right">
                   <button
                     type="button"
-                    className="appointment-cancel-button"
+                    className="appointment-cancel-button action-button action-button--secondary"
                     onClick={onClose}
                     disabled={
                       saving ||
@@ -1314,7 +1315,7 @@ function AppointmentModal({
 
                   <button
                     type="submit"
-                    className="appointment-save-button"
+                    className="appointment-save-button action-button action-button--primary"
                     disabled={
                       saving ||
                       deleting
