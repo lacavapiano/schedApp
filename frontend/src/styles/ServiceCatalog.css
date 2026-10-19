@@ -426,3 +426,68 @@
     grid-column: 1 / -1;
   }
 }
+
+
+/* Refined tuning checkbox treatment in the service editor and catalog. */
+.service-tuning-checkbox {
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border-color: var(--service-border);
+  background: var(--surface-muted, #f7f8fa);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.service-tuning-checkbox:hover {
+  border-color: var(--text-secondary, #9ca3af);
+}
+
+.service-tuning-checkbox:focus-within {
+  outline: 2px solid var(--text-secondary, #777);
+  outline-offset: 2px;
+}
+
+.service-tuning-checkbox input,
+.service-catalog-tuning-toggle input {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  margin: 0;
+  accent-color: var(--text-primary, #222);
+  cursor: pointer;
+}
+
+.service-tuning-checkbox strong {
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.service-tuning-checkbox small {
+  line-height: 1.45;
+}
+
+.service-catalog-tuning-toggle {
+  gap: 7px;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.service-catalog-tuning-toggle:hover {
+  border-color: var(--service-border);
+  background: var(--surface-muted, #f7f8fa);
+}
+
+.service-catalog-tuning-toggle:focus-within {
+  outline: 2px solid var(--text-secondary, #777);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-tuning-checkbox,
+  .service-catalog-tuning-toggle {
+    transition: none;
+  }
+}
