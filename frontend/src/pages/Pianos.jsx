@@ -4,6 +4,7 @@ import { deletePiano, getAppointments, getClients, getPianos } from "../services
 import PageLayout from "../components/PageLayout";
 import PianoForm from "../components/PianoForm";
 import "../styles/Pianos.css";
+import "../styles/ActionButtons.css";
 
 function formatDate(date) {
   if (!date) return "Not recorded";
@@ -165,7 +166,7 @@ function Pianos() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <button className="add-piano-button" onClick={() => setShowForm(true)}>
+          <button className="add-piano-button action-button action-button--primary" onClick={() => setShowForm(true)}>
             + Add Piano
           </button>
         </div>
@@ -248,7 +249,7 @@ function Pianos() {
                 <div className="piano-panel-actions">
                   <button
                     type="button"
-                    className="piano-delete-button"
+                    className="piano-delete-button action-button action-button--danger"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDelete(piano);
