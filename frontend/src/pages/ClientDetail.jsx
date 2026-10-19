@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getClient, getAppointments, deleteClient } from "../services/api";
 import AddClientModal from "../components/AddClientModal";
 import PianoForm from "../components/PianoForm";
+import ClientDiscounts from "../components/ClientDiscounts";
 import PageLayout from "../components/PageLayout";
 import "../styles/ClientDetail.css";
 import "../styles/ActionButtons.css";
@@ -483,6 +484,8 @@ function ClientDetail() {
             </p>
           )}
         </section>
+
+        <ClientDiscounts clientId={client.id} />
 
         <section className="client-detail-section record-detail-section">
           <h3>Notes</h3>
