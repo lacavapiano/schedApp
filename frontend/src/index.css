@@ -223,7 +223,6 @@ textarea {
   background: var(--app-bg) !important;
   color: var(--text-primary);
 }
-
 :root[data-theme="dark"] .app-navbar,
 :root[data-theme="dark"] .client-modal,
 :root[data-theme="dark"] .appointment-modal,
@@ -232,12 +231,11 @@ textarea {
 :root[data-theme="dark"] .client-detail-section,
 :root[data-theme="dark"] .piano-detail-section,
 :root[data-theme="dark"] .settings-section,
-:root[data-theme="dark"] .client-table,
-:root[data-theme="dark"] .piano-table,
 :root[data-theme="dark"] .client-search-dropdown,
 :root[data-theme="dark"] .client-search-option,
 :root[data-theme="dark"] .client-search-create,
-:root[data-theme="dark"] .settings-selected-calendar {
+:root[data-theme="dark"] .settings-selected-calendar
+{
   background-color: var(--surface) !important;
   color: var(--text-primary) !important;
   border-color: var(--border-color);
@@ -262,17 +260,16 @@ textarea {
 :root[data-theme="dark"] .settings-selected-calendar-name {
   color: var(--text-primary) !important;
 }
-
 :root[data-theme="dark"] .navbar-link:hover,
 :root[data-theme="dark"] .navbar-link.active,
 :root[data-theme="dark"] .navbar-logout:hover:not(:disabled),
-:root[data-theme="dark"] .client-table tbody tr:hover,
 :root[data-theme="dark"] .piano-row:hover,
 :root[data-theme="dark"] .client-search-option:hover,
 :root[data-theme="dark"] .client-search-option.selected,
 :root[data-theme="dark"] .client-search-create:hover,
 :root[data-theme="dark"] .client-detail-list-item:hover,
-:root[data-theme="dark"] .client-piano-row:hover {
+:root[data-theme="dark"] .client-piano-row:hover
+{
   background-color: var(--hover-bg) !important;
 }
 :root[data-theme="dark"] .navbar-logout,
@@ -292,13 +289,6 @@ textarea {
   color: var(--text-primary) !important;
   border-color: var(--border-color) !important;
 }
-
-:root[data-theme="dark"] .client-table th,
-:root[data-theme="dark"] .client-table td,
-:root[data-theme="dark"] .piano-table th,
-:root[data-theme="dark"] .piano-table td,
-:root[data-theme="dark"] .client-table-wrapper,
-:root[data-theme="dark"] .piano-table-wrapper,
 :root[data-theme="dark"] .client-detail-section,
 :root[data-theme="dark"] .client-detail-list-item,
 :root[data-theme="dark"] .client-contact-card,
@@ -309,7 +299,8 @@ textarea {
 :root[data-theme="dark"] .appointment-section,
 :root[data-theme="dark"] .appointment-modal-actions,
 :root[data-theme="dark"] .repeatable-section-header,
-:root[data-theme="dark"] .form-field:has(.repeatable-section-header) {
+:root[data-theme="dark"] .form-field:has(.repeatable-section-header)
+{
   border-color: var(--border-color) !important;
 }
 
@@ -451,21 +442,19 @@ textarea {
     background: var(--app-bg) !important;
     color: var(--text-primary);
   }
-
-  :root:not([data-theme="light"]) .app-navbar,
-  :root:not([data-theme="light"]) .client-modal,
-  :root:not([data-theme="light"]) .appointment-modal,
-  :root:not([data-theme="light"]) .piano-modal,
-  :root:not([data-theme="light"]) .dashboard-section,
-  :root:not([data-theme="light"]) .client-detail-section,
-  :root:not([data-theme="light"]) .piano-detail-section,
-  :root:not([data-theme="light"]) .settings-section,
-  :root:not([data-theme="light"]) .client-table,
-  :root:not([data-theme="light"]) .piano-table,
-  :root:not([data-theme="light"]) .client-search-dropdown,
-  :root:not([data-theme="light"]) .client-search-option,
-  :root:not([data-theme="light"]) .client-search-create,
-  :root:not([data-theme="light"]) .settings-selected-calendar {
+:root:not([data-theme="light"]) .app-navbar,
+:root:not([data-theme="light"]) .client-modal,
+:root:not([data-theme="light"]) .appointment-modal,
+:root:not([data-theme="light"]) .piano-modal,
+:root:not([data-theme="light"]) .dashboard-section,
+:root:not([data-theme="light"]) .client-detail-section,
+:root:not([data-theme="light"]) .piano-detail-section,
+:root:not([data-theme="light"]) .settings-section,
+:root:not([data-theme="light"]) .client-search-dropdown,
+:root:not([data-theme="light"]) .client-search-option,
+:root:not([data-theme="light"]) .client-search-create,
+:root:not([data-theme="light"]) .settings-selected-calendar
+{
     background-color: var(--surface) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color);
@@ -487,15 +476,14 @@ textarea {
   :root:not([data-theme="light"]) .settings-selected-calendar-name {
     color: var(--text-primary) !important;
   }
-
-  :root:not([data-theme="light"]) .navbar-link:hover,
-  :root:not([data-theme="light"]) .navbar-link.active,
-  :root:not([data-theme="light"]) .navbar-logout:hover:not(:disabled),
-  :root:not([data-theme="light"]) .client-table tbody tr:hover,
-  :root:not([data-theme="light"]) .piano-row:hover,
-  :root:not([data-theme="light"]) .client-search-option:hover,
-  :root:not([data-theme="light"]) .client-search-option.selected,
-  :root:not([data-theme="light"]) .client-search-create:hover {
+:root:not([data-theme="light"]) .navbar-link:hover,
+:root:not([data-theme="light"]) .navbar-link.active,
+:root:not([data-theme="light"]) .navbar-logout:hover:not(:disabled),
+:root:not([data-theme="light"]) .piano-row:hover,
+:root:not([data-theme="light"]) .client-search-option:hover,
+:root:not([data-theme="light"]) .client-search-option.selected,
+:root:not([data-theme="light"]) .client-search-create:hover
+{
     background-color: var(--hover-bg) !important;
   }
 
@@ -694,11 +682,8 @@ textarea {
     min-height: 42px;
     flex: 1 1 auto;
   }
-
-  /* Keep wide data tables intact and let the table area scroll, rather than
-     compressing columns and overlapping text/actions. */
-  .client-table-wrapper,
-  .piano-table-wrapper {
+/* Keep wide data tables intact and let the table area scroll
+{
     display: block;
     width: 100%;
     max-width: 100%;
@@ -707,23 +692,8 @@ textarea {
     -webkit-overflow-scrolling: touch;
   }
 
-  .client-table {
-    width: max-content;
-    min-width: 700px;
-  }
 
-  .piano-table {
-    width: max-content;
-    min-width: 680px;
-    table-layout: auto;
-  }
 
-  .client-table th,
-  .client-table td,
-  .piano-table th,
-  .piano-table td {
-    padding: 10px 12px;
-  }
 .table-action-button,
 .settings-button,
 .settings-secondary-button,
@@ -988,12 +958,6 @@ textarea {
     height: 40px;
   }
 
-  .client-table th,
-  .client-table td,
-  .piano-table th,
-  .piano-table td {
-    padding: 9px 10px;
-  }
 .settings-button,
 .settings-secondary-button
 {
