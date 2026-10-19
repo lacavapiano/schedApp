@@ -464,38 +464,35 @@ function ClientDetail() {
 <section className="client-detail-section record-detail-section">
           <div className="section-header">
             <h2>Pianos</h2>
-
-            <button
-              className="action-button action-button--primary"
-              onClick={() => setShowAddPiano(true)}
-            >
-              Add Piano
-            </button>
+            <button className="action-button action-button--primary" onClick={() => setShowAddPiano(true)}>Add Piano</button>
           </div>
-
           {client.pianos?.length > 3 ? (
-            <details className="client-detail-collapsible client-pianos-disclosure"><summary><span>Pianos</span><span className="client-detail-count">({client.pianos.length})</span></summary><div className="client-pianos-list">
+            <details className="client-detail-collapsible client-pianos-disclosure">
+              <summary><span>Show pianos</span><span className="client-detail-count">({client.pianos.length})</span></summary>
+              <div className="client-pianos-list">
+                {client.pianos.map((piano) => (
+                  <div key={piano.id} className="client-piano-row" onClick={() => navigate(`/pianos/${piano.id}`)}>
+                    <div className="client-piano-main">
+                      <strong>{[piano.make, piano.model].filter(Boolean).join(" ") || "Unknown piano"}</strong>
+                      {piano.serial && <span className="client-piano-serial">Serial: {piano.serial}</span>}
+                    </div>
+                    <div className="client-piano-details">
+                      {piano.type && <span>{piano.type}</span>}
+                      {piano.location && <span>{piano.location}</span>}
+                      <span>Last tuned: {piano.lastTunedAt ? piano.lastTunedAt.toLocaleDateString() : "Not recorded"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </details>
+          ) : client.pianos?.length > 0 ? (
             <div className="client-pianos-list">
               {client.pianos.map((piano) => (
-                <div
-                  key={piano.id}
-                  className="client-piano-row"
-                  onClick={() => navigate(`/pianos/${piano.id}`)}
-                >
+                <div key={piano.id} className="client-piano-row" onClick={() => navigate(`/pianos/${piano.id}`)}>
                   <div className="client-piano-main">
-                    <strong>
-                      {[piano.make, piano.model]
-                        .filter(Boolean)
-                        .join(" ") || "Unknown piano"}
-                    </strong>
-
-                    {piano.serial && (
-                      <span className="client-piano-serial">
-                        Serial: {piano.serial}
-                      </span>
-                    )}
+                    <strong>{[piano.make, piano.model].filter(Boolean).join(" ") || "Unknown piano"}</strong>
+                    {piano.serial && <span className="client-piano-serial">Serial: {piano.serial}</span>}
                   </div>
-
                   <div className="client-piano-details">
                     {piano.type && <span>{piano.type}</span>}
                     {piano.location && <span>{piano.location}</span>}
@@ -503,14 +500,11 @@ function ClientDetail() {
                   </div>
                 </div>
               ))}
-            </div></details>
-          ) : client.pianos?.length > 0 ? (
-            <p className="empty-section">
-              No pianos associated with this client.
-            </p>
+            </div>
+          ) : (
+            <p className="empty-section">No pianos associated with this client.</p>
           )}
         </section>
-
         <ClientDiscounts clientId={client.id} />
 
         {showEditModal && (
