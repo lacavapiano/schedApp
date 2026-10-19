@@ -1,0 +1,85 @@
+/* Shared spacing and information hierarchy for client and piano detail records. */
+.record-detail-page {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.record-detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 20px;
+}
+
+.record-detail-header {
+  margin: 0 0 18px;
+}
+
+.record-detail-header h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.record-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
+.record-detail-section {
+  min-width: 0;
+  padding: 16px;
+  margin: 0 0 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+}
+
+.record-detail-section > h3,
+.record-detail-section .record-section-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.record-detail-section .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+.record-detail-section .section-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+@media (max-width: 700px) {
+  .record-detail-toolbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .record-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .record-detail-section {
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+}
+
+:root[data-theme="dark"] .record-detail-section {
+  background: var(--surface, #20232a);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #454b56);
+}
