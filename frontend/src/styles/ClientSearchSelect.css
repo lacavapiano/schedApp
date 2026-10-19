@@ -139,3 +139,68 @@
 :root[data-theme="dark"] .client-search-dropdown .client-search-create:hover {
   background: #343a46 !important;
 }
+
+
+/* The appointment modal has a broad button reset with higher specificity.
+   Override it here so dropdown rows remain plain list items, not stacked buttons. */
+.appointment-modal .client-search-dropdown button.client-search-option,
+.appointment-modal .client-search-dropdown button.client-search-create {
+  display: block !important;
+  box-sizing: border-box !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  white-space: normal !important;
+  transform: none !important;
+}
+
+.appointment-modal .client-search-dropdown button.client-search-option {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  border-bottom: 1px solid #eee !important;
+  background: #fff !important;
+}
+
+.appointment-modal .client-search-dropdown button.client-search-option:last-of-type {
+  border-bottom: 0 !important;
+}
+
+.appointment-modal .client-search-dropdown button.client-search-create {
+  width: 100% !important;
+  border-top: 1px solid #eee !important;
+  background: #fff !important;
+  color: #2563eb !important;
+  font-weight: 500 !important;
+}
+
+.appointment-modal .client-search-dropdown button.client-search-option:hover,
+.appointment-modal .client-search-dropdown button.client-search-option.selected,
+.appointment-modal .client-search-dropdown button.client-search-create:hover {
+  background: #f5f7fa !important;
+}
+
+:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-option,
+:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-create {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-option:hover,
+:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-option.selected,
+:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-create:hover {
+  background: var(--hover-bg) !important;
+}
