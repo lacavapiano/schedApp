@@ -6,7 +6,7 @@ import {
 } from "../services/api";
 import "../styles/ServiceCatalog.css";
 
-const emptyForm = { name: "", pricing_method: "flat_rate", price: "" };
+const emptyForm = { name: "", pricing_method: "flat_rate", price: "", default_service_minutes: "120" };
 
 function formatPrice(value) {
   return new Intl.NumberFormat("en-US", {
@@ -52,6 +52,10 @@ export default function ServiceCatalog() {
     if (form.price === "" || !Number.isFinite(price) || price < 0) {
       return setError("Enter a valid price of $0 or more.");
     }
+    const duration = form.default_service_minutes === "" ? null : Number(form.default_service_minutes);
+    if (form.pricing_method === "flat_rate" && duration !== null && (!Number.isInteger(duration) || duration < 1 || duration > 1440)) {
+      return setError("Default service time must be between 1 and 1440 minutes, or left blank.");
+    }
 
     try {
       setSaving(true);
@@ -59,6 +63,7 @@ export default function ServiceCatalog() {
         name: form.name.trim(),
         pricing_method: form.pricing_method,
         price,
+        default_service_minutes: form.pricing_method === "flat_rate" && form.default_service_minutes !== "" ? Number(form.default_service_minutes) : null,
       };
       if (editingId) {
         await updateServiceType(editingId, payload);
@@ -82,6 +87,7 @@ export default function ServiceCatalog() {
       name: service.name,
       pricing_method: service.pricing_method,
       price: String(service.price),
+      default_service_minutes: service.default_service_minutes == null ? "" : String(service.default_service_minutes),
     });
     setError("");
     setNotice("");
@@ -143,6 +149,13 @@ export default function ServiceCatalog() {
               <option value="hourly">Hourly</option>
             </select>
           </div>
+          {form.pricing_method === "flat_rate" && (
+            <div className="settings-field service-duration-field">
+              <label htmlFor="service-default-duration">Default service time (minutes)</label>
+              <input id="service-default-duration" type="number" min="1" max="1440" step="1" inputMode="numeric" value={form.default_service_minutes} onChange={(event) => setForm({ ...form, default_service_minutes: event.target.value })} placeholder="e.g. 90" />
+              <span className="settings-help-text">Used to calculate appointment end times. Leave blank if not applicable.</span>
+            </div>
+          )}
           <div className="settings-field service-price-field">
             <label htmlFor="service-price">Standard price ($)</label>
             <input
@@ -192,7 +205,7 @@ export default function ServiceCatalog() {
               </div>
               <div className="service-catalog-price">
                 <strong>{formatPrice(service.price)}</strong>
-                <span>{service.pricing_method === "hourly" ? "per billable hour" : "per service"}</span>
+                <span>{service.pricing_method === "hourly" ? "per billable hour" : `per service${service.default_service_minutes ? ` · ${service.default_service_minutes} min` : ""}`}</span>
               </div>
               <div className="service-catalog-row-actions">
                 {!service.is_active && <span className="service-catalog-archived">Archived</span>}
