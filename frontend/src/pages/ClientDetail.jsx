@@ -136,7 +136,7 @@ function ClientDetail() {
           <p>{error}</p>
 
           <button
-            className="client-detail-button"
+            className="action-button action-button--secondary"
             onClick={() => navigate("/clients")}
           >
             ← Back to Clients
