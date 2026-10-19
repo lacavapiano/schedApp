@@ -140,9 +140,6 @@ function AppointmentModal({
   const [discountDrafts, setDiscountDrafts] = useState([]);
   const [discountPercent, setDiscountPercent] = useState("");
   const [discountType, setDiscountType] = useState("ongoing");
-  const [discountScope, setDiscountScope] = useState("all");
-  const [discountServiceTypeId, setDiscountServiceTypeId] = useState("");
-  const [discountPianoIndex, setDiscountPianoIndex] = useState("0");
   const [activeDiscountPianoIndex, setActiveDiscountPianoIndex] = useState(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
 
@@ -353,37 +350,6 @@ function AppointmentModal({
         piano.client_id === formData.client_id
     );
   }, [allPianos, formData.client_id]);
-
-  function addDiscountDraft() {
-    const percent = Number(discountPercent);
-    if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
-      setError("Enter a discount percentage greater than 0 and no more than 100.");
-      return;
-    }
-    if (discountScope === "service" && !discountServiceTypeId) {
-      setError("Choose a service for this discount.");
-      return;
-    }
-    if (discountType === "one_time" && discountScope === "piano" && !formData.pianos[Number(discountPianoIndex)]?.piano_id) {
-      setError("Choose a piano with a selected service for this one-time discount.");
-      return;
-    }
-    setError("");
-    setDiscountDrafts((previous) => [...previous, {
-      draftId: `discount-${Date.now()}-${previous.length}`,
-      discount_percent: percent,
-      discount_type: discountType,
-      service_type_id: discountScope === "service" ? discountServiceTypeId : null,
-      scope: discountType === "one_time" ? discountScope : (discountScope === "service" ? "service" : "all"),
-      targetPianoIndex: discountType === "one_time" && discountScope === "piano" ? Number(discountPianoIndex) : null,
-      is_active: true,
-    }]);
-    setDiscountPercent("");
-  }
-
-  function removeDiscountDraft(draftId) {
-    setDiscountDrafts((previous) => previous.filter((discount) => discount.draftId !== draftId));
-  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -1207,9 +1173,6 @@ function AppointmentModal({
                             onClick={() => {
                               setActiveDiscountPianoIndex(activeDiscountPianoIndex === index ? null : index);
                               setDiscountType("one_time");
-                              setDiscountScope("piano");
-                              setDiscountServiceTypeId(appointmentPiano.service_type_id || serviceTypes.find((service) => appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase())?.id || "");
-                              setDiscountPianoIndex(String(index));
                               setDiscountPercent("");
                               setError("");
                             }}
