@@ -6,7 +6,7 @@ import {
 } from "../services/api";
 import "../styles/ServiceCatalog.css";
 
-const emptyForm = { name: "", pricing_method: "flat_rate", price: "", default_service_minutes: "" };
+const emptyForm = { name: "", pricing_method: "flat_rate", price: "", default_service_minutes: "", is_tuning: false };
 
 function formatPrice(value) {
   return new Intl.NumberFormat("en-US", {
@@ -64,6 +64,7 @@ export default function ServiceCatalog() {
         pricing_method: form.pricing_method,
         price,
         default_service_minutes: form.pricing_method === "flat_rate" && form.default_service_minutes !== "" ? Number(form.default_service_minutes) : null,
+        is_tuning: Boolean(form.is_tuning),
       };
       if (editingId) {
         await updateServiceType(editingId, payload);
@@ -88,6 +89,7 @@ export default function ServiceCatalog() {
       pricing_method: service.pricing_method,
       price: String(service.price),
       default_service_minutes: service.default_service_minutes == null ? "" : String(service.default_service_minutes),
+      is_tuning: service.is_tuning === true,
     });
     setError("");
     setNotice("");
@@ -106,6 +108,18 @@ export default function ServiceCatalog() {
       setNotice(service.is_active ? "Service archived." : "Service reactivated.");
     } catch (err) {
       setError(err.message || "Could not update this service.");
+    }
+  }
+
+  async function toggleTuning(service, checked) {
+    setError("");
+    setNotice("");
+    try {
+      await updateServiceType(service.id, { is_tuning: checked });
+      setServices((current) => current.map((item) => item.id === service.id ? { ...item, is_tuning: checked } : item));
+      setNotice(checked ? service.name + " marked as a tuning." : service.name + " is no longer marked as a tuning.");
+    } catch (err) {
+      setError(err.message || "Could not update the tuning setting.");
     }
   }
 
@@ -170,6 +184,10 @@ export default function ServiceCatalog() {
               required
             />
           </div>
+          <label className="service-tuning-checkbox">
+            <input type="checkbox" checked={Boolean(form.is_tuning)} onChange={(event) => setForm({ ...form, is_tuning: event.target.checked })} />
+            <span><strong>This is a tuning</strong><small>Include this service when calculating the piano\'s last-tuned date.</small></span>
+          </label>
         </div>
         <div className="service-catalog-form-actions">
           {editingId && (
@@ -207,6 +225,10 @@ export default function ServiceCatalog() {
                 <strong>{formatPrice(service.price)}</strong>
                 <span>{service.pricing_method === "hourly" ? "per billable hour" : `per service${service.default_service_minutes ? ` · ${service.default_service_minutes} min` : ""}`}</span>
               </div>
+              <label className="service-catalog-tuning-toggle">
+                <input type="checkbox" checked={service.is_tuning === true} onChange={(event) => toggleTuning(service, event.target.checked)} aria-label={"Mark " + service.name + " as a tuning"} />
+                <span>This is a tuning</span>
+              </label>
               <div className="service-catalog-row-actions">
                 {!service.is_active && <span className="service-catalog-archived">Archived</span>}
                 <button type="button" className="settings-secondary-button" onClick={() => startEdit(service)}>Edit</button>
