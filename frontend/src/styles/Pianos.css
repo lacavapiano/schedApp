@@ -382,9 +382,8 @@
   background: var(--surface, #fff);
   border-color: var(--border-color, #ccc);
 }
-
-.piano-search::placeholder,
-.piano-form-grid input::placeholder {
+.piano-form-grid input::placeholder
+{
   color: var(--text-secondary, #6c757d);
   opacity: 1;
 }
