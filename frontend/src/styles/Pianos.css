@@ -1062,3 +1062,67 @@
     padding-inline: 8px;
   }
 }
+
+
+/* Filter piano records by how recently they were tuned. */
+.piano-tuning-age-filter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0 0 14px;
+}
+
+.piano-tuning-age-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.piano-tuning-months {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-secondary, #6c757d);
+  font-size: 12px;
+}
+
+.piano-tuning-months input {
+  width: 68px;
+  min-height: 32px;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  border: 1px solid var(--border-color, #d4d7dc);
+  border-radius: 7px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+  font: inherit;
+  font-size: 13px;
+}
+
+.piano-tuning-months input:focus {
+  outline: 2px solid var(--border-color, #999);
+  outline-offset: 1px;
+}
+
+@media (max-width: 560px) {
+  .piano-tuning-age-filter {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .piano-tuning-age-controls {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .piano-tuning-age-controls > .piano-sort-button {
+    flex: 1 1 auto;
+  }
+
+  .piano-tuning-months {
+    min-height: 36px;
+  }
+}
