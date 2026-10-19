@@ -317,6 +317,11 @@ function AppointmentModal({
     return { service, ready: true, baseAmount, finalAmount: remaining, discounts };
   }), [formData.pianos, serviceTypes, clientDiscounts, appointment?.id]);
   const estimatedTotal = pricingPreview.reduce((total, item) => total + (item.ready ? item.finalAmount : 0), 0);
+  const pricingReady = formData.pianos.filter((piano) => piano.piano_id).length > 0
+    && formData.pianos.filter((piano) => piano.piano_id).every((piano) => {
+      const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
+      return Boolean(service) && (service.pricing_method !== "hourly" || (Number.isFinite(Number(piano.billable_hours)) && Number(piano.billable_hours) > 0));
+    });
 
   /*
    * Pianos belonging to the selected client.
@@ -1155,7 +1160,7 @@ function AppointmentModal({
                 {formData.pianos.length > 0 && (
                   <div className="appointment-pricing-summary">
                     <span>Estimated appointment total</span>
-                    <strong>{"$" + estimatedTotal.toFixed(2)}</strong>
+                    <strong>{pricingReady ? "$" + estimatedTotal.toFixed(2) : "Complete service pricing"}</strong>
                   </div>
                 )}
 
