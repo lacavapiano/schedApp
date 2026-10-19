@@ -12,6 +12,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [showCancelled, setShowCancelled] = useState(false);
+  const [completedVisibleCount, setCompletedVisibleCount] = useState(10);
 
   async function loadAppointments() {
     try {
@@ -91,11 +92,41 @@ function Dashboard() {
             <h2>Completed</h2>
           </div>
 
-          <AppointmentList
-            appointments={completedAppointments}
-            onAppointmentClick={handleAppointmentClick}
-            emptyMessage="No completed appointments."
-          />
+          {completedAppointments.length === 0 ? (
+            <AppointmentList
+              appointments={completedAppointments}
+              onAppointmentClick={handleAppointmentClick}
+              emptyMessage="No completed appointments."
+            />
+          ) : (
+            <>
+              <div
+                className={"dashboard-completed-list" +
+                  (completedVisibleCount < completedAppointments.length ? " is-collapsed" : "")}
+              >
+                <AppointmentList
+                  appointments={completedAppointments.slice(0, completedVisibleCount)}
+                  onAppointmentClick={handleAppointmentClick}
+                  emptyMessage="No completed appointments."
+                />
+              </div>
+              {completedVisibleCount < completedAppointments.length && (
+                <div className="dashboard-show-more-wrap">
+                  <button
+                    type="button"
+                    className="dashboard-show-more"
+                    onClick={() =>
+                      setCompletedVisibleCount((count) =>
+                        Math.min(count + 50, completedAppointments.length)
+                      )
+                    }
+                  >
+                    Show {Math.min(50, completedAppointments.length - completedVisibleCount)} more
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </section>
 
         <section className="dashboard-section dashboard-cancelled-section">
