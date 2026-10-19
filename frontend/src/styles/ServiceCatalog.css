@@ -41,7 +41,7 @@
 
 .service-catalog-fields {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(150px, 0.9fr) minmax(130px, 0.75fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(150px, 0.9fr) minmax(130px, 0.75fr) minmax(170px, 0.9fr);
   gap: 16px;
   margin-top: 18px;
 }
@@ -50,6 +50,13 @@
   align-items: stretch;
   min-width: 0;
   gap: 7px;
+}
+
+.service-catalog .service-duration-field .settings-help-text {
+  margin: 0;
+  color: var(--service-muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
 }
 
 .service-catalog .settings-field > label {
