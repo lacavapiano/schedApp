@@ -6,9 +6,6 @@ alter table public.service_types
 update public.service_types
 set is_tuning = true,
     updated_at = now()
-where lower(trim(name)) in (
-  'standard service visit',
-  'concert',
-  'concert tuning',
-  'pitch correction'
-);
+where lower(trim(name)) like '%standard service visit%'
+   or lower(trim(name)) like '%concert%'
+   or lower(trim(name)) like '%pitch correction%';
