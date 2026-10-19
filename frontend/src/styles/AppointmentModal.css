@@ -204,42 +204,11 @@
   margin-left: auto;
 }
 
-.appointment-cancel-button,
-.appointment-save-button,
-.appointment-delete-button {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-}
 
-.appointment-cancel-button {
-  background: #eee;
-}
 
-.appointment-save-button {
-  background: #333;
-  color: #fff;
-}
 
-.appointment-delete-button {
-  background: #f5dddd;
-  color: #a00000;
-}
 
-.appointment-cancel-button:hover,
-.appointment-save-button:hover,
-.appointment-delete-button:hover {
-  opacity: 0.85;
-}
 
-.appointment-cancel-button:disabled,
-.appointment-save-button:disabled,
-.appointment-delete-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 @media (max-width: 600px) {
   .appointment-modal-overlay {
@@ -314,16 +283,6 @@
     display: contents;
   }
 
-  .appointment-modal-actions > .appointment-delete-button,
-  .appointment-modal-actions-right > .appointment-cancel-button,
-  .appointment-modal-actions-right > .appointment-save-button {
-    flex: 1 1 0;
-    width: 0;
-    min-width: 0;
-    padding: 10px 6px;
-    white-space: nowrap;
-    text-align: center;
-  }
 }
 
 
