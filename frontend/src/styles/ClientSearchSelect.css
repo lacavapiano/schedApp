@@ -204,3 +204,47 @@
 :root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-create:hover {
   background: var(--hover-bg) !important;
 }
+
+
+/* Keep the dropdown chevron as a small, unboxed control inside the input. */
+.appointment-modal .client-search-input-wrapper button.client-search-toggle {
+  position: absolute !important;
+  top: 50% !important;
+  right: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  outline: none;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--text-secondary, #666) !important;
+  font: inherit !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  transform: translateY(-50%) !important;
+  cursor: pointer;
+}
+
+.appointment-modal .client-search-input-wrapper button.client-search-toggle:hover:not(:disabled) {
+  background: var(--hover-bg, #f1f3f5) !important;
+  color: var(--text-primary, #222) !important;
+}
+
+.appointment-modal .client-search-input-wrapper button.client-search-toggle:focus-visible {
+  outline: 2px solid var(--border-color, #777) !important;
+  outline-offset: -2px;
+}
+
+.appointment-modal .client-search-input-wrapper button.client-search-toggle:disabled {
+  background: transparent !important;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
