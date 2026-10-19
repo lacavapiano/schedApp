@@ -37,6 +37,16 @@ function getClientSummary(client) {
   ].filter(Boolean).join(" · ");
 }
 
+function getServiceName(item) {
+  if (typeof item?.service === "string") return item.service;
+  return item?.service?.name || item?.service_type?.name ||
+    item?.serviceType?.name || item?.service_type_name || "";
+}
+
+function isTuningService(item) {
+  return /tun/i.test(getServiceName(item));
+}
+
 function getNextTuningDate(lastTunedAt, tuningPeriod) {
   if (!lastTunedAt || !Number(tuningPeriod) || Number(tuningPeriod) <= 0) return null;
 
@@ -81,7 +91,7 @@ function Pianos() {
         if (Number.isNaN(appointmentDate.getTime())) return;
 
         (appointment.appointment_pianos || []).forEach((item) => {
-          if (!item.piano_id || !/tun/i.test(item.service || "")) return;
+          if (!item.piano_id || !isTuningService(item)) return;
           const key = String(item.piano_id);
           const previous = lastTunedByPiano.get(key);
           if (!previous || appointmentDate > previous) lastTunedByPiano.set(key, appointmentDate);
