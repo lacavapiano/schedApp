@@ -170,23 +170,23 @@ function ClientDetail() {
   return (
     <PageLayout title={client.name}>
       <div className="client-detail-page">
-        <div className="client-detail-toolbar detail-action-toolbar">
+        <div className="client-detail-toolbar">
           <button
-            className="client-detail-back-button detail-action-back-button"
+            className="action-button action-button--quiet"
             onClick={() => navigate("/clients")}
           >
             ← Back to Clients
           </button>
 
-          <div className="client-detail-toolbar-actions detail-action-toolbar-actions">
+          <div className="action-button-group client-detail-toolbar-actions">
             <button
-              className="client-detail-button action-button action-button--primary"
+              className="action-button action-button--primary"
               onClick={() => setShowEditModal(true)}
             >
               Edit Client
             </button>
             <button
-              className="client-detail-delete-button action-button action-button--danger"
+              className="action-button action-button--danger"
               onClick={handleDeleteClient}
               disabled={deletingClient}
             >
@@ -195,7 +195,7 @@ function ClientDetail() {
           </div>
         </div>
 
-        {deleteError && <p className="client-detail-delete-error action-button-error" role="alert">{deleteError}</p>}
+        {deleteError && <p className="action-button-error" role="alert">{deleteError}</p>}
 
         <div className="client-detail-header">
           <span className="client-type-badge">
