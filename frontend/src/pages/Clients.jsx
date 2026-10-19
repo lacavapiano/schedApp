@@ -6,6 +6,7 @@ import PageLayout from "../components/PageLayout";
 import AddClientModal from "../components/AddClientModal";
 import "../styles/Clients.css";
 import "../styles/ActionButtons.css";
+import "../styles/RecordListToolbar.css";
 
 function Clients() {
   const navigate = useNavigate();
@@ -62,14 +63,14 @@ function Clients() {
   return (
     <PageLayout title="Clients">
       <div className="clients-page">
-        <div className="clients-toolbar">
-          <div className="clients-count">
+        <div className="record-list-toolbar">
+          <div className="record-list-count">
             {filteredClients.length}{" "}
             {filteredClients.length === 1 ? "client" : "clients"}
           </div>
 
           <input
-            className="client-search"
+            className="record-list-search"
             type="text"
             placeholder="Search clients..."
             value={searchTerm}
