@@ -5,6 +5,7 @@ import {
   getAppointment,
   createAppointment,
   updateAppointment,
+  completeAppointment,
   deleteAppointment,
 } from "../controllers/appointmentController.js";
 
@@ -14,6 +15,7 @@ router.get("/", getAppointments);
 router.get("/:id", getAppointment);
 router.post("/", createAppointment);
 router.patch("/:id", updateAppointment);
+router.post("/:id/complete", completeAppointment);
 router.delete("/:id", deleteAppointment);
 
 export default router;
