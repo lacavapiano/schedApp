@@ -740,3 +740,70 @@
     line-height: 1.4;
   }
 }
+
+
+/* Desktop density pass: identity + five aligned detail columns in one row. */
+@media (min-width: 901px) {
+  .piano-panel-grid {
+    gap: 5px;
+  }
+
+  .piano-panel {
+    display: grid;
+    grid-template-columns: minmax(155px, 0.85fr) minmax(0, 3.5fr);
+    align-items: center;
+    gap: 14px;
+    padding: 8px 12px;
+    border-radius: 7px;
+  }
+
+  .piano-panel-main {
+    display: contents;
+  }
+
+  .piano-panel-heading {
+    grid-column: 1;
+    grid-row: 1;
+    align-content: center;
+    gap: 4px 6px;
+    padding: 0;
+    border: 0;
+  }
+
+  .piano-panel-name {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+
+  .piano-panel-type {
+    padding: 1px 5px;
+    font-size: 10px;
+  }
+
+  .piano-panel-details {
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: minmax(65px, 0.8fr) minmax(75px, 0.9fr) minmax(120px, 1.5fr) minmax(90px, 1fr) minmax(105px, 1.1fr);
+    align-items: center;
+    gap: 8px 12px;
+  }
+
+  .piano-panel-detail {
+    gap: 2px;
+  }
+
+  .piano-panel-label {
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  .piano-panel-value,
+  .piano-panel-client-link {
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  .piano-panel-client-summary {
+    display: none;
+  }
+}
