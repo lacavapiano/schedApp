@@ -59,6 +59,11 @@
   line-height: 1.4;
 }
 
+/* Keep this longer label on one line so its input aligns with neighboring fields. */
+.service-catalog .service-duration-field > label {
+  white-space: nowrap;
+}
+
 .service-catalog .settings-field > label {
   align-self: flex-start;
   color: var(--text-primary, #333);
