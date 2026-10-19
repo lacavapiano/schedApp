@@ -449,3 +449,177 @@
   .modal-actions { flex-wrap: wrap; }
   .modal-actions > * { flex: 1 1 120px; min-width: 0; }
 }
+
+
+/* Dark mode: readable form controls and nested contact panes. */
+:root[data-theme="dark"] .client-modal {
+  background: var(--surface, #20232a);
+  color: var(--text-primary, #f3f4f6);
+  border: 1px solid var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-modal-header h2,
+:root[data-theme="dark"] .repeatable-section-header label,
+:root[data-theme="dark"] .repeatable-section-header strong,
+:root[data-theme="dark"] .form-field > label {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-modal-close {
+  color: var(--text-secondary, #b8bec8);
+}
+
+:root[data-theme="dark"] .client-modal-close:hover {
+  background: var(--hover-bg, #343a46);
+  color: var(--text-primary, #fff);
+}
+
+:root[data-theme="dark"] .form-field input,
+:root[data-theme="dark"] .form-field select,
+:root[data-theme="dark"] .form-field textarea,
+:root[data-theme="dark"] .contact-item > input,
+:root[data-theme="dark"] .contact-item > textarea {
+  background: var(--surface, #20232a);
+  border-color: var(--border-color, #545c69);
+  color: var(--text-primary, #f3f4f6);
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] .form-field input::placeholder,
+:root[data-theme="dark"] .form-field textarea::placeholder,
+:root[data-theme="dark"] .contact-item input::placeholder,
+:root[data-theme="dark"] .contact-item textarea::placeholder {
+  color: var(--text-secondary, #aeb6c2);
+}
+
+:root[data-theme="dark"] .repeatable-item,
+:root[data-theme="dark"] .contact-item {
+  background: var(--surface-muted, #292d36);
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .form-field:has(.repeatable-section-header),
+:root[data-theme="dark"] .contact-item .form-field,
+:root[data-theme="dark"] .modal-actions {
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .primary-label {
+  color: var(--text-secondary, #b8bec8);
+}
+
+:root[data-theme="dark"] .modal-cancel {
+  background: var(--surface-muted, #292d36);
+  border-color: var(--border-color, #545c69);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .modal-cancel:hover {
+  background: var(--hover-bg, #343a46);
+}
+
+.modal-actions {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.modal-primary-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-delete-client {
+  align-self: flex-start;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid #b91c1c;
+  border-radius: 6px;
+  background: transparent;
+  color: #b91c1c;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-delete-client:hover {
+  background: #fef2f2;
+}
+
+:root[data-theme="dark"] .modal-delete-client {
+  border-color: #f87171;
+  color: #fca5a5;
+}
+
+:root[data-theme="dark"] .modal-delete-client:hover {
+  background: #422529;
+}
+
+@media (max-width: 700px) {
+  .client-modal-overlay { padding: 0; }
+
+  .client-modal {
+    max-height: 92dvh;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .modal-actions { gap: 12px; }
+
+  .modal-primary-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .modal-primary-actions .modal-cancel,
+  .modal-primary-actions .modal-save {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 8px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .modal-delete-client {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .client-modal {
+    background: var(--surface, #20232a);
+    color: var(--text-primary, #f3f4f6);
+  }
+
+  :root:not([data-theme="light"]) .repeatable-item,
+  :root:not([data-theme="light"]) .contact-item {
+    background: var(--surface-muted, #292d36);
+    border-color: var(--border-color, #454b56);
+  }
+
+  :root:not([data-theme="light"]) .form-field input,
+  :root:not([data-theme="light"]) .form-field select,
+  :root:not([data-theme="light"]) .form-field textarea {
+    background: var(--surface, #20232a);
+    border-color: var(--border-color, #545c69);
+    color: var(--text-primary, #f3f4f6);
+    color-scheme: dark;
+  }
+
+  :root:not([data-theme="light"]) .client-modal-header h2,
+  :root:not([data-theme="light"]) .repeatable-section-header label,
+  :root:not([data-theme="light"]) .repeatable-section-header strong,
+  :root:not([data-theme="light"]) .form-field > label {
+    color: var(--text-primary, #f3f4f6);
+  }
+
+  :root:not([data-theme="light"]) .modal-cancel {
+    background: var(--surface-muted, #292d36);
+    border-color: var(--border-color, #545c69);
+    color: var(--text-primary, #f3f4f6);
+  }
+}
