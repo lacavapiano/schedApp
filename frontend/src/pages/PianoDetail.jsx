@@ -5,6 +5,7 @@ import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
 import "../styles/ActionButtons.css";
+import "../styles/RecordDetailLayout.css";
 
 function formatDate(date) {
   if (!date) return "Not recorded";
@@ -144,8 +145,8 @@ function PianoDetail() {
 
   return (
     <PageLayout title="Piano Details">
-      <div className="piano-detail-page">
-        <div className="piano-detail-toolbar">
+      <div className="piano-detail-page record-detail-page">
+        <div className="piano-detail-toolbar record-detail-toolbar">
           <button className="action-button action-button--quiet" onClick={() => navigate("/pianos")}>
             ← Back to Pianos
           </button>
@@ -165,13 +166,13 @@ function PianoDetail() {
 
         {deleteError && <p className="action-button-error" role="alert">{deleteError}</p>}
 
-        <div className="piano-detail-header">
+        <div className="piano-detail-header record-detail-header">
           <h2>{[piano.make, piano.model].filter(Boolean).join(" ") || "Piano"}</h2>
           {piano.type && <span className="piano-type-badge">{piano.type}</span>}
         </div>
 
-        <div className="piano-detail-grid">
-          <section className="piano-detail-section">
+        <div className="piano-detail-grid record-detail-grid">
+          <section className="piano-detail-section record-detail-section">
             <h3>Identification</h3>
             <div className="piano-detail-fields">
               <div>
