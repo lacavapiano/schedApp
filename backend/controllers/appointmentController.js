@@ -77,6 +77,7 @@ function normalizePianos(pianos) {
   return pianos
     .filter((piano) => piano?.piano_id)
     .map((piano) => ({
+      ...(piano.id ? { id: piano.id } : {}),
       piano_id: piano.piano_id,
       service: piano.service ?? null,
       temp: piano.temp ?? null,
@@ -407,7 +408,7 @@ export async function createAppointment(req, res) {
         await supabase
           .from("appointment_pianos")
           .insert(
-            normalizedPianos.map((piano) => ({
+            normalizedPianos.map(({ id: _ignoredId, ...piano }) => ({
               appointment_id: appointment.id,
               ...piano,
             }))
@@ -669,47 +670,57 @@ export async function updateAppointment(req, res) {
     }
 
     /*
-     * Replace the appointment's piano records.
+     * Preserve existing appointment_piano IDs when a service remains on
+     * the appointment. One-time discounts target these IDs, so deleting and
+     * recreating every row would silently delete those discounts by cascade.
      */
-    const { error: deletePianosError } =
-      await supabase
-        .from("appointment_pianos")
-        .delete()
-        .eq("appointment_id", id);
-
-    if (deletePianosError) {
-      console.error(
-        "Error replacing appointment pianos:",
-        deletePianosError
-      );
-
-      return res.status(500).json({
-        error:
-          "Appointment updated but appointment pianos could not be replaced",
-      });
+    const { data: existingPianos, error: existingPianosError } = await supabase
+      .from("appointment_pianos")
+      .select("id")
+      .eq("appointment_id", id);
+    if (existingPianosError) {
+      return res.status(500).json({ error: "Unable to retrieve existing appointment services" });
     }
 
-    if (normalizedPianos.length > 0) {
-      const { error: insertPianosError } =
-        await supabase
+    const existingPianoIds = new Set((existingPianos || []).map((row) => row.id));
+    const submittedExistingIds = normalizedPianos.map((piano) => piano.id).filter(Boolean);
+    if (submittedExistingIds.some((pianoId) => !existingPianoIds.has(pianoId))) {
+      return res.status(400).json({ error: "An appointment service ID does not belong to this appointment" });
+    }
+
+    const removedIds = [...existingPianoIds].filter((pianoId) => !submittedExistingIds.includes(pianoId));
+    if (removedIds.length) {
+      const { error: deletePianosError } = await supabase
+        .from("appointment_pianos")
+        .delete()
+        .in("id", removedIds)
+        .eq("appointment_id", id);
+      if (deletePianosError) {
+        console.error("Error removing appointment services:", deletePianosError);
+        return res.status(500).json({ error: "Appointment updated but removed services could not be deleted" });
+      }
+    }
+
+    for (const piano of normalizedPianos) {
+      const { id: pianoRowId, ...pianoData } = piano;
+      if (pianoRowId) {
+        const { error: updatePianoError } = await supabase
           .from("appointment_pianos")
-          .insert(
-            normalizedPianos.map((piano) => ({
-              appointment_id: appointment.id,
-              ...piano,
-            }))
-          );
-
-      if (insertPianosError) {
-        console.error(
-          "Error inserting appointment pianos:",
-          insertPianosError
-        );
-
-        return res.status(500).json({
-          error:
-            "Appointment updated but appointment pianos could not be saved",
-        });
+          .update(pianoData)
+          .eq("id", pianoRowId)
+          .eq("appointment_id", id);
+        if (updatePianoError) {
+          console.error("Error updating appointment service:", updatePianoError);
+          return res.status(500).json({ error: "Appointment updated but a service could not be updated" });
+        }
+      } else {
+        const { error: insertPianoError } = await supabase
+          .from("appointment_pianos")
+          .insert({ appointment_id: appointment.id, ...pianoData });
+        if (insertPianoError) {
+          console.error("Error inserting appointment service:", insertPianoError);
+          return res.status(500).json({ error: "Appointment updated but a new service could not be saved" });
+        }
       }
     }
 
