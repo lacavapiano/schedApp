@@ -408,3 +408,14 @@
     white-space: normal;
   }
 }
+
+
+.appointment-modal .completion-field-missing {
+  border-color: #b42318 !important;
+  box-shadow: 0 0 0 1px #b42318;
+}
+
+:root[data-theme="dark"] .appointment-modal .completion-field-missing {
+  border-color: #ff9292 !important;
+  box-shadow: 0 0 0 1px #ff9292;
+}
