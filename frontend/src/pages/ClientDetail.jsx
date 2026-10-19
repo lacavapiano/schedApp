@@ -6,6 +6,7 @@ import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/ClientDetail.css";
 import "../styles/ActionButtons.css";
+import "../styles/RecordDetailLayout.css";
 
 function ClientDetail() {
   const { id } = useParams();
@@ -169,8 +170,8 @@ function ClientDetail() {
 
   return (
     <PageLayout title={client.name}>
-      <div className="client-detail-page">
-        <div className="client-detail-toolbar">
+      <div className="client-detail-page record-detail-page">
+        <div className="client-detail-toolbar record-detail-toolbar">
           <button
             className="action-button action-button--quiet"
             onClick={() => navigate("/clients")}
@@ -197,14 +198,14 @@ function ClientDetail() {
 
         {deleteError && <p className="action-button-error" role="alert">{deleteError}</p>}
 
-        <div className="client-detail-header">
+        <div className="client-detail-header record-detail-header">
           <span className="client-type-badge">
             {client.type === "institution" ? "Institution" : "Individual"}
           </span>
         </div>
 
-        <div className="client-detail-grid">
-          <section className="client-detail-section">
+        <div className="client-detail-grid record-detail-grid">
+          <section className="client-detail-section record-detail-section">
             <h3>Contact Information</h3>
 
             <div className="client-detail-fields">
@@ -363,7 +364,7 @@ function ClientDetail() {
         )}
 
         <section className="client-detail-section">
-          <div className="client-detail-section-header">
+          <div className="client-detail-section-header record-section-title">
             <h3>Contacts</h3>
           </div>
 
