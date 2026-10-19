@@ -566,3 +566,106 @@ export async function getGoogleCalendars() {
 
   return response.json();
 }
+
+export async function getServiceTypes({ includeInactive = false } = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const query = includeInactive ? "?include_inactive=true" : "";
+  const response = await fetch(`${API_URL}/api/pricing/service-types${query}`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch service types");
+  }
+  return response.json();
+}
+
+export async function createServiceType(serviceData) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/pricing/service-types`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(serviceData),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to create service type");
+  }
+  return response.json();
+}
+
+export async function updateServiceType(serviceTypeId, serviceData) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/pricing/service-types/${serviceTypeId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(serviceData),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to update service type");
+  }
+  return response.json();
+}
+
+export async function getClientDiscounts(clientId, { includeInactive = false } = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const params = new URLSearchParams();
+  if (clientId) params.set("client_id", clientId);
+  if (includeInactive) params.set("include_inactive", "true");
+  const suffix = params.size ? `?${params.toString()}` : "";
+  const response = await fetch(`${API_URL}/api/pricing/client-discounts${suffix}`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch client discounts");
+  }
+  return response.json();
+}
+
+export async function createClientDiscount(discountData) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/pricing/client-discounts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(discountData),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to create client discount");
+  }
+  return response.json();
+}
+
+export async function updateClientDiscount(discountId, discountData) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/pricing/client-discounts/${discountId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify(discountData),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to update client discount");
+  }
+  return response.json();
+}
