@@ -8,6 +8,7 @@ import {
   completeAppointment,
   getServiceTypes,
   getClientDiscounts,
+  createClientDiscount,
   getAppointmentCharges,
   saveAppointmentCharges,
 } from "../services/api";
@@ -136,6 +137,12 @@ function AppointmentModal({
   const [allPianos, setAllPianos] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [clientDiscounts, setClientDiscounts] = useState([]);
+  const [discountDrafts, setDiscountDrafts] = useState([]);
+  const [discountPercent, setDiscountPercent] = useState("");
+  const [discountType, setDiscountType] = useState("ongoing");
+  const [discountScope, setDiscountScope] = useState("all");
+  const [discountServiceTypeId, setDiscountServiceTypeId] = useState("");
+  const [discountPianoIndex, setDiscountPianoIndex] = useState("0");
   const [formData, setFormData] = useState(EMPTY_FORM);
 
   const [loadingData, setLoadingData] = useState(true);
@@ -295,17 +302,24 @@ function AppointmentModal({
     return () => { cancelled = true; };
   }, [appointment?.id]);
 
-  const pricingPreview = useMemo(() => formData.pianos.map((piano) => {
+  const pricingPreview = useMemo(() => formData.pianos.map((piano, pianoIndex) => {
     const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
     if (!service) return { service: null, ready: false, baseAmount: 0, finalAmount: 0, discounts: [] };
     const hours = piano.billable_hours === "" ? null : Number(piano.billable_hours);
     if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [] };
     const baseAmount = Math.round(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
-    const relevant = clientDiscounts.filter((discount) => {
-      if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
-      if (discount.discount_type === "ongoing") return true;
-      return (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (piano.id && discount.applies_to_appointment_piano_id === piano.id);
-    });
+    const relevant = [
+      ...clientDiscounts.filter((discount) => {
+        if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
+        if (discount.discount_type === "ongoing") return true;
+        return (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (piano.id && discount.applies_to_appointment_piano_id === piano.id);
+      }),
+      ...discountDrafts.filter((discount) => {
+        if (discount.service_type_id && discount.service_type_id !== service.id) return false;
+        if (discount.discount_type === "ongoing") return true;
+        return discount.scope === "piano" ? Number(discount.targetPianoIndex) === pianoIndex : true;
+      }),
+    ];
     const global = relevant.filter((discount) => discount.discount_type === "ongoing" && !discount.service_type_id);
     const scoped = relevant.filter((discount) => discount.discount_type === "ongoing" && discount.service_type_id === service.id);
     const oneTime = relevant.filter((discount) => discount.discount_type === "one_time");
@@ -317,7 +331,7 @@ function AppointmentModal({
       discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), percent: Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
     }
     return { service, ready: true, baseAmount, finalAmount: remaining, discounts };
-  }), [formData.pianos, serviceTypes, clientDiscounts, appointment?.id]);
+  }), [formData.pianos, serviceTypes, clientDiscounts, discountDrafts, appointment?.id]);
   const estimatedTotal = pricingPreview.reduce((total, item) => total + (item.ready ? item.finalAmount : 0), 0);
   const pricingReady = formData.pianos.filter((piano) => piano.piano_id).length > 0
     && formData.pianos.filter((piano) => piano.piano_id).every((piano) => {
@@ -338,6 +352,37 @@ function AppointmentModal({
         piano.client_id === formData.client_id
     );
   }, [allPianos, formData.client_id]);
+
+  function addDiscountDraft() {
+    const percent = Number(discountPercent);
+    if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+      setError("Enter a discount percentage greater than 0 and no more than 100.");
+      return;
+    }
+    if (discountScope === "service" && !discountServiceTypeId) {
+      setError("Choose a service for this discount.");
+      return;
+    }
+    if (discountType === "one_time" && discountScope === "piano" && !formData.pianos[Number(discountPianoIndex)]?.piano_id) {
+      setError("Choose a piano with a selected service for this one-time discount.");
+      return;
+    }
+    setError("");
+    setDiscountDrafts((previous) => [...previous, {
+      draftId: `discount-${Date.now()}-${previous.length}`,
+      discount_percent: percent,
+      discount_type: discountType,
+      service_type_id: discountScope === "service" ? discountServiceTypeId : null,
+      scope: discountType === "one_time" ? discountScope : (discountScope === "service" ? "service" : "all"),
+      targetPianoIndex: discountType === "one_time" && discountScope === "piano" ? Number(discountPianoIndex) : null,
+      is_active: true,
+    }]);
+    setDiscountPercent("");
+  }
+
+  function removeDiscountDraft(draftId) {
+    setDiscountDrafts((previous) => previous.filter((discount) => discount.draftId !== draftId));
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -697,6 +742,33 @@ function AppointmentModal({
         ? await updateAppointment(appointment.id, appointmentData)
         : await createAppointment(appointmentData);
       const savedPianos = savedAppointment?.appointment_pianos || [];
+
+      // Create any discounts added in this modal before calculating charges,
+      // so the saved appointment totals use the same discounts shown in the preview.
+      for (const discount of discountDrafts) {
+        const payload = {
+          client_id: formData.client_id,
+          discount_percent: discount.discount_percent,
+          discount_type: discount.discount_type,
+          service_type_id: discount.service_type_id || null,
+        };
+        if (discount.discount_type === "one_time") {
+          if (discount.scope === "piano") {
+            const targetFormPiano = formData.pianos[Number(discount.targetPianoIndex)];
+            const targetSavedPiano = savedPianos.find((row) =>
+              String(row.piano_id || row.piano?.id) === String(targetFormPiano?.piano_id)
+            );
+            if (!targetSavedPiano?.id) {
+              throw new Error("Could not match the selected piano to the saved appointment. Please save again.");
+            }
+            payload.applies_to_appointment_piano_id = targetSavedPiano.id;
+          } else {
+            payload.applies_to_appointment_id = savedAppointment.id;
+          }
+        }
+        await createClientDiscount(payload);
+      }
+
       const chargesToSave = formData.pianos.filter((piano) => piano.piano_id).map((piano) => {
         const savedPiano = savedPianos.find((row) => String(row.piano_id || row.piano?.id) === String(piano.piano_id));
         const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
@@ -1208,6 +1280,102 @@ function AppointmentModal({
                   </button>
                 </div>
               </div>
+
+              {/* Discounts */}
+              {formData.client_id && (
+                <div className="appointment-section appointment-discounts-section">
+                  <div className="appointment-section-header">
+                    <label>Discounts</label>
+                  </div>
+                  <p className="appointment-help-text">
+                    Existing client discounts are applied automatically. Add a new discount below to apply it to this appointment.
+                  </p>
+
+                  {clientDiscounts.filter((discount) => discount.is_active).length > 0 && (
+                    <div className="appointment-existing-discounts">
+                      <strong>Existing discounts</strong>
+                      {clientDiscounts.filter((discount) => discount.is_active).map((discount) => (
+                        <div className="appointment-discount-item" key={discount.id}>
+                          <span>
+                            {discount.discount_type === "one_time" ? "One-time" : "Ongoing"}
+                            {discount.service_type?.name ? ` · ${discount.service_type.name}` : " · All services"}
+                          </span>
+                          <strong>{Number(discount.discount_percent)}%</strong>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {discountDrafts.length > 0 && (
+                    <div className="appointment-pending-discounts">
+                      <strong>New discounts to save</strong>
+                      {discountDrafts.map((discount) => (
+                        <div className="appointment-discount-item" key={discount.draftId}>
+                          <span>
+                            {discount.discount_type === "one_time" ? "One-time" : "Ongoing"}
+                            {discount.scope === "piano"
+                              ? ` · Piano ${Number(discount.targetPianoIndex) + 1}`
+                              : discount.service_type_id
+                              ? ` · ${serviceTypes.find((service) => service.id === discount.service_type_id)?.name || "Selected service"}`
+                              : " · All services"}
+                            {" "}({Number(discount.discount_percent)}%)
+                          </span>
+                          <button type="button" className="appointment-remove-button" onClick={() => removeDiscountDraft(discount.draftId)}>Remove</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="appointment-discount-editor">
+                    <div className="appointment-form-row">
+                      <div className="appointment-form-field">
+                        <label htmlFor="appointment-discount-type">Discount type</label>
+                        <select id="appointment-discount-type" value={discountType} onChange={(event) => {
+                          setDiscountType(event.target.value);
+                          if (event.target.value === "ongoing" && discountScope === "piano") setDiscountScope("all");
+                        }}>
+                          <option value="ongoing">Ongoing client discount</option>
+                          <option value="one_time">One-time discount</option>
+                        </select>
+                      </div>
+                      <div className="appointment-form-field">
+                        <label htmlFor="appointment-discount-scope">Apply to</label>
+                        <select id="appointment-discount-scope" value={discountScope} onChange={(event) => setDiscountScope(event.target.value)}>
+                          <option value="all">All services</option>
+                          <option value="service">Selected service type</option>
+                          {discountType === "one_time" && <option value="piano">Specific piano on this appointment</option>}
+                        </select>
+                      </div>
+                      <div className="appointment-form-field appointment-discount-percent-field">
+                        <label htmlFor="appointment-discount-percent">Discount (%)</label>
+                        <input id="appointment-discount-percent" type="number" min="0.01" max="100" step="0.01" value={discountPercent} onChange={(event) => setDiscountPercent(event.target.value)} placeholder="e.g. 10" />
+                      </div>
+                    </div>
+                    {discountScope === "service" && (
+                      <div className="appointment-form-field">
+                        <label htmlFor="appointment-discount-service">Service type</label>
+                        <select id="appointment-discount-service" value={discountServiceTypeId} onChange={(event) => setDiscountServiceTypeId(event.target.value)}>
+                          <option value="">Select service</option>
+                          {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
+                        </select>
+                      </div>
+                    )}
+                    {discountType === "one_time" && discountScope === "piano" && (
+                      <div className="appointment-form-field">
+                        <label htmlFor="appointment-discount-piano">Piano / service</label>
+                        <select id="appointment-discount-piano" value={discountPianoIndex} onChange={(event) => setDiscountPianoIndex(event.target.value)}>
+                          {formData.pianos.map((piano, index) => (
+                            <option key={piano.id || `discount-piano-${index}`} value={index} disabled={!piano.piano_id}>
+                              Piano {index + 1}{piano.piano_id ? ` — ${allPianos.find((item) => String(item.id) === String(piano.piano_id))?.make || ""} ${allPianos.find((item) => String(item.id) === String(piano.piano_id))?.model || ""}` : " — select a piano first"}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    <button type="button" className="appointment-add-button" onClick={addDiscountDraft}>+ Add Discount</button>
+                  </div>
+                </div>
+              )}
 
               {/* Payment */}
               <div className="appointment-form-row">
