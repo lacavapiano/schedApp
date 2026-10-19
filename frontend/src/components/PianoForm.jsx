@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPiano, getClients, updatePiano } from "../services/api";
+import "../styles/ActionButtons.css";
 
 function PianoForm({
   piano = null,
@@ -238,6 +239,7 @@ function PianoForm({
           <div className="piano-form-actions">
             <button
               type="button"
+              className="action-button action-button--secondary"
               onClick={onClose}
             >
               Cancel
@@ -245,6 +247,7 @@ function PianoForm({
 
             <button
               type="submit"
+              className="action-button action-button--primary"
               disabled={saving}
             >
               {saving
