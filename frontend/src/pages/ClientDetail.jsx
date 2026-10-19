@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getClient } from "../services/api";
+import { getClient, getAppointments, deleteClient } from "../services/api";
 import AddClientModal from "../components/AddClientModal";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
@@ -15,6 +15,8 @@ function ClientDetail() {
   const [error, setError] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddPiano, setShowAddPiano] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const [deletingClient, setDeletingClient] = useState(false);
 
   async function loadClient() {
     try {
@@ -22,6 +24,35 @@ function ClientDetail() {
       setError("");
 
       const data = await getClient(id);
+
+      // Derive each piano's last-tuned date from completed tuning appointments.
+      try {
+        const appointments = await getAppointments();
+        const lastTunedByPiano = new Map();
+
+        appointments.forEach((appointment) => {
+          if (String(appointment.status || "").toLowerCase() !== "completed") return;
+          const appointmentDate = new Date(appointment.start_time);
+          if (Number.isNaN(appointmentDate.getTime())) return;
+
+          (appointment.appointment_pianos || []).forEach((item) => {
+            if (!item.piano_id || !/tun/i.test(item.service || "")) return;
+            const previous = lastTunedByPiano.get(String(item.piano_id));
+            if (!previous || appointmentDate > previous) {
+              lastTunedByPiano.set(String(item.piano_id), appointmentDate);
+            }
+          });
+        });
+
+        data.pianos = (data.pianos || []).map((piano) => ({
+          ...piano,
+          lastTunedAt: lastTunedByPiano.get(String(piano.id)) || null,
+        }));
+      } catch (appointmentError) {
+        console.error("Unable to load tuning history:", appointmentError);
+        data.pianos = (data.pianos || []).map((piano) => ({ ...piano, lastTunedAt: null }));
+      }
+
       setClient(data);
     } catch (error) {
       console.error(error);
@@ -39,6 +70,24 @@ function ClientDetail() {
   async function handlePianoSaved() {
     setShowAddPiano(false);
     await loadClient();
+  }
+
+  async function handleDeleteClient() {
+    const confirmed = window.confirm(
+      `Delete ${client.name}? This action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      setDeletingClient(true);
+      setDeleteError("");
+      await deleteClient(client.id);
+      navigate("/clients", { replace: true });
+    } catch (deleteRequestError) {
+      console.error(deleteRequestError);
+      setDeleteError(deleteRequestError.message || "Unable to delete client.");
+      setDeletingClient(false);
+    }
   }
 
   useEffect(() => {
@@ -128,13 +177,24 @@ function ClientDetail() {
             ← Back to Clients
           </button>
 
-          <button
-            className="client-detail-button"
-            onClick={() => setShowEditModal(true)}
-          >
-            Edit Client
-          </button>
+          <div className="client-detail-toolbar-actions">
+            <button
+              className="client-detail-button"
+              onClick={() => setShowEditModal(true)}
+            >
+              Edit Client
+            </button>
+            <button
+              className="client-detail-delete-button"
+              onClick={handleDeleteClient}
+              disabled={deletingClient}
+            >
+              {deletingClient ? "Deleting..." : "Delete Client"}
+            </button>
+          </div>
         </div>
+
+        {deleteError && <p className="client-detail-delete-error" role="alert">{deleteError}</p>}
 
         <div className="client-detail-header">
           <div>
@@ -416,6 +476,7 @@ function ClientDetail() {
                   <div className="client-piano-details">
                     {piano.type && <span>{piano.type}</span>}
                     {piano.location && <span>{piano.location}</span>}
+                    <span>Last tuned: {piano.lastTunedAt ? piano.lastTunedAt.toLocaleDateString() : "Not recorded"}</span>
                   </div>
                 </div>
               ))}
