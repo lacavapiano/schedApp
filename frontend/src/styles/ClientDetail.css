@@ -394,3 +394,103 @@
     width: 100%;
   }
 }
+
+
+/* Improve contrast for the client record in dark mode without changing global styles. */
+:root[data-theme="dark"] .client-detail-page,
+:root[data-theme="dark"] .client-detail-page p,
+:root[data-theme="dark"] .client-detail-page span,
+:root[data-theme="dark"] .client-detail-page strong,
+:root[data-theme="dark"] .client-detail-page h2,
+:root[data-theme="dark"] .client-detail-page h3,
+:root[data-theme="dark"] .client-detail-page h4,
+:root:not([data-theme="light"]) .client-detail-page,
+:root:not([data-theme="light"]) .client-detail-page p,
+:root:not([data-theme="light"]) .client-detail-page span,
+:root:not([data-theme="light"]) .client-detail-page strong,
+:root:not([data-theme="light"]) .client-detail-page h2,
+:root:not([data-theme="light"]) .client-detail-page h3,
+:root:not([data-theme="light"]) .client-detail-page h4 {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-label,
+:root[data-theme="dark"] .client-detail-page .client-detail-item-label,
+:root[data-theme="dark"] .client-detail-page .client-contact-relationship,
+:root[data-theme="dark"] .client-detail-page .client-detail-empty,
+:root[data-theme="dark"] .client-detail-page .client-piano-serial,
+:root[data-theme="dark"] .client-detail-page .client-piano-details,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-label,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-item-label,
+:root:not([data-theme="light"]) .client-detail-page .client-contact-relationship,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-empty,
+:root:not([data-theme="light"]) .client-detail-page .client-piano-serial,
+:root:not([data-theme="light"]) .client-detail-page .client-piano-details {
+  color: var(--text-secondary, #c0c6d0) !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-section,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-section {
+  background: var(--surface, #20232a) !important;
+  color: var(--text-primary, #f3f4f6) !important;
+  border-color: var(--border-color, #454b56) !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-list-item,
+:root[data-theme="dark"] .client-detail-page .client-contact-card,
+:root[data-theme="dark"] .client-detail-page .client-piano-row,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-list-item,
+:root:not([data-theme="light"]) .client-detail-page .client-contact-card,
+:root:not([data-theme="light"]) .client-detail-page .client-piano-row {
+  background: var(--surface-muted, #2b2f38) !important;
+  color: var(--text-primary, #f3f4f6) !important;
+  border-color: var(--border-color, #454b56) !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-piano-row:hover,
+:root[data-theme="dark"] .client-detail-page .client-detail-list-item:hover,
+:root:not([data-theme="light"]) .client-detail-page .client-piano-row:hover,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-list-item:hover {
+  background: var(--hover-bg, #343a46) !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-back-button,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-back-button {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-button,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-button {
+  background: #f3f4f6 !important;
+  color: #17191e !important;
+  border-color: #f3f4f6 !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-button:hover,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-button:hover {
+  background: #dbe0e7 !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-delete-button,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-delete-button {
+  color: #ffb4b4 !important;
+  border-color: #ff8a8a !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-delete-button:hover:not(:disabled),
+:root:not([data-theme="light"]) .client-detail-page .client-detail-delete-button:hover:not(:disabled) {
+  background: #3a2024 !important;
+}
+
+:root[data-theme="dark"] .client-detail-page .client-detail-delete-error,
+:root:not([data-theme="light"]) .client-detail-page .client-detail-delete-error {
+  color: #ffb4b4 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .client-detail-page .client-detail-section {
+    background: var(--surface, #20232a) !important;
+    color: var(--text-primary, #f3f4f6) !important;
+    border-color: var(--border-color, #454b56) !important;
+  }
+}
