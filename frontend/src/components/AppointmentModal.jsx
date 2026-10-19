@@ -1201,6 +1201,7 @@ function AppointmentModal({
                           const discountEditorKey = `${index}:${serviceIndex}`;
                           const selectedServiceId = selectedService?.id || serviceEntry.service_type_id;
                           const existingDiscounts = clientDiscounts.filter((discount) => discount.is_active && (!discount.service_type_id || discount.service_type_id === selectedServiceId) && (discount.discount_type === "ongoing" || (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (appointmentPiano.id && discount.applies_to_appointment_piano_id === appointmentPiano.id)));
+                          const appliedDiscounts = [...existingDiscounts, ...discountDrafts.filter((discount) => discount.is_active && (!discount.service_type_id || discount.service_type_id === selectedServiceId) && (discount.discount_type === "ongoing" || (discount.scope === "piano" && Number(discount.targetPianoIndex) === index)))];
                           const preview = pricingPreview[index]?.[serviceIndex];
                           return (
                             <div className="appointment-piano-service" key={`${appointmentPiano.id || index}-service-${serviceIndex}`}>
@@ -1281,9 +1282,9 @@ function AppointmentModal({
                                   </div>
                                 </div>
                               )}
-                              {existingDiscounts.length > 0 && (
+                              {appliedDiscounts.length > 0 && (
                                 <div className="appointment-applied-discounts">
-                                  {existingDiscounts.map((discount) => <span key={discount.id}>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>)}
+                                  {appliedDiscounts.map((discount) => <span key={discount.id || discount.draftId}>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>)}
                                 </div>
                               )}
                               {preview?.service && (
