@@ -681,3 +681,62 @@
     grid-column: span 2;
   }
 }
+
+
+/* Desktop piano cards: establish a predictable reading order. The piano
+   identity sits first, followed by a three-column detail grid that naturally
+   wraps tuning history onto a second row instead of squeezing five fields. */
+@media (min-width: 901px) {
+  .piano-panel {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 8px;
+    box-shadow: none;
+  }
+
+  .piano-panel:hover {
+    box-shadow: none;
+  }
+
+  .piano-panel-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .piano-panel-heading {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color, #e1e1e1);
+  }
+
+  .piano-panel-name {
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  .piano-panel-details {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 14px 22px;
+  }
+
+  .piano-panel-detail {
+    gap: 4px;
+  }
+
+  .piano-panel-label {
+    font-size: 10px;
+    letter-spacing: 0.045em;
+  }
+
+  .piano-panel-value,
+  .piano-panel-client-link {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .piano-panel-client-summary {
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+}
