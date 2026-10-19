@@ -6,6 +6,7 @@ function AddClientModal({
   onClose,
   onClientAdded,
   onSaved,
+  onDelete,
   client,
 }) {
   const [formData, setFormData] = useState({
@@ -1077,20 +1078,24 @@ function AddClientModal({
 
           {/* Modal Actions */}
           <div className="modal-actions">
-            <button
-              type="button"
-              className="modal-cancel"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
+            <div className="modal-primary-actions">
+              <button type="button" className="modal-cancel" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="modal-save">
+                {isEditing ? "Save Changes" : "Save Client"}
+              </button>
+            </div>
 
-            <button
-              type="submit"
-              className="modal-save"
-            >
-              {isEditing ? "Save Changes" : "Save Client"}
-            </button>
+            {isEditing && onDelete && (
+              <button
+                type="button"
+                className="modal-delete-client"
+                onClick={() => onDelete(client)}
+              >
+                Delete Client
+              </button>
+            )}
           </div>
         </form>
       </div>
