@@ -197,7 +197,7 @@ function PianoDetail() {
           <section className="piano-detail-section record-detail-section">
             <h3>Location & Ownership</h3>
             <div className="piano-detail-fields">
-              <div>
+              <div className="piano-detail-owner">
                 <span className="piano-detail-label">Client</span>
                 {piano.client ? (
                   <button
