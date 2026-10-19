@@ -85,7 +85,7 @@ function PianoDetail() {
       let history = [];
 
       try {
-        const [appointmentResult, serviceTypeResult] = await Promise.allSettled([getAppointments(), getServiceTypes()]);
+        const [appointmentResult, serviceTypeResult] = await Promise.allSettled([getAppointments(), getServiceTypes({ includeInactive: true })]);
         if (appointmentResult.status === "rejected") throw appointmentResult.reason;
         const appointments = appointmentResult.value;
         const serviceTypes = serviceTypeResult.status === "fulfilled" ? serviceTypeResult.value : [];
