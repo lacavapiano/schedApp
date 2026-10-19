@@ -493,11 +493,30 @@
 }
 
 
-/* Align the form checkbox with the first line of its label text. */
+/* Keep the checkbox and its copy side-by-side on desktop, with comfortable spacing. */
 .service-tuning-checkbox {
+  display: flex;
+  flex-direction: row;
   align-items: flex-start;
+  gap: 12px;
+}
+
+.service-tuning-checkbox > span {
+  min-width: 0;
+  gap: 4px;
 }
 
 .service-tuning-checkbox input {
   margin-top: 2px;
+}
+
+@media (max-width: 600px) {
+  .service-tuning-checkbox {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .service-tuning-checkbox input {
+    margin-top: 0;
+  }
 }
