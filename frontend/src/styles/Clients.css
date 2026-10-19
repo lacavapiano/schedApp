@@ -42,18 +42,7 @@
   border-color: #555;
 }
 
-.add-client-button {
-  margin-left: auto;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
-}
 
-.add-client-button:hover {
-  opacity: 0.85;
-}
 
 .clients-loading {
   padding: 40px;
@@ -65,5 +54,5 @@
   .clients-header { align-items: flex-start; flex-wrap: wrap; gap: 8px; }
   .clients-toolbar { flex-wrap: wrap; align-items: stretch; gap: 10px; }
   .client-search { flex: 1 1 100%; width: 100%; max-width: none; }
-  .add-client-button { margin-left: 0; min-height: 42px; }
+
 }
