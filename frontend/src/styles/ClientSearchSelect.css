@@ -92,3 +92,50 @@
 .client-search-create:hover {
   background: #f5f7fa;
 }
+
+/* Keep the client picker options visually grouped as one dropdown, not separate buttons. */
+.client-search-dropdown .client-search-option,
+.client-search-dropdown .client-search-create {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0 !important;
+  outline: 0;
+  box-shadow: none !important;
+  transform: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.client-search-dropdown .client-search-option {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  border-bottom: 1px solid #eee !important;
+}
+
+.client-search-dropdown .client-search-option:last-of-type {
+  border-bottom: 0 !important;
+}
+
+.client-search-dropdown .client-search-option:hover,
+.client-search-dropdown .client-search-option.selected,
+.client-search-dropdown .client-search-create:hover {
+  background: #f5f7fa !important;
+}
+
+.client-search-dropdown .client-search-create {
+  border-top: 1px solid #eee !important;
+  color: #2563eb;
+}
+
+:root[data-theme="dark"] .client-search-dropdown .client-search-option,
+:root[data-theme="dark"] .client-search-dropdown .client-search-create {
+  color: #f3f4f6;
+  border-color: #3c424d !important;
+}
+
+:root[data-theme="dark"] .client-search-dropdown .client-search-option:hover,
+:root[data-theme="dark"] .client-search-dropdown .client-search-option.selected,
+:root[data-theme="dark"] .client-search-dropdown .client-search-create:hover {
+  background: #343a46 !important;
+}
