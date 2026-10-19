@@ -406,6 +406,9 @@ function AppointmentModal({
       client_address_id: "",
       pianos: [],
     }));
+    setDiscountDrafts([]);
+    setDiscountPercent("");
+    setError("");
   }
 
   function handlePianoChange(
