@@ -51,12 +51,6 @@ function isTuningService(item, serviceTypes = []) {
   return /tuning|tune|concert|pitch\s*correction|standard\s+service\s+visit/i.test(serviceName);
 }
 
-function formatCurrency(value) {
-  const amount = Number(value);
-  if (value === null || value === undefined || value === "" || !Number.isFinite(amount)) return "Not recorded";
-  return amount.toLocaleString(undefined, { style: "currency", currency: "USD" });
-}
-
 function getNextTuningDate(lastTunedAt, tuningPeriod) {
   if (!lastTunedAt || !Number(tuningPeriod) || Number(tuningPeriod) <= 0) return null;
   const nextDate = new Date(lastTunedAt);
@@ -412,7 +406,6 @@ function PianoDetail() {
           {serviceHistory.length ? (
             <div className="piano-service-history-list">
               {serviceHistory.map(({ appointment, item, appointmentDate, charges = [] }) => {
-                const billedTotal = charges.reduce((sum, charge) => sum + Number(charge.final_amount || 0), 0);
                 const serviceName = getServiceName(item) || "Service";
                 const notes = item.notes || appointment.notes;
                 return (
@@ -437,19 +430,7 @@ function PianoDetail() {
 
                     <div className="piano-service-history-billing">
                       <div>
-                        <span className="piano-detail-label">Billed</span>
-                        <strong>{charges.length ? formatCurrency(billedTotal) : "No charge details"}</strong>
-                      </div>
-                      <div>
-                        <span className="piano-detail-label">Payment received</span>
-                        <strong>{formatCurrency(appointment.payment)}</strong>
-                      </div>
-                      <div>
-                        <span className="piano-detail-label">Payment type</span>
-                        <strong>{appointment.payment_type || "—"}</strong>
-                      </div>
-                      <div>
-                        <span className="piano-detail-label">Invoice</span>
+                        <span className="piano-detail-label">Invoice #</span>
                         <strong>{appointment.invoice || "—"}</strong>
                       </div>
                     </div>
