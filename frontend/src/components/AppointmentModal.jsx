@@ -1323,7 +1323,7 @@ function AppointmentModal({
 
               {/* Actions */}
               <div className="appointment-modal-actions">
-                {isEditing && (
+                {isEditing && (appointment.status || "scheduled") === "scheduled" && (
                   <button
                     type="button"
                     className="appointment-delete-button action-button action-button--danger"
