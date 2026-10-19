@@ -667,3 +667,112 @@
     border-color: var(--text-primary, #f1f1f1);
   }
 }
+
+
+/* Compact piano summaries with maintenance and client context. */
+.piano-panel-grid {
+  gap: 8px;
+}
+
+.piano-panel {
+  padding: 10px 12px;
+  gap: 12px;
+  border-radius: 8px;
+}
+
+.piano-panel-main {
+  grid-template-columns: minmax(145px, 0.8fr) minmax(0, 3fr);
+  gap: 14px;
+}
+
+.piano-panel-name {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.piano-panel-details {
+  grid-template-columns: minmax(70px, 0.65fr) minmax(75px, 0.7fr) minmax(130px, 1.5fr) minmax(90px, 0.8fr) minmax(100px, 0.9fr);
+  gap: 8px 12px;
+}
+
+.piano-panel-client-link {
+  display: block;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary, #212529);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.piano-panel-client-link:hover {
+  text-decoration: underline;
+}
+
+.piano-panel-client-summary {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-secondary, #6c757d);
+  font-size: 11px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.piano-panel .piano-delete-button {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+:root[data-theme="dark"] .piano-panel-client-link {
+  color: var(--text-primary, #f1f1f1);
+}
+
+:root[data-theme="dark"] .piano-panel-client-summary {
+  color: var(--text-secondary, #b8bec8);
+}
+
+@media (max-width: 1100px) {
+  .piano-panel-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .piano-panel-details {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .piano-panel {
+    padding: 10px;
+  }
+
+  .piano-panel-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+  }
+
+  .piano-panel-client {
+    grid-column: 1 / -1;
+  }
+
+  .piano-panel-actions {
+    align-self: start;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .piano-panel-client-link {
+    color: var(--text-primary, #f1f1f1);
+  }
+
+  :root:not([data-theme="light"]) .piano-panel-client-summary {
+    color: var(--text-secondary, #b8bec8);
+  }
+}
