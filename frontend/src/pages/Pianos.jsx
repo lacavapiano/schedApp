@@ -52,6 +52,8 @@ function Pianos() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("client");
+  const [sortDirection, setSortDirection] = useState("asc");
 
   async function loadPianos() {
     try {
@@ -125,6 +127,39 @@ function Pianos() {
     );
   });
 
+  const sortedPianos = [...filteredPianos].sort((a, b) => {
+    let comparison = 0;
+
+    if (sortBy === "client") {
+      comparison = (a.client?.name || "Unassigned").localeCompare(
+        b.client?.name || "Unassigned",
+        undefined,
+        { sensitivity: "base" }
+      );
+    } else {
+      const field = sortBy === "lastTuned" ? "lastTunedAt" : "nextTuningDue";
+      const aTime = a[field] ? new Date(a[field]).getTime() : null;
+      const bTime = b[field] ? new Date(b[field]).getTime() : null;
+
+      // Keep missing dates at the bottom regardless of sort direction.
+      if (aTime === null && bTime === null) comparison = 0;
+      else if (aTime === null) comparison = 1;
+      else if (bTime === null) comparison = -1;
+      else comparison = aTime - bTime;
+    }
+
+    return sortDirection === "asc" ? comparison : -comparison;
+  });
+
+  function handleSort(field) {
+    if (sortBy === field) {
+      setSortDirection((direction) => direction === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortDirection("asc");
+    }
+  }
+
   if (loading) {
     return (
       <PageLayout title="Pianos">
@@ -154,9 +189,33 @@ function Pianos() {
           </button>
         </div>
 
-        {filteredPianos.length > 0 ? (
+        <div className="piano-list-sort" role="group" aria-label="Sort pianos">
+          <span className="piano-list-sort-label">Sort by</span>
+          {[
+            { value: "client", label: "Client" },
+            { value: "lastTuned", label: "Last tuned" },
+            { value: "nextTuningDue", label: "Next tuning due" },
+          ].map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`piano-sort-button${sortBy === option.value ? " is-active" : ""}`}
+              aria-pressed={sortBy === option.value}
+              onClick={() => handleSort(option.value)}
+            >
+              {option.label}
+              {sortBy === option.value && (
+                <span className="piano-sort-direction" aria-label={sortDirection === "asc" ? "ascending" : "descending"}>
+                  {sortDirection === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {sortedPianos.length > 0 ? (
           <section className="piano-panel-grid" aria-label="Pianos">
-            {filteredPianos.map((piano) => (
+            {sortedPianos.map((piano) => (
               <article
                 className="piano-panel"
                 key={piano.id}
