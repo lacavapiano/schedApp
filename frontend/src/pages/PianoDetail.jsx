@@ -6,6 +6,7 @@ import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
 import "../styles/ActionButtons.css";
 import "../styles/RecordDetailLayout.css";
+import "../styles/PianoClimateHistory.css";
 
 function formatDate(date) {
   if (!date) return "Not recorded";
@@ -61,6 +62,88 @@ function getNextTuningDate(lastTunedAt, tuningPeriod) {
   const nextDate = new Date(lastTunedAt);
   nextDate.setMonth(nextDate.getMonth() + Number(tuningPeriod));
   return nextDate;
+}
+
+
+function PianoClimateHistory({ history }) {
+  const records = [...history]
+    .filter(({ item, appointmentDate }) =>
+      appointmentDate &&
+      ((item.temp !== null && item.temp !== undefined && item.temp !== "" && Number.isFinite(Number(item.temp))) ||
+       (item.hum !== null && item.hum !== undefined && item.hum !== "" && Number.isFinite(Number(item.hum))))
+    )
+    .sort((a, b) => a.appointmentDate - b.appointmentDate);
+
+  if (!records.length) {
+    return (
+      <section className="piano-climate-history piano-detail-section" aria-labelledby="piano-climate-history-title">
+        <div className="piano-climate-heading">
+          <div>
+            <h3 id="piano-climate-history-title">Temperature &amp; Humidity</h3>
+            <p>Measurements recorded during completed service visits.</p>
+          </div>
+        </div>
+        <div className="piano-climate-empty">No temperature or humidity readings have been recorded yet.</div>
+      </section>
+    );
+  }
+
+  const width = 800;
+  const height = 260;
+  const left = 48;
+  const right = 48;
+  const top = 24;
+  const bottom = 48;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const temps = records.map(({ item }) => Number(item.temp)).filter(Number.isFinite);
+  const hums = records.map(({ item }) => Number(item.hum)).filter(Number.isFinite);
+  const tempMin = temps.length ? Math.floor(Math.min(...temps) - 2) : 0;
+  const tempMax = temps.length ? Math.ceil(Math.max(...temps) + 2) : 1;
+  const humMin = hums.length ? Math.max(0, Math.floor(Math.min(...hums) - 5)) : 0;
+  const humMax = hums.length ? Math.min(100, Math.ceil(Math.max(...hums) + 5)) : 1;
+  const x = (index) => left + (records.length < 2 ? plotWidth / 2 : index * plotWidth / (records.length - 1));
+  const yTemp = (value) => top + plotHeight - ((value - tempMin) / Math.max(1, tempMax - tempMin)) * plotHeight;
+  const yHum = (value) => top + plotHeight - ((value - humMin) / Math.max(1, humMax - humMin)) * plotHeight;
+  const tempPoints = records.map(({ item }, index) => ({ x: x(index), y: yTemp(Number(item.temp)), value: Number(item.temp) })).filter((point) => Number.isFinite(point.value));
+  const humPoints = records.map(({ item }, index) => ({ x: x(index), y: yHum(Number(item.hum)), value: Number(item.hum) })).filter((point) => Number.isFinite(point.value));
+  const pathFor = (points) => points.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ");
+  const labelIndexes = [...new Set([0, Math.floor((records.length - 1) / 3), Math.floor(2 * (records.length - 1) / 3), records.length - 1])];
+
+  return (
+    <section className="piano-climate-history piano-detail-section" aria-labelledby="piano-climate-history-title">
+      <div className="piano-climate-heading">
+        <div>
+          <h3 id="piano-climate-history-title">Temperature &amp; Humidity</h3>
+          <p>Recorded conditions across completed service visits, oldest to newest.</p>
+        </div>
+        <span className="piano-climate-count">{records.length} {records.length === 1 ? "reading" : "readings"}</span>
+      </div>
+      <div className="piano-climate-legend">
+        <span><i className="piano-climate-key piano-climate-key--temp" /> Temperature (°)</span>
+        <span><i className="piano-climate-key piano-climate-key--hum" /> Humidity (%)</span>
+      </div>
+      <div className="piano-climate-chart-wrap">
+        <svg className="piano-climate-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Temperature and humidity readings over time">
+          {[0, 1, 2, 3].map((tick) => {
+            const y = top + (plotHeight * tick) / 3;
+            const tempLabel = Math.round(tempMax - ((tempMax - tempMin) * tick) / 3);
+            const humLabel = Math.round(humMax - ((humMax - humMin) * tick) / 3);
+            return <g key={tick}>
+              <line x1={left} x2={width - right} y1={y} y2={y} className="piano-climate-gridline" />
+              <text x={left - 9} y={y + 4} textAnchor="end" className="piano-climate-axis-label">{temps.length ? tempLabel : "—"}</text>
+              <text x={width - right + 9} y={y + 4} textAnchor="start" className="piano-climate-axis-label">{hums.length ? humLabel : "—"}</text>
+            </g>;
+          })}
+          {tempPoints.length > 0 && <path d={pathFor(tempPoints)} className="piano-climate-line piano-climate-line--temp" />}
+          {humPoints.length > 0 && <path d={pathFor(humPoints)} className="piano-climate-line piano-climate-line--hum" />}
+          {tempPoints.map((point, index) => <circle key={`t-${index}`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--temp"><title>{point.value}°</title></circle>)}
+          {humPoints.map((point, index) => <circle key={`h-${index}`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--hum"><title>{point.value}%</title></circle>)}
+          {labelIndexes.map((index) => <text key={index} x={x(index)} y={height - 17} textAnchor={index === 0 ? "start" : index === records.length - 1 ? "end" : "middle"} className="piano-climate-date-label">{formatDate(records[index].appointmentDate)}</text>)}
+        </svg>
+      </div>
+    </section>
+  );
 }
 
 function PianoDetail() {
@@ -298,6 +381,8 @@ function PianoDetail() {
             </div>
           </section>
         </div>
+
+        <PianoClimateHistory history={serviceHistory} />
 
         <section className="piano-detail-section piano-service-history-section record-detail-section" aria-labelledby="piano-service-history-title">
           <div className="piano-service-history-heading">
