@@ -453,3 +453,71 @@
     max-width: none;
   }
 }
+
+
+/* Appointment modal discount editor */
+.appointment-discounts-section .appointment-help-text {
+  margin-top: -2px;
+  margin-bottom: 12px;
+}
+.appointment-existing-discounts,
+.appointment-pending-discounts {
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #dedede);
+  border-radius: 7px;
+  background: var(--surface-muted, #f7f7f7);
+  color: var(--text-primary, #222);
+}
+.appointment-existing-discounts > strong,
+.appointment-pending-discounts > strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.appointment-discount-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.appointment-discount-item + .appointment-discount-item {
+  border-top: 1px solid var(--border-color, #dedede);
+}
+.appointment-discount-item > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.appointment-discount-editor {
+  padding: 12px;
+  border: 1px solid var(--border-color, #dedede);
+  border-radius: 7px;
+}
+.appointment-discount-editor .appointment-form-row {
+  align-items: flex-start;
+}
+.appointment-discount-percent-field {
+  flex: 0.65 1 100px;
+  min-width: 100px;
+}
+:root[data-theme="dark"] .appointment-existing-discounts,
+:root[data-theme="dark"] .appointment-pending-discounts,
+:root[data-theme="dark"] .appointment-discount-editor {
+  background: var(--surface-muted, #2b2f38);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #484d58);
+}
+:root[data-theme="dark"] .appointment-discount-item + .appointment-discount-item {
+  border-color: var(--border-color, #484d58);
+}
+@media (max-width: 700px) {
+  .appointment-discount-editor .appointment-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .appointment-discount-percent-field {
+    min-width: 0;
+  }
+}
