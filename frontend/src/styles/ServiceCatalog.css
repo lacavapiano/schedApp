@@ -491,3 +491,13 @@
     transition: none;
   }
 }
+
+
+/* Align the form checkbox with the first line of its label text. */
+.service-tuning-checkbox {
+  align-items: flex-start;
+}
+
+.service-tuning-checkbox input {
+  margin-top: 2px;
+}
