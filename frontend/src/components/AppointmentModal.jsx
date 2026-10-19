@@ -9,6 +9,7 @@ import {
   getServiceTypes,
   getClientDiscounts,
   createClientDiscount,
+  updateClientDiscount,
   getAppointmentCharges,
   saveAppointmentCharges,
 } from "../services/api";
@@ -140,6 +141,9 @@ function AppointmentModal({
   const [discountDrafts, setDiscountDrafts] = useState([]);
   const [discountPercent, setDiscountPercent] = useState("");
   const [discountType, setDiscountType] = useState("ongoing");
+  const [editingDiscountKey, setEditingDiscountKey] = useState(null);
+  const [editingDiscountPercent, setEditingDiscountPercent] = useState("");
+  const [savingDiscountEdit, setSavingDiscountEdit] = useState(false);
   const [activeDiscountPianoIndex, setActiveDiscountPianoIndex] = useState(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
 
@@ -1284,7 +1288,47 @@ function AppointmentModal({
                               )}
                               {appliedDiscounts.length > 0 && (
                                 <div className="appointment-applied-discounts">
-                                  {appliedDiscounts.map((discount) => <span key={discount.id || discount.draftId}>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>)}
+                                  {appliedDiscounts.map((discount) => {
+                                      const discountKey = String(discount.id || discount.draftId);
+                                      const isEditingDiscount = editingDiscountKey === discountKey;
+                                      return (
+                                        <div className="appointment-applied-discount-item" key={discountKey}>
+                                          <span>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>
+                                          {isEditingDiscount ? (
+                                            <div className="appointment-edit-discount-controls">
+                                              <input aria-label="Discount percentage" type="number" min="0.01" max="100" step="0.01" value={editingDiscountPercent} onChange={(event) => setEditingDiscountPercent(event.target.value)} />
+                                              <button type="button" className="appointment-add-button" disabled={savingDiscountEdit} onClick={async () => {
+                                                const percent = Number(editingDiscountPercent);
+                                                if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+                                                  setError("Enter a discount percentage greater than 0 and no more than 100.");
+                                                  return;
+                                                }
+                                                setSavingDiscountEdit(true);
+                                                setError("");
+                                                try {
+                                                  if (discount.draftId) {
+                                                    setDiscountDrafts((previous) => previous.map((item) => item.draftId === discount.draftId ? { ...item, discount_percent: percent } : item));
+                                                  } else {
+                                                    await updateClientDiscount(discount.id, { discount_percent: percent });
+                                                    const refreshed = await getClientDiscounts(formData.client_id);
+                                                    setClientDiscounts(refreshed || []);
+                                                  }
+                                                  setEditingDiscountKey(null);
+                                                  setEditingDiscountPercent("");
+                                                } catch (err) {
+                                                  setError(err.message || "Failed to update discount.");
+                                                } finally {
+                                                  setSavingDiscountEdit(false);
+                                                }
+                                              }}>{savingDiscountEdit ? "Saving…" : "Save"}</button>
+                                              <button type="button" className="appointment-remove-button" disabled={savingDiscountEdit} onClick={() => { setEditingDiscountKey(null); setEditingDiscountPercent(""); }}>Cancel</button>
+                                            </div>
+                                          ) : (
+                                            <button type="button" className="appointment-remove-button appointment-edit-discount-button" onClick={() => { setEditingDiscountKey(discountKey); setEditingDiscountPercent(String(discount.discount_percent)); setError(""); }}>Edit</button>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
                                 </div>
                               )}
                               {preview?.service && (
