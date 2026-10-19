@@ -1,34 +1,28 @@
 .client-discounts-section {
-  margin-top: 24px;
-}
-
-.client-discounts-header,
-.client-discounts-list-heading,
-.client-discount-form-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  margin-top: 0;
 }
 
 .client-discounts-header {
-  margin-bottom: 18px;
+  margin: 0 0 8px;
 }
 
-.client-discounts-header h3,
-.client-discount-form-heading h4,
-.client-discounts-list-heading h4 {
-  margin: 0 0 6px;
-  color: var(--text-primary, #222);
-}
-
-.client-discounts-header p,
-.client-discount-form-heading p {
-  max-width: 680px;
+.client-discounts-header h2 {
   margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.client-discounts-description {
+  margin: 0 0 12px;
   color: var(--text-secondary, #666);
   font-size: 13px;
   line-height: 1.5;
+}
+
+.client-discounts-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
 }
 
 .client-discounts-inactive-toggle {
@@ -36,7 +30,7 @@
   align-items: center;
   gap: 7px;
   flex-shrink: 0;
-  color: var(--text-secondary, #555);
+  color: var(--text-secondary, #666);
   font-size: 13px;
 }
 
@@ -44,37 +38,109 @@
   accent-color: var(--text-primary, #222);
 }
 
+.client-discount-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  background: rgb(0 0 0 / 55%);
+}
+
+.client-discount-modal {
+  width: min(100%, 620px);
+  max-height: min(90vh, 820px);
+  overflow-y: auto;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #222);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 24%);
+}
+
+.client-discount-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #ddd);
+  background: var(--surface, #fff);
+}
+
+.client-discount-modal-header h3 {
+  margin: 0;
+  color: var(--text-primary, #222);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.client-discount-modal-close {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #222);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .client-discount-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 18px;
-  border: 1px solid var(--border-color, #ddd);
-  border-radius: 8px;
-  background: var(--surface-secondary, #fafafa);
+  padding: 20px;
 }
 
 .client-discount-form-heading {
+  display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 5px;
+}
+
+.client-discount-form-heading h4 {
+  margin: 0;
+  color: var(--text-primary, #222);
+  font-size: 15px;
+}
+
+.client-discount-form-heading p {
+  margin: 0;
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .client-discount-fields {
   display: grid;
-  grid-template-columns: minmax(120px, 0.7fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 0.75fr) repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
 .client-discount-form .settings-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
   align-items: stretch;
   min-width: 0;
 }
 
 .client-discount-form .settings-field > label {
   color: var(--text-primary, #444);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .client-discount-form input:not([type="checkbox"]),
@@ -86,7 +152,7 @@
   box-sizing: border-box;
   border: 1px solid var(--border-color, #ccc);
   border-radius: 6px;
-  background: var(--surface-primary, #fff);
+  background: var(--surface, #fff);
   color: var(--text-primary, #222);
   font: inherit;
   font-size: 14px;
@@ -99,13 +165,13 @@
 }
 
 .client-discount-target-field {
-  align-items: stretch;
   max-width: 100%;
 }
 
 .client-discount-help {
   color: var(--text-secondary, #666);
   font-size: 12px;
+  line-height: 1.45;
 }
 
 .client-discount-form-actions,
@@ -116,37 +182,20 @@
   gap: 8px;
 }
 
-.client-discount-form .settings-button,
-.client-discount-form .settings-secondary-button,
-.client-discount-actions .settings-secondary-button {
-  min-height: 36px;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color, #ccc);
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.client-discount-form .settings-button {
-  border-color: #222;
-  background: #222;
-  color: #fff;
-}
-
-.client-discount-form .settings-secondary-button,
-.client-discount-actions .settings-secondary-button {
-  background: var(--surface-primary, #fff);
-  color: var(--text-primary, #333);
+.client-discount-form-actions {
+  justify-content: flex-end;
+  padding-top: 4px;
 }
 
 .client-discount-form button:disabled,
-.client-discount-actions button:disabled {
+.client-discount-actions button:disabled,
+.client-discount-modal-close:disabled {
   cursor: wait;
   opacity: 0.6;
 }
 
 .client-discounts-message {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   padding: 10px 12px;
   border: 1px solid var(--border-color, #ddd);
   border-radius: 6px;
@@ -160,13 +209,18 @@
 }
 
 .client-discounts-list-heading {
+  display: flex;
   align-items: center;
-  margin: 22px 0 12px;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 10px;
 }
 
 .client-discounts-list-heading h4 {
   margin: 0;
-  font-size: 15px;
+  color: var(--text-primary, #222);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .client-discounts-list-heading > span {
@@ -177,7 +231,7 @@
 .client-discounts-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .client-discount-row {
@@ -185,10 +239,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 14px;
+  padding: 12px 14px;
   border: 1px solid var(--border-color, #ddd);
   border-radius: 7px;
-  background: var(--surface-primary, #fff);
+  background: var(--surface, #fff);
 }
 
 .client-discount-row-inactive {
@@ -225,28 +279,72 @@
 
 .client-discounts-empty {
   margin: 0;
-  padding: 14px 0;
+  padding: 12px 0;
   color: var(--text-secondary, #666);
   font-size: 13px;
 }
 
+:root[data-theme="dark"] .client-discount-modal,
+:root[data-theme="dark"] .client-discount-modal-header,
+:root[data-theme="dark"] .client-discount-modal-close {
+  background: var(--surface, #20232a);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-discount-form .settings-field > label,
+:root[data-theme="dark"] .client-discount-form-heading h4,
+:root[data-theme="dark"] .client-discount-modal-header h3,
+:root[data-theme="dark"] .client-discounts-list-heading h4,
+:root[data-theme="dark"] .client-discount-main strong,
+:root[data-theme="dark"] .client-discount-main span {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-discount-form input:not([type="checkbox"]),
+:root[data-theme="dark"] .client-discount-form select {
+  background: var(--surface-muted, #2b2f38);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-discount-row {
+  background: var(--surface-muted, #2b2f38);
+  border-color: var(--border-color, #454b56);
+}
+
 @media (max-width: 680px) {
-  .client-discounts-header,
-  .client-discount-row {
-    flex-direction: column;
-    align-items: stretch;
+  .client-discounts-header {
+    align-items: center;
   }
 
-  .client-discounts-inactive-toggle {
-    align-self: flex-start;
+  .client-discounts-header .action-button {
+    flex-shrink: 0;
   }
 
   .client-discount-fields {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .client-discount-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .client-discount-modal {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .client-discount-modal-header,
   .client-discount-form {
-    padding: 14px;
+    padding: 16px;
+  }
+
+  .client-discount-row {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .client-discount-actions {
