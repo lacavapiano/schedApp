@@ -145,16 +145,16 @@ function PianoDetail() {
   return (
     <PageLayout title="Piano Details">
       <div className="piano-detail-page">
-        <div className="piano-detail-toolbar detail-action-toolbar">
-          <button className="piano-back-button action-button action-button--quiet" onClick={() => navigate("/pianos")}>
+        <div className="piano-detail-toolbar">
+          <button className="action-button action-button--quiet" onClick={() => navigate("/pianos")}>
             ← Back to Pianos
           </button>
-          <div className="detail-action-toolbar-actions">
-            <button className="piano-edit-button action-button action-button--primary" onClick={() => setShowEditForm(true)}>
+          <div className="action-button-group">
+            <button className="action-button action-button--primary" onClick={() => setShowEditForm(true)}>
               Edit Piano
             </button>
             <button
-              className="detail-action-delete-button action-button action-button--danger"
+              className="action-button action-button--danger"
               onClick={handleDeletePiano}
               disabled={deletingPiano}
             >
@@ -163,7 +163,7 @@ function PianoDetail() {
           </div>
         </div>
 
-        {deleteError && <p className="detail-action-delete-error action-button-error" role="alert">{deleteError}</p>}
+        {deleteError && <p className="action-button-error" role="alert">{deleteError}</p>}
 
         <div className="piano-detail-header">
           <h2>{[piano.make, piano.model].filter(Boolean).join(" ") || "Piano"}</h2>
