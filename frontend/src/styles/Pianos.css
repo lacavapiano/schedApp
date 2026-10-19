@@ -654,3 +654,30 @@
     color: var(--text-secondary, #b8bec8) !important;
   }
 }
+
+
+/* Desktop list panels: separate piano identity from the supporting details
+   so the five fields don't compete for space in one crowded row. */
+@media (min-width: 901px) {
+  .piano-panel {
+    padding: 12px 14px;
+  }
+
+  .piano-panel-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .piano-panel-heading {
+    gap: 8px;
+  }
+
+  .piano-panel-details {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 14px;
+  }
+
+  .piano-panel-client {
+    grid-column: span 2;
+  }
+}
