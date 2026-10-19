@@ -359,10 +359,6 @@ export async function saveAppointmentCharges(req, res) {
     if (submittedIds.some((id) => !id || !appointmentPianoIds.has(id))) {
       return res.status(400).json({ error: "Every priced service must belong to this appointment" });
     }
-    if (new Set(submittedIds).size !== submittedIds.length) {
-      return res.status(400).json({ error: "Each appointment service can only be priced once" });
-    }
-
     const serviceIds = [...new Set(charges.map((charge) => charge.service_type_id).filter(Boolean))];
     const { data: serviceRows, error: serviceError } = serviceIds.length
       ? await supabase.from("service_types")
