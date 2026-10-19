@@ -11,6 +11,7 @@ function Dashboard() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingAppointment, setEditingAppointment] = useState(null);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [showCancelled, setShowCancelled] = useState(false);
   const [completedVisibleCount, setCompletedVisibleCount] = useState(10);
 
@@ -46,18 +47,27 @@ function Dashboard() {
 
   function handleAppointmentClick(appointment) {
     setEditingAppointment(appointment);
+    setShowAppointmentModal(true);
+  }
+
+  function handleNewAppointment() {
+    setEditingAppointment(null);
+    setShowAppointmentModal(true);
   }
 
   function handleCloseAppointmentModal() {
+    setShowAppointmentModal(false);
     setEditingAppointment(null);
   }
 
   async function handleAppointmentSaved() {
+    setShowAppointmentModal(false);
     setEditingAppointment(null);
     await loadAppointments();
   }
 
   async function handleAppointmentDeleted() {
+    setShowAppointmentModal(false);
     setEditingAppointment(null);
     await loadAppointments();
   }
@@ -75,6 +85,16 @@ function Dashboard() {
   return (
     <PageLayout title="Dashboard">
       <div className="dashboard">
+        <div className="dashboard-toolbar">
+          <button
+            type="button"
+            className="dashboard-new-appointment-button"
+            onClick={handleNewAppointment}
+          >
+            + New Appointment
+          </button>
+        </div>
+
         <section className="dashboard-section">
           <div className="dashboard-section-header">
             <h2>Upcoming</h2>
@@ -152,7 +172,7 @@ function Dashboard() {
         </section>
       </div>
 
-      {editingAppointment && (
+      {showAppointmentModal && (
         <AppointmentModal
           appointment={editingAppointment}
           onClose={handleCloseAppointmentModal}
