@@ -221,7 +221,7 @@ function ClientDetail() {
             </div>
           </section>
 
-          <section className="client-detail-section">
+          <section className="client-detail-section record-detail-section">
             <h3>Address</h3>
 
             {primaryAddress ? (
@@ -257,7 +257,7 @@ function ClientDetail() {
         </div>
 
         {client.client_emails?.length > 1 && (
-          <section className="client-detail-section">
+          <section className="client-detail-section record-detail-section">
             <h3>Email Addresses</h3>
 
             <div className="client-detail-list">
@@ -286,7 +286,7 @@ function ClientDetail() {
         )}
 
         {client.client_phones?.length > 1 && (
-          <section className="client-detail-section">
+          <section className="client-detail-section record-detail-section">
             <h3>Phone Numbers</h3>
 
             <div className="client-detail-list">
@@ -315,7 +315,7 @@ function ClientDetail() {
         )}
 
         {client.client_addresses?.length > 1 && (
-          <section className="client-detail-section">
+          <section className="client-detail-section record-detail-section">
             <h3>Addresses</h3>
 
             <div className="client-detail-list">
@@ -363,7 +363,7 @@ function ClientDetail() {
           </section>
         )}
 
-        <section className="client-detail-section">
+        <section className="client-detail-section record-detail-section">
           <div className="client-detail-section-header record-section-title">
             <h3>Contacts</h3>
           </div>
@@ -435,7 +435,7 @@ function ClientDetail() {
           )}
         </section>
 
-        <section className="client-detail-section">
+        <section className="client-detail-section record-detail-section">
           <div className="section-header">
             <h2>Pianos</h2>
 
@@ -484,7 +484,7 @@ function ClientDetail() {
           )}
         </section>
 
-        <section className="client-detail-section">
+        <section className="client-detail-section record-detail-section">
           <h3>Notes</h3>
 
           {client.notes ? (
