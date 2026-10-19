@@ -521,3 +521,81 @@
     min-width: 0;
   }
 }
+
+
+/* Keep discount actions beside the service they modify. */
+.appointment-apply-discount-field {
+  flex: 0 1 145px;
+  min-width: 125px;
+  justify-content: flex-end;
+}
+.appointment-apply-discount-field label {
+  display: block;
+}
+.appointment-apply-discount-button {
+  width: 100%;
+  white-space: nowrap;
+}
+.appointment-inline-discount-editor {
+  margin: 10px 0 12px;
+  padding: 12px;
+  border: 1px solid var(--border-color, #dedede);
+  border-radius: 8px;
+  background: var(--surface-muted, #f7f7f7);
+  color: var(--text-primary, #222);
+}
+.appointment-inline-discount-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-bottom: 10px;
+}
+.appointment-inline-discount-heading span {
+  font-size: 13px;
+  opacity: 0.8;
+}
+.appointment-inline-discount-editor .appointment-form-row {
+  align-items: flex-start;
+}
+.appointment-inline-discount-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.appointment-applied-discounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+.appointment-applied-discounts span {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color, #dedede);
+  border-radius: 999px;
+  font-size: 12px;
+}
+:root[data-theme="dark"] .appointment-inline-discount-editor {
+  background: var(--surface-muted, #2b2f38);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #484d58);
+}
+:root[data-theme="dark"] .appointment-applied-discounts span {
+  border-color: var(--border-color, #484d58);
+}
+@media (max-width: 700px) {
+  .appointment-apply-discount-field {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .appointment-apply-discount-button {
+    width: auto;
+    min-width: 140px;
+  }
+  .appointment-inline-discount-editor .appointment-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
