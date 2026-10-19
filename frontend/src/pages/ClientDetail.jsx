@@ -5,6 +5,7 @@ import AddClientModal from "../components/AddClientModal";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/ClientDetail.css";
+import "../styles/DetailActions.css";
 
 function ClientDetail() {
   const { id } = useParams();
@@ -169,23 +170,23 @@ function ClientDetail() {
   return (
     <PageLayout title={client.name}>
       <div className="client-detail-page">
-        <div className="client-detail-toolbar">
+        <div className="client-detail-toolbar detail-action-toolbar">
           <button
-            className="client-detail-back-button"
+            className="client-detail-back-button detail-action-back-button"
             onClick={() => navigate("/clients")}
           >
             ← Back to Clients
           </button>
 
-          <div className="client-detail-toolbar-actions">
+          <div className="client-detail-toolbar-actions detail-action-toolbar-actions">
             <button
-              className="client-detail-button"
+              className="client-detail-button detail-action-button"
               onClick={() => setShowEditModal(true)}
             >
               Edit Client
             </button>
             <button
-              className="client-detail-delete-button"
+              className="client-detail-delete-button detail-action-delete-button"
               onClick={handleDeleteClient}
               disabled={deletingClient}
             >
@@ -438,7 +439,7 @@ function ClientDetail() {
             <h2>Pianos</h2>
 
             <button
-              className="client-detail-button"
+              className="client-detail-button detail-action-button"
               onClick={() => setShowAddPiano(true)}
             >
               Add Piano
