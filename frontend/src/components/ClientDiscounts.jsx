@@ -216,6 +216,7 @@ export default function ClientDiscounts({ clientId }) {
               <h3 id="client-discount-modal-title">{editingId ? "Edit Discount" : "New Discount"}</h3>
               <button type="button" className="client-discount-modal-close" aria-label="Close" onClick={resetForm} disabled={saving}>×</button>
             </div>
+            {error && <div className="client-discounts-message client-discounts-error client-discount-modal-message" role="alert">{error}</div>}
             <form className="client-discount-form" onSubmit={handleSubmit}>
         <div className="client-discount-form-heading">
           <h4>{editingId ? "Edit discount" : "Apply a discount"}</h4>
