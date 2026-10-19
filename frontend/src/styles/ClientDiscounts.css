@@ -367,3 +367,111 @@
     flex: 1;
   }
 }
+
+
+/* Match the client Pianos panel treatment: compact, neutral record rows. */
+.client-discounts-section .client-discounts-list {
+  gap: 8px;
+}
+
+.client-discounts-section .client-discount-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.client-discounts-section .client-discount-row:hover {
+  border-color: #b9bec6;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 6%);
+}
+
+.client-discounts-section .client-discount-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 18px;
+  min-width: 0;
+  text-align: left;
+}
+
+.client-discounts-section .client-discount-main strong {
+  flex: 0 0 auto;
+  color: var(--text-primary, #212529);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.client-discounts-section .client-discount-main span,
+.client-discounts-section .client-discount-main small {
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.client-discounts-section .client-discount-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.client-discounts-section .client-discount-actions button {
+  white-space: nowrap;
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-row,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-row {
+  background: var(--surface-muted, #2b2f38);
+  border-color: var(--border-color, #454b56);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-row:hover,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-row:hover {
+  background: var(--hover-bg, #343a46);
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-main strong,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-main strong {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-main span,
+:root[data-theme="dark"] .client-discounts-section .client-discount-main small,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-main span,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-main small {
+  color: var(--text-secondary, #c0c6d0);
+}
+
+@media (max-width: 700px) {
+  .client-discounts-section .client-discount-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .client-discounts-section .client-discount-main {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .client-discounts-section .client-discount-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .client-discounts-section .client-discount-actions button {
+    flex: 1 1 auto;
+  }
+}
