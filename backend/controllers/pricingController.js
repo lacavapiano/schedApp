@@ -112,6 +112,18 @@ export async function updateServiceType(req, res) {
       }
       updates.price = Number(req.body.price).toFixed(2);
     }
+    if (req.body.default_service_minutes !== undefined) {
+      if (req.body.default_service_minutes === null || req.body.default_service_minutes === "") {
+        updates.default_service_minutes = null;
+      } else {
+        const minutes = Number(req.body.default_service_minutes);
+        if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) {
+          return res.status(400).json({ error: "Default service time must be between 1 and 1440 minutes" });
+        }
+        updates.default_service_minutes = req.body.pricing_method === "hourly" ? null : minutes;
+      }
+    }
+    if (req.body.pricing_method === "hourly") updates.default_service_minutes = null;
     if (req.body.is_active !== undefined) updates.is_active = Boolean(req.body.is_active);
     updates.updated_at = new Date().toISOString();
 
