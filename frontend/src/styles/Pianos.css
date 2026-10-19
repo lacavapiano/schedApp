@@ -1719,3 +1719,132 @@
   .piano-detail-page .piano-service-history-status { white-space: normal; }
 }
 
+
+
+/* Piano detail information panels: compact layout with a clearer value-first
+   hierarchy. Keep these rules scoped to the four summary panels, not history. */
+.piano-detail-page .piano-detail-grid > .piano-detail-section {
+  padding: 13px 15px;
+  border-radius: 8px;
+}
+
+.piano-detail-page .piano-detail-grid > .piano-detail-section > h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, #e1e4e8);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 18px;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-fields > div {
+  gap: 3px;
+  min-width: 0;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-label {
+  color: var(--text-secondary, #525b66);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.035em;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-fields > div > span:not(.piano-detail-label),
+.piano-detail-page .piano-detail-grid .piano-detail-owner .piano-client-link {
+  color: var(--text-primary, #212529);
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 1.35;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-client-summary {
+  margin-top: 2px;
+  color: var(--text-secondary, #525b66);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-owner {
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-owner > .piano-detail-label,
+.piano-detail-page .piano-detail-grid .piano-detail-owner > .piano-detail-client-summary {
+  width: 100%;
+  text-align: left;
+}
+
+.piano-detail-page .piano-detail-grid .piano-detail-owner > .piano-client-link {
+  align-self: flex-start;
+  width: auto;
+  margin: 0;
+  text-align: left;
+  font-weight: 650;
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-detail-grid > .piano-detail-section > h3,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid > .piano-detail-section > h3 {
+  border-bottom-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-label,
+:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-client-summary,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-label,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-client-summary {
+  color: var(--text-secondary, #c0c6d0);
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-fields > div > span:not(.piano-detail-label),
+:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-owner .piano-client-link,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-fields > div > span:not(.piano-detail-label),
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-owner .piano-client-link {
+  color: var(--text-primary, #f3f4f6);
+}
+
+@media (max-width: 700px) {
+  .piano-detail-page .piano-detail-grid {
+    gap: 9px;
+  }
+
+  .piano-detail-page .piano-detail-grid > .piano-detail-section {
+    padding: 12px 13px;
+  }
+
+  .piano-detail-page .piano-detail-grid > .piano-detail-section > h3 {
+    margin-bottom: 9px;
+    padding-bottom: 7px;
+    font-size: 14px;
+  }
+
+  .piano-detail-page .piano-detail-grid .piano-detail-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+  }
+
+  .piano-detail-page .piano-detail-grid .piano-detail-fields > .piano-detail-owner {
+    grid-column: 1 / -1;
+  }
+
+  .piano-detail-page .piano-detail-grid .piano-detail-fields > div > span:not(.piano-detail-label),
+  .piano-detail-page .piano-detail-grid .piano-detail-owner .piano-client-link {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .piano-detail-page .piano-detail-grid .piano-detail-fields {
+    gap: 9px 10px;
+  }
+}
