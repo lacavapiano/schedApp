@@ -1125,9 +1125,9 @@ function AppointmentModal({
                         {(() => {
                           const selectedService = serviceTypes.find((service) => service.id === appointmentPiano.service_type_id || (!appointmentPiano.service_type_id && appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase()));
                           return selectedService?.pricing_method === "hourly" ? (
-                            <div className="appointment-form-field">
-                              <label>Actual billable hours *</label>
-                              <input type="number" inputMode="decimal" value={appointmentPiano.billable_hours} onChange={(event) => handlePianoChange(index, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
+                            <div className="appointment-form-field appointment-hourly-field">
+                              <label htmlFor={`billable-hours-${index}`}>Actual billable hours *</label>
+                              <input id={`billable-hours-${index}`} type="text" inputMode="decimal" autoComplete="off" value={appointmentPiano.billable_hours} onChange={(event) => handlePianoChange(index, "billable_hours", event.target.value)} placeholder="e.g. 1.5" aria-label="Actual billable hours" required />
                             </div>
                           ) : null;
                         })()}
