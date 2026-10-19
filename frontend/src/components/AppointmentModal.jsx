@@ -1513,16 +1513,7 @@ function AppointmentModal({
                 )}
 
                 <div className="appointment-modal-actions-right">
-                  {isEditing && (appointment.status || "scheduled") === "scheduled" && (
-                    <button
-                      type="button"
-                      className="appointment-complete-button action-button action-button--primary"
-                      onClick={() => handleSubmit(null, true)}
-                      disabled={saving || deleting}
-                    >
-                      {saving && completionMode ? "Completing..." : "Complete Appointment"}
-                    </button>
-                  )}
+                  
                   <button
                     type="button"
                     className="appointment-cancel-button action-button action-button--secondary"
@@ -1549,6 +1540,17 @@ function AppointmentModal({
                       ? "Save Changes"
                       : "Save Appointment"}
                   </button>
+
+                  {isEditing && (appointment.status || "scheduled") === "scheduled" && (
+                    <button
+                      type="button"
+                      className="appointment-complete-button action-button action-button--primary"
+                      onClick={() => handleSubmit(null, true)}
+                      disabled={saving || deleting}
+                    >
+                      {saving && completionMode ? "Completing..." : "Complete Appointment"}
+                    </button>
+                  )}
                 </div>
               </div>
             </form>
