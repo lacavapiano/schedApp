@@ -249,7 +249,7 @@ function Pianos() {
                 <div className="piano-panel-actions">
                   <button
                     type="button"
-                    className="piano-delete-button action-button action-button--danger"
+                    className="action-button action-button--danger"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleDelete(piano);
