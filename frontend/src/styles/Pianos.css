@@ -877,3 +877,35 @@
     display: none;
   }
 }
+
+
+/* Keep the client name centered beneath its label and consistent with the
+   other compact list values; truncate long names instead of stretching cards. */
+.piano-panel-client {
+  min-width: 0;
+  align-items: center;
+  text-align: center;
+}
+
+.piano-panel-client .piano-panel-label {
+  width: 100%;
+  text-align: center;
+}
+
+.piano-panel-client-link {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.piano-panel-client .piano-panel-value {
+  width: 100%;
+  text-align: center;
+}
