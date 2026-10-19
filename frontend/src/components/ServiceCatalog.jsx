@@ -186,7 +186,7 @@ export default function ServiceCatalog() {
           </div>
           <label className="service-tuning-checkbox">
             <input type="checkbox" checked={Boolean(form.is_tuning)} onChange={(event) => setForm({ ...form, is_tuning: event.target.checked })} />
-            <span><strong>This is a tuning</strong><small>Include this service when calculating the piano\'s last-tuned date.</small></span>
+            <span><strong>This is a tuning</strong><small>Include this service when calculating the piano's last-tuned date.</small></span>
           </label>
         </div>
         <div className="service-catalog-form-actions">
