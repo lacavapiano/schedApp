@@ -230,3 +230,38 @@
     color: var(--text-secondary, #b8bec8);
   }
 }
+
+/* Desktop layout: give the heading and contact details their own clear rows.
+   Keep the compact stacked layout on tablet and mobile unchanged. */
+@media (min-width: 901px) {
+  .client-panel {
+    padding: 12px 14px;
+  }
+
+  .client-panel-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .client-panel-heading {
+    gap: 8px;
+  }
+
+  .client-panel-contact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .client-panel-contact-item {
+    padding-left: 12px;
+  }
+
+  .client-panel-contact-item:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .client-panel-hint {
+    margin-top: 8px;
+  }
+}
