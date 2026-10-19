@@ -475,3 +475,128 @@
     flex: 1 1 auto;
   }
 }
+
+
+/* Discount records use the same compact label/value layout as piano panels. */
+.client-discounts-section .client-discounts-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.client-discounts-section .client-discount-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.client-discounts-section .client-discount-row:hover {
+  border-color: #b9bec6;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 6%);
+}
+
+.client-discounts-section .client-discount-main {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.65fr) minmax(120px, 0.9fr) minmax(0, 2fr);
+  align-items: center;
+  gap: 8px 14px;
+  min-width: 0;
+}
+
+.client-discounts-section .client-discount-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.client-discounts-section .client-discount-field-label {
+  color: var(--text-secondary, #6c757d);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.client-discounts-section .client-discount-field-value {
+  min-width: 0;
+  color: var(--text-primary, #212529);
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.client-discounts-section .client-discount-percent {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.client-discounts-section .client-discount-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.client-discounts-section .client-discount-actions button {
+  white-space: nowrap;
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-row,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-row {
+  background: var(--surface, #20232a);
+  border-color: var(--border-color, #454b56);
+  color: var(--text-primary, #f1f1f1);
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-field-label,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-field-label {
+  color: var(--text-secondary, #b8bec8);
+}
+
+:root[data-theme="dark"] .client-discounts-section .client-discount-field-value,
+:root:not([data-theme="light"]) .client-discounts-section .client-discount-field-value {
+  color: var(--text-primary, #f1f1f1);
+}
+
+@media (max-width: 900px) {
+  .client-discounts-section .client-discount-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .client-discounts-section .client-discount-field:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .client-discounts-section .client-discount-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .client-discounts-section .client-discount-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+  }
+
+  .client-discounts-section .client-discount-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .client-discounts-section .client-discount-actions button {
+    flex: 1 1 auto;
+  }
+}
