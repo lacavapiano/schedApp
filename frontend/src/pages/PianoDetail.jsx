@@ -4,7 +4,7 @@ import { deletePiano, getAppointments, getPiano } from "../services/api";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
-import "../styles/DetailActions.css";
+import "../styles/ActionButtons.css";
 
 function formatDate(date) {
   if (!date) return "Not recorded";
@@ -146,15 +146,15 @@ function PianoDetail() {
     <PageLayout title="Piano Details">
       <div className="piano-detail-page">
         <div className="piano-detail-toolbar detail-action-toolbar">
-          <button className="piano-back-button detail-action-back-button" onClick={() => navigate("/pianos")}>
+          <button className="piano-back-button action-button action-button--quiet" onClick={() => navigate("/pianos")}>
             ← Back to Pianos
           </button>
           <div className="detail-action-toolbar-actions">
-            <button className="piano-edit-button detail-action-button" onClick={() => setShowEditForm(true)}>
+            <button className="piano-edit-button action-button action-button--primary" onClick={() => setShowEditForm(true)}>
               Edit Piano
             </button>
             <button
-              className="detail-action-delete-button"
+              className="detail-action-delete-button action-button action-button--danger"
               onClick={handleDeletePiano}
               disabled={deletingPiano}
             >
@@ -163,7 +163,7 @@ function PianoDetail() {
           </div>
         </div>
 
-        {deleteError && <p className="detail-action-delete-error" role="alert">{deleteError}</p>}
+        {deleteError && <p className="detail-action-delete-error action-button-error" role="alert">{deleteError}</p>}
 
         <div className="piano-detail-header">
           <h2>{[piano.make, piano.model].filter(Boolean).join(" ") || "Piano"}</h2>
