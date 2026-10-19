@@ -776,3 +776,114 @@
     color: var(--text-secondary, #b8bec8);
   }
 }
+
+
+/* Compact piano detail page: consistent with the piano list panels. */
+.piano-detail-page {
+  max-width: none;
+}
+
+.piano-detail-toolbar {
+  margin-bottom: 16px;
+}
+
+.piano-detail-header {
+  margin-bottom: 16px;
+}
+
+.piano-detail-header h2 {
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.piano-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.piano-detail-section {
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+}
+
+.piano-detail-section h3 {
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.piano-detail-fields {
+  gap: 10px;
+}
+
+.piano-detail-fields > div {
+  min-width: 0;
+  gap: 3px;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-fields > div > span:not(.piano-detail-label) {
+  color: var(--text-primary, #212529);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-client-summary {
+  color: var(--text-secondary, #6c757d) !important;
+  font-size: 12px !important;
+  line-height: 1.4;
+}
+
+.piano-detail-section .piano-client-link {
+  align-self: flex-start;
+  color: var(--text-primary, #212529);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+:root[data-theme="dark"] .piano-detail-fields > div > span:not(.piano-detail-label),
+:root[data-theme="dark"] .piano-detail-section .piano-client-link {
+  color: var(--text-primary, #f1f1f1);
+}
+
+:root[data-theme="dark"] .piano-detail-client-summary {
+  color: var(--text-secondary, #b8bec8) !important;
+}
+
+@media (max-width: 700px) {
+  .piano-detail-toolbar {
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .piano-detail-header {
+    margin-bottom: 14px;
+  }
+
+  .piano-detail-header h2 {
+    font-size: 20px;
+  }
+
+  .piano-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .piano-detail-section {
+    padding: 12px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .piano-detail-fields > div > span:not(.piano-detail-label),
+  :root:not([data-theme="light"]) .piano-detail-section .piano-client-link {
+    color: var(--text-primary, #f1f1f1);
+  }
+
+  :root:not([data-theme="light"]) .piano-detail-client-summary {
+    color: var(--text-secondary, #b8bec8) !important;
+  }
+}
