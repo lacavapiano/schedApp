@@ -571,6 +571,28 @@
   gap: 6px;
   margin: 8px 0;
 }
+.appointment-applied-discount-item {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.appointment-edit-discount-controls {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.appointment-edit-discount-controls input {
+  width: 82px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.appointment-modal .appointment-edit-discount-button {
+  min-height: 26px;
+  padding: 3px 8px;
+  font-size: 12px;
+}
 .appointment-applied-discounts span {
   padding: 4px 8px;
   border: 1px solid var(--border-color, #dedede);
