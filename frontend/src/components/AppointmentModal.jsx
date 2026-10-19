@@ -473,38 +473,37 @@ function AppointmentModal({
     });
   }
 
-  function updateEndTimeFromPianos(
-    date,
-    startTime,
-    pianoCount
-  ) {
-    if (
-      !date ||
-      !startTime ||
-      pianoCount === 0
-    ) {
-      return;
+  function updateEndTimeFromPianos(date, startTime, pianos) {
+    if (!date || !startTime || !pianos.length) return "";
+
+    const start = combineDateAndTime(date, startTime);
+    if (!start) return "";
+
+    let totalMinutes = 0;
+    for (const piano of pianos) {
+      const entries = piano.services?.length
+        ? piano.services
+        : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }];
+      for (const entry of entries) {
+        const service = serviceTypes.find((item) =>
+          item.id === entry.service_type_id ||
+          (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase())
+        );
+        if (!service) continue;
+        if (service.pricing_method === "flat_rate") {
+          totalMinutes += Number(service.default_service_minutes) > 0
+            ? Number(service.default_service_minutes)
+            : 120;
+        } else {
+          const hours = Number(entry.billable_hours);
+          totalMinutes += Number.isFinite(hours) && hours > 0 ? hours * 60 : 120;
+        }
+      }
     }
 
-    const start = combineDateAndTime(
-      date,
-      startTime
-    );
-
-    if (!start) {
-      return;
-    }
-
-    const end = addHours(
-      start,
-      pianoCount * 2
-    );
-
-    return `${String(
-      end.getHours()
-    ).padStart(2, "0")}:${String(
-      end.getMinutes()
-    ).padStart(2, "0")}`;
+    if (!totalMinutes) totalMinutes = pianos.length * 120;
+    const end = new Date(start.getTime() + totalMinutes * 60000);
+    return `${String(end.getHours()).padStart(2, "0")}:${String(end.getMinutes()).padStart(2, "0")}`;
   }
 
   function handleDateChange(event) {
@@ -521,7 +520,7 @@ function AppointmentModal({
           updateEndTimeFromPianos(
             date,
             previous.start_time,
-            previous.pianos.length
+            previous.pianos
           );
 
         if (calculatedEnd) {
@@ -547,7 +546,7 @@ function AppointmentModal({
           updateEndTimeFromPianos(
             previous.date,
             startTime,
-            previous.pianos.length
+            previous.pianos
           );
 
         if (calculatedEnd) {
