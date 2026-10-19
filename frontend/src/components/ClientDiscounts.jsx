@@ -321,9 +321,18 @@ export default function ClientDiscounts({ clientId }) {
           {visibleDiscounts.map((discount) => (
             <article className={`client-discount-row ${discount.is_active ? "" : "client-discount-row-inactive"}`} key={discount.id}>
               <div className="client-discount-main">
-                <strong>{formatPercent(discount.discount_percent)} discount</strong>
-                <span>{discountScope(discount)}</span>
-                <small>{discountTarget(discount)}</small>
+                <div className="client-discount-field">
+                  <span className="client-discount-field-label">Discount</span>
+                  <strong className="client-discount-field-value client-discount-percent">{formatPercent(discount.discount_percent)}</strong>
+                </div>
+                <div className="client-discount-field">
+                  <span className="client-discount-field-label">Type / Service</span>
+                  <span className="client-discount-field-value">{discountScope(discount)}</span>
+                </div>
+                <div className="client-discount-field">
+                  <span className="client-discount-field-label">Applies to</span>
+                  <span className="client-discount-field-value">{discountTarget(discount)}</span>
+                </div>
               </div>
               <div className="client-discount-actions">
                 {!discount.is_active && <span className="client-discount-archived">Archived</span>}
