@@ -6,6 +6,8 @@ import {
   getClientDiscounts,
   createClientDiscount,
   updateClientDiscount,
+  getAppointmentCharges,
+  saveAppointmentCharges,
 } from "../controllers/pricingController.js";
 
 const router = express.Router();
@@ -17,5 +19,8 @@ router.patch("/service-types/:id", updateServiceType);
 router.get("/client-discounts", getClientDiscounts);
 router.post("/client-discounts", createClientDiscount);
 router.patch("/client-discounts/:id", updateClientDiscount);
+
+router.get("/appointment-charges", getAppointmentCharges);
+router.post("/appointment-charges", saveAppointmentCharges);
 
 export default router;
