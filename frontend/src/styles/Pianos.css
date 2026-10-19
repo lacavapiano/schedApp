@@ -991,3 +991,74 @@
   margin: 0 auto;
   text-align: center;
 }
+
+
+/* Compact, accessible sorting controls for the piano list. */
+.piano-list-sort {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: -8px 0 14px;
+}
+
+.piano-list-sort-label {
+  margin-right: 3px;
+  color: var(--text-secondary, #6c757d);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.piano-sort-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color, #d4d7dc);
+  border-radius: 7px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.piano-sort-button:hover {
+  border-color: var(--text-secondary, #777);
+}
+
+.piano-sort-button.is-active {
+  border-color: var(--text-primary, #343a40);
+  background: var(--surface-muted, #f1f3f5);
+  font-weight: 650;
+}
+
+.piano-sort-direction {
+  font-size: 15px;
+  line-height: 1;
+}
+
+:root[data-theme="dark"] .piano-sort-button.is-active {
+  background: var(--surface-muted, #343a40);
+}
+
+@media (max-width: 560px) {
+  .piano-list-sort {
+    gap: 6px;
+    margin-top: -4px;
+  }
+
+  .piano-list-sort-label {
+    flex-basis: 100%;
+  }
+
+  .piano-sort-button {
+    flex: 1 1 auto;
+    min-height: 36px;
+    padding-inline: 8px;
+  }
+}
