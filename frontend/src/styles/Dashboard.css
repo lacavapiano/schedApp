@@ -412,3 +412,44 @@
     min-width: 0;
   }
 }
+
+
+/* Dashboard action toolbar mirrors the Calendar's new-appointment control. */
+.dashboard-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.dashboard-new-appointment-button {
+  padding: 10px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.dashboard-new-appointment-button:hover {
+  background: var(--hover-bg);
+}
+
+.dashboard-new-appointment-button:focus-visible {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: 2px;
+}
+
+:root[data-theme="dark"] .dashboard-new-appointment-button {
+  background: #343a46;
+  color: #f3f4f6;
+  border-color: #545c69;
+}
+
+@media (max-width: 480px) {
+  .dashboard-new-appointment-button {
+    width: 100%;
+  }
+}
