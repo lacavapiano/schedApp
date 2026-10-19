@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getClients, deleteClient } from "../services/api";
+import { getClients, getPianos, deleteClient } from "../services/api";
 import ClientTable from "../components/ClientTable";
 import PageLayout from "../components/PageLayout";
 import AddClientModal from "../components/AddClientModal";
@@ -14,8 +14,21 @@ function Clients() {
 
   async function loadClients() {
     try {
-      const data = await getClients();
-      setClients(data);
+      const [data, pianoData] = await Promise.all([
+        getClients(),
+        getPianos(),
+      ]);
+      setClients(
+        data.map((client) => ({
+          ...client,
+          piano_count: pianoData.filter((piano) => {
+            const attachedClientId =
+              piano.client?.id ?? piano.client_id ?? piano.owner_id;
+            return String(attachedClientId ?? "") === String(client.id);
+          }).length,
+        }))
+      );
+      setPianos(pianoData);
     } catch (err) {
       console.error(err);
     } finally {
