@@ -909,3 +909,16 @@
   width: 100%;
   text-align: center;
 }
+
+
+/* Give the next-tuning label enough room to stay on one line by narrowing
+   the client column and slightly reducing the client-name text size. */
+@media (min-width: 901px) {
+  .piano-panel-details {
+    grid-template-columns: minmax(75px, 0.8fr) minmax(85px, 0.9fr) minmax(90px, 1fr) minmax(95px, 1fr) minmax(125px, 1.35fr);
+  }
+
+  .piano-panel-client-link {
+    font-size: 11px;
+  }
+}
