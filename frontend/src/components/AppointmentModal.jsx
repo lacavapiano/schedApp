@@ -403,9 +403,8 @@ function AppointmentModal({
   }
 
   function handleServiceChange(pianoIndex, serviceIndex, field, value) {
-    setFormData((previous) => ({
-      ...previous,
-      pianos: previous.pianos.map((piano, index) => {
+    setFormData((previous) => {
+      const pianos = previous.pianos.map((piano, index) => {
         if (index !== pianoIndex) return piano;
         const current = piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id || "", billable_hours: piano.billable_hours || "", service: piano.service || "" }];
         const services = current.map((entry, idx) => {
@@ -417,29 +416,33 @@ function AppointmentModal({
           return { ...entry, [field]: value };
         });
         return { ...piano, services, service_type_id: services[0]?.service_type_id || "", billable_hours: services[0]?.billable_hours || "", service: services[0]?.service || "" };
-      }),
-    }));
+      });
+      const endTime = !isEditing ? updateEndTimeFromPianos(previous.date, previous.start_time, pianos) : "";
+      return { ...previous, pianos, ...(endTime ? { end_time: endTime } : {}) };
+    });
   }
 
   function addServiceToPiano(pianoIndex) {
-    setFormData((previous) => ({
-      ...previous,
-      pianos: previous.pianos.map((piano, index) => index === pianoIndex
+    setFormData((previous) => {
+      const pianos = previous.pianos.map((piano, index) => index === pianoIndex
         ? { ...piano, services: [...(piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id || "", billable_hours: piano.billable_hours || "", service: piano.service || "" }]), { service_type_id: "", billable_hours: "", service: "" }] }
-        : piano),
-    }));
+        : piano);
+      const endTime = !isEditing ? updateEndTimeFromPianos(previous.date, previous.start_time, pianos) : "";
+      return { ...previous, pianos, ...(endTime ? { end_time: endTime } : {}) };
+    });
   }
 
   function removeServiceFromPiano(pianoIndex, serviceIndex) {
-    setFormData((previous) => ({
-      ...previous,
-      pianos: previous.pianos.map((piano, index) => {
+    setFormData((previous) => {
+      const pianos = previous.pianos.map((piano, index) => {
         if (index !== pianoIndex) return piano;
         const services = (piano.services || []).filter((_, idx) => idx !== serviceIndex);
         const nextServices = services.length ? services : [{ service_type_id: "", billable_hours: "", service: "" }];
         return { ...piano, services: nextServices, service_type_id: nextServices[0]?.service_type_id || "", billable_hours: nextServices[0]?.billable_hours || "", service: nextServices[0]?.service || "" };
-      }),
-    }));
+      });
+      const endTime = !isEditing ? updateEndTimeFromPianos(previous.date, previous.start_time, pianos) : "";
+      return { ...previous, pianos, ...(endTime ? { end_time: endTime } : {}) };
+    });
   }
 
   /*
@@ -447,67 +450,26 @@ function AppointmentModal({
    */
   function addPiano() {
     if (!formData.client_id) {
-      setError(
-        "Select a client before adding a piano."
-      );
+      setError("Select a client before adding a piano.");
       return;
     }
-
     setError("");
-
-    setFormData((previous) => ({
-      ...previous,
-      pianos: [
+    setFormData((previous) => {
+      const defaultService = serviceTypes.find((service) => /tun/i.test(service.name));
+      const pianos = [
         ...previous.pianos,
-        { ...EMPTY_PIANO, service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "", service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "", services: [{ service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "", billable_hours: "", service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "" }] },
-      ],
-    }));
-
-    /*
-     * New tunings default to 2 hours per piano.
-     */
-    if (
-      formData.date &&
-      formData.start_time
-    ) {
-      const start = combineDateAndTime(
-        formData.date,
-        formData.start_time
-      );
-
-      if (start) {
-        const newPianoCount =
-          formData.pianos.length + 1;
-
-        const end = addHours(
-          start,
-          newPianoCount * 2
-        );
-
-        setFormData((previous) => ({
-          ...previous,
-          end_time: `${String(
-            end.getHours()
-          ).padStart(2, "0")}:${String(
-            end.getMinutes()
-          ).padStart(2, "0")}`,
-        }));
-      }
-    }
+        { ...EMPTY_PIANO, service_type_id: defaultService?.id || "", service: defaultService?.name || "", services: [{ service_type_id: defaultService?.id || "", billable_hours: "", service: defaultService?.name || "" }] },
+      ];
+      const endTime = !isEditing ? updateEndTimeFromPianos(previous.date, previous.start_time, pianos) : "";
+      return { ...previous, pianos, ...(endTime ? { end_time: endTime } : {}) };
+    });
   }
 
   function removePiano(index) {
     setFormData((previous) => {
-      const updatedPianos =
-        previous.pianos.filter(
-          (_, pianoIndex) =>
-            pianoIndex !== index
-        );
-
-      return {
-        ...previous,
-        pianos: updatedPianos,
-      };
+      const pianos = previous.pianos.filter((_, pianoIndex) => pianoIndex !== index);
+      const endTime = !isEditing ? updateEndTimeFromPianos(previous.date, previous.start_time, pianos) : "";
+      return { ...previous, pianos, ...(endTime ? { end_time: endTime } : {}) };
     });
   }
 
