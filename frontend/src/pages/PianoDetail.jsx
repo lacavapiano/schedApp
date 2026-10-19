@@ -17,12 +17,6 @@ function formatDate(date) {
   });
 }
 
-function formatCurrency(value) {
-  const amount = Number(value);
-  if (value === null || value === undefined || value === "" || !Number.isFinite(amount)) return "Not recorded";
-  return amount.toLocaleString(undefined, { style: "currency", currency: "USD" });
-}
-
 function getPrimaryValue(items = [], field) {
   return items.find((item) => item.is_primary)?.[field] || items[0]?.[field] || "";
 }
@@ -446,8 +440,8 @@ function PianoDetail() {
                         <span className="piano-detail-label">Charge details</span>
                         {charges.map((charge) => (
                           <div className="piano-service-history-charge" key={charge.id}>
-                            <span>{charge.service_name}{charge.discount_amount > 0 ? ` · ${formatCurrency(charge.discount_amount)} discount` : ""}</span>
-                            <strong>{formatCurrency(charge.final_amount)}</strong>
+                            <span>{charge.service_name}{charge.discount_amount > 0 ? ` · ${Number(charge.discount_amount).toLocaleString(undefined, { style: "currency", currency: "USD" })} discount` : ""}</span>
+                            <strong>{Number(charge.final_amount).toLocaleString(undefined, { style: "currency", currency: "USD" })}</strong>
                           </div>
                         ))}
                       </div>
