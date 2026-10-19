@@ -111,18 +111,6 @@ export default function ServiceCatalog() {
     }
   }
 
-  async function toggleTuning(service, checked) {
-    setError("");
-    setNotice("");
-    try {
-      await updateServiceType(service.id, { is_tuning: checked });
-      setServices((current) => current.map((item) => item.id === service.id ? { ...item, is_tuning: checked } : item));
-      setNotice(checked ? service.name + " marked as a tuning." : service.name + " is no longer marked as a tuning.");
-    } catch (err) {
-      setError(err.message || "Could not update the tuning setting.");
-    }
-  }
-
   return (
     <section className="settings-section service-catalog">
       <div className="settings-section-header">
@@ -225,10 +213,6 @@ export default function ServiceCatalog() {
                 <strong>{formatPrice(service.price)}</strong>
                 <span>{service.pricing_method === "hourly" ? "per billable hour" : `per service${service.default_service_minutes ? ` · ${service.default_service_minutes} min` : ""}`}</span>
               </div>
-              <label className="service-catalog-tuning-toggle">
-                <input type="checkbox" checked={service.is_tuning === true} onChange={(event) => toggleTuning(service, event.target.checked)} aria-label={"Mark " + service.name + " as a tuning"} />
-                <span>This is a tuning</span>
-              </label>
               <div className="service-catalog-row-actions">
                 {!service.is_active && <span className="service-catalog-archived">Archived</span>}
                 <button type="button" className="settings-secondary-button" onClick={() => startEdit(service)}>Edit</button>
