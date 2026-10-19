@@ -35,6 +35,7 @@ function Clients() {
     try {
       await deleteClient(client.id);
 
+      if (editingClient?.id === client.id) setEditingClient(null);
       await loadClients();
     } catch (error) {
       console.error(error);
@@ -99,7 +100,6 @@ function Clients() {
         <ClientTable
           clients={filteredClients}
           onEdit={setEditingClient}
-          onDelete={handleDelete}
         />
 
         {showAddClient && (
@@ -114,6 +114,7 @@ function Clients() {
             client={editingClient}
             onClose={() => setEditingClient(null)}
             onSaved={loadClients}
+            onDelete={handleDelete}
           />
         )}
       </div>
