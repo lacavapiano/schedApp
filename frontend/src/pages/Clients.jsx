@@ -28,7 +28,6 @@ function Clients() {
           }).length,
         }))
       );
-      setPianos(pianoData);
     } catch (err) {
       console.error(err);
     } finally {
