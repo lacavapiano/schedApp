@@ -1127,7 +1127,7 @@ function AppointmentModal({
                           return selectedService?.pricing_method === "hourly" ? (
                             <div className="appointment-form-field">
                               <label>Actual billable hours *</label>
-                              <input type="number" min="0.01" step="0.25" inputMode="decimal" value={appointmentPiano.billable_hours} onChange={(event) => handlePianoChange(index, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
+                              <input type="number" inputMode="decimal" value={appointmentPiano.billable_hours} onChange={(event) => handlePianoChange(index, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
                             </div>
                           ) : null;
                         })()}
