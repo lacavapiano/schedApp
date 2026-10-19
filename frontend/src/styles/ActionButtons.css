@@ -30,6 +30,13 @@
   outline-offset: 2px;
 }
 
+.action-button-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .action-button--primary {
   background: #2563eb;
   border-color: #2563eb;
@@ -85,6 +92,10 @@
 }
 
 @media (max-width: 700px) {
+  .action-button-group {
+    gap: 8px;
+  }
+
   .action-button {
     min-height: 40px;
     padding: 9px 12px;
