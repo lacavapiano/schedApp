@@ -119,7 +119,7 @@ function PianoClimateHistory({ history }) {
   const yFor = (value, min, max, bandTop) => bandTop + bandHeight - ((value - min) / Math.max(1, max - min)) * bandHeight;
   const tempPoints = records.map(({ item }, index) => validValue(item.temp) ? ({ x: x(index), y: yFor(Number(item.temp), tempMin, tempMax, tempTop), value: Number(item.temp) }) : null).filter(Boolean);
   const humPoints = records.map(({ item }, index) => validValue(item.hum) ? ({ x: x(index), y: yFor(Number(item.hum), humMin, humMax, humTop), value: Number(item.hum) }) : null).filter(Boolean);
-  const pathFor = (points) => points.map((point, index) => \`\${index ? "L" : "M"} \${point.x} \${point.y}\`).join(" ");
+  const pathFor = (points) => points.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ");
   const labelIndexes = [...new Set([0, Math.floor((records.length - 1) / 3), Math.floor(2 * (records.length - 1) / 3), records.length - 1])];
 
   return (
@@ -136,9 +136,9 @@ function PianoClimateHistory({ history }) {
         <span><i className="piano-climate-key piano-climate-key--hum" /> Humidity (%)</span>
       </div>
       <div className="piano-climate-chart-wrap">
-        <svg className="piano-climate-chart piano-climate-chart--stacked" viewBox={\`0 0 \${width} \${height}\`} role="img" aria-label="Temperature in degrees Fahrenheit shown in the upper graph and relative humidity percentage shown in the lower graph, over time">
-          <text x="16" y={tempTop + bandHeight / 2} textAnchor="middle" transform={\`rotate(-90 16 \${tempTop + bandHeight / 2})\`} className="piano-climate-axis-title piano-climate-axis-title--temp">Temperature (°F)</text>
-          <text x="16" y={humTop + bandHeight / 2} textAnchor="middle" transform={\`rotate(-90 16 \${humTop + bandHeight / 2})\`} className="piano-climate-axis-title piano-climate-axis-title--hum">Humidity (%)</text>
+        <svg className="piano-climate-chart piano-climate-chart--stacked" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Temperature in degrees Fahrenheit shown in the upper graph and relative humidity percentage shown in the lower graph, over time">
+          <text x="16" y={tempTop + bandHeight / 2} textAnchor="middle" transform={`rotate(-90 16 ${tempTop + bandHeight / 2})`} className="piano-climate-axis-title piano-climate-axis-title--temp">Temperature (°F)</text>
+          <text x="16" y={humTop + bandHeight / 2} textAnchor="middle" transform={`rotate(-90 16 ${humTop + bandHeight / 2})`} className="piano-climate-axis-title piano-climate-axis-title--hum">Humidity (%)</text>
           {[0, 1, 2, 3].map((tick) => {
             const tempY = tempTop + (bandHeight * tick) / 3;
             const humY = humTop + (bandHeight * tick) / 3;
@@ -153,8 +153,8 @@ function PianoClimateHistory({ history }) {
           })}
           {tempPoints.length > 0 && <path d={pathFor(tempPoints)} className="piano-climate-line piano-climate-line--temp" />}
           {humPoints.length > 0 && <path d={pathFor(humPoints)} className="piano-climate-line piano-climate-line--hum" />}
-          {tempPoints.map((point, index) => <circle key={\`t-\${index}\`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--temp"><title>{point.value}°F</title></circle>)}
-          {humPoints.map((point, index) => <circle key={\`h-\${index}\`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--hum"><title>{point.value}%</title></circle>)}
+          {tempPoints.map((point, index) => <circle key={`t-${index}`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--temp"><title>{point.value}°F</title></circle>)}
+          {humPoints.map((point, index) => <circle key={`h-${index}`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--hum"><title>{point.value}%</title></circle>)}
           {labelIndexes.map((index) => <text key={index} x={x(index)} y={height - 14} textAnchor={index === 0 ? "start" : index === records.length - 1 ? "end" : "middle"} className="piano-climate-date-label">{formatDate(records[index].appointmentDate)}</text>)}
         </svg>
       </div>
