@@ -59,10 +59,13 @@ export async function getClients(req, res) {
             label,
             is_primary
           )
+        ),
+        pianos (
+          id
         )
       `)
       .order("name");
-      
+
     if (error) {
       console.error(error);
 
