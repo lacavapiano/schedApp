@@ -45,6 +45,7 @@ export default function ClientDiscounts({ clientId }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState(null);
   const [showInactive, setShowInactive] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -87,6 +88,7 @@ export default function ClientDiscounts({ clientId }) {
   function resetForm() {
     setForm(EMPTY_FORM);
     setEditingId(null);
+    setShowForm(false);
   }
 
   async function handleSubmit(event) {
@@ -131,6 +133,7 @@ export default function ClientDiscounts({ clientId }) {
 
   function startEdit(discount) {
     setEditingId(discount.id);
+    setShowForm(true);
     setForm({
       ...EMPTY_FORM,
       discount_percent: String(discount.discount_percent),
@@ -172,11 +175,25 @@ export default function ClientDiscounts({ clientId }) {
 
   return (
     <section className="client-discounts-section record-detail-section">
-      <div className="client-discounts-header">
-        <div>
-          <h3>Discounts</h3>
-          <p>Set ongoing client discounts or assign a one-time discount to a specific appointment or service.</p>
-        </div>
+      <div className="section-header client-discounts-header">
+        <h2>Discounts</h2>
+        <button
+          type="button"
+          className="action-button action-button--primary"
+          onClick={() => {
+            resetForm();
+            setError("");
+            setNotice("");
+            setShowForm(true);
+          }}
+        >
+          New Discount
+        </button>
+      </div>
+      <p className="client-discounts-description">
+        Manage ongoing discounts or assign a one-time discount to an appointment or service.
+      </p>
+      <div className="client-discounts-toolbar">
         <label className="client-discounts-inactive-toggle">
           <input
             type="checkbox"
@@ -190,10 +207,19 @@ export default function ClientDiscounts({ clientId }) {
       {error && <div className="client-discounts-message client-discounts-error" role="alert">{error}</div>}
       {notice && <div className="client-discounts-message" role="status">{notice}</div>}
 
-      <form className="client-discount-form" onSubmit={handleSubmit}>
+      {showForm && (
+        <div className="client-discount-modal-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget && !saving) resetForm();
+        }}>
+          <section className="client-discount-modal" role="dialog" aria-modal="true" aria-labelledby="client-discount-modal-title">
+            <div className="client-discount-modal-header">
+              <h3 id="client-discount-modal-title">{editingId ? "Edit Discount" : "New Discount"}</h3>
+              <button type="button" className="client-discount-modal-close" aria-label="Close" onClick={resetForm} disabled={saving}>×</button>
+            </div>
+            <form className="client-discount-form" onSubmit={handleSubmit}>
         <div className="client-discount-form-heading">
-          <h4>{editingId ? "Edit discount" : "Add a discount"}</h4>
-          <p>Global and service-specific ongoing discounts will be applied sequentially when billing is implemented.</p>
+          <h4>{editingId ? "Edit discount" : "Apply a discount"}</h4>
+          <p>Choose a percentage and how it should apply to this client.</p>
         </div>
         <div className="client-discount-fields">
           <div className="settings-field">
@@ -269,13 +295,16 @@ export default function ClientDiscounts({ clientId }) {
 
         <div className="client-discount-form-actions">
           {editingId && (
-            <button type="button" className="settings-secondary-button" onClick={resetForm} disabled={saving}>Cancel</button>
+            <button type="button" className="action-button action-button--secondary" onClick={resetForm} disabled={saving}>Cancel</button>
           )}
-          <button type="submit" className="settings-button" disabled={saving || (!editingId && form.discount_type === "one_time" && appointments.length === 0)}>
-            {saving ? "Saving..." : editingId ? "Save changes" : "Add discount"}
+          <button type="submit" className="action-button action-button--primary" disabled={saving || (!editingId && form.discount_type === "one_time" && appointments.length === 0)}>
+            {saving ? "Saving..." : editingId ? "Save Changes" : "Apply Discount"}
           </button>
+            </div>
+            </form>
+          </section>
         </div>
-      </form>
+      )}
 
       <div className="client-discounts-list-heading">
         <h4>Configured discounts</h4>
