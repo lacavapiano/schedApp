@@ -374,3 +374,17 @@
     border-color: var(--border-color, #454b56) !important;
   }
 }
+
+
+/* Disclosure controls for long lists on client detail pages. */
+.client-detail-collapsible { min-width: 0; }
+.client-detail-collapsible > summary { display:flex; align-items:center; gap:8px; cursor:pointer; list-style:none; color:var(--text-primary,#222); font-weight:600; }
+.client-detail-collapsible > summary::-webkit-details-marker { display:none; }
+.client-detail-collapsible > summary::before { content:"▸"; flex:0 0 auto; color:var(--text-secondary,#666); transition:transform .15s ease; }
+.client-detail-collapsible[open] > summary::before { transform:rotate(90deg); }
+.client-detail-collapsible > summary h3 { margin:0; }
+.client-detail-collapsible[open] > summary { margin-bottom:14px; }
+.client-detail-count { color:var(--text-secondary,#777); font-size:12px; font-weight:500; }
+.client-detail-collapsible-content { margin-top:14px; }
+.client-pianos-disclosure, .client-discounts-disclosure { margin-top:4px; }
+:root[data-theme="dark"] .client-detail-collapsible > summary, :root:not([data-theme="light"]) .client-detail-collapsible > summary { color:var(--text-primary,#f3f4f6); }
