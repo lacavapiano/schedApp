@@ -265,3 +265,43 @@
     margin-top: 8px;
   }
 }
+
+
+/* Cleaner desktop client rows: remove divider-heavy styling and use spacing
+   and typography to separate each contact field instead. */
+@media (min-width: 901px) {
+  .client-panel {
+    padding: 13px 16px;
+    border-radius: 8px;
+  }
+
+  .client-panel-main {
+    gap: 12px;
+  }
+
+  .client-panel-contact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .client-panel-contact-item,
+  .client-panel-contact-item:first-child {
+    padding: 0;
+    border: 0;
+  }
+
+  .client-panel-contact-label {
+    margin-bottom: 2px;
+    font-size: 10px;
+  }
+
+  .client-panel-contact-value {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .client-panel-hint {
+    margin-top: 6px;
+    font-size: 10px;
+  }
+}
