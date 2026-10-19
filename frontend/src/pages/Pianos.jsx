@@ -54,6 +54,8 @@ function Pianos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("client");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [tuningAgeFilter, setTuningAgeFilter] = useState("all");
+  const [tuningAgeMonths, setTuningAgeMonths] = useState("6");
 
   async function loadPianos() {
     try {
@@ -125,6 +127,21 @@ function Pianos() {
       formatDate(piano.lastTunedAt).toLowerCase().includes(search) ||
       formatDate(piano.nextTuningDue).toLowerCase().includes(search)
     );
+  }).filter((piano) => {
+    if (tuningAgeFilter === "all") return true;
+    // Pianos without a recorded tuning date cannot be compared to an age threshold.
+    if (!piano.lastTunedAt) return false;
+
+    const months = Number(tuningAgeMonths);
+    if (!Number.isFinite(months) || months < 0) return true;
+
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - months);
+    const lastTuned = new Date(piano.lastTunedAt);
+
+    return tuningAgeFilter === "more"
+      ? lastTuned < cutoff
+      : lastTuned >= cutoff;
   });
 
   const sortedPianos = [...filteredPianos].sort((a, b) => {
@@ -193,6 +210,48 @@ function Pianos() {
           <button className="add-piano-button action-button action-button--primary" onClick={() => setShowForm(true)}>
             + Add Piano
           </button>
+        </div>
+
+        <div className="piano-tuning-age-filter" aria-label="Filter by last tuning date">
+          <span className="piano-list-sort-label">Last tuned</span>
+          <div className="piano-tuning-age-controls">
+            <button
+              type="button"
+              className={`piano-sort-button${tuningAgeFilter === "all" ? " is-active" : ""}`}
+              aria-pressed={tuningAgeFilter === "all"}
+              onClick={() => setTuningAgeFilter("all")}
+            >
+              Any time
+            </button>
+            <button
+              type="button"
+              className={`piano-sort-button${tuningAgeFilter === "more" ? " is-active" : ""}`}
+              aria-pressed={tuningAgeFilter === "more"}
+              onClick={() => setTuningAgeFilter("more")}
+            >
+              More than
+            </button>
+            <button
+              type="button"
+              className={`piano-sort-button${tuningAgeFilter === "less" ? " is-active" : ""}`}
+              aria-pressed={tuningAgeFilter === "less"}
+              onClick={() => setTuningAgeFilter("less")}
+            >
+              Less than
+            </button>
+            <label className="piano-tuning-months">
+              <input
+                type="number"
+                min="0"
+                step="1"
+                inputMode="numeric"
+                aria-label="Months since last tuning"
+                value={tuningAgeMonths}
+                onChange={(event) => setTuningAgeMonths(event.target.value)}
+              />
+              <span>months ago</span>
+            </label>
+          </div>
         </div>
 
         <div className="piano-list-sort" role="group" aria-label="Sort pianos">
