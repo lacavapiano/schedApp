@@ -529,32 +529,9 @@
   gap: 10px;
 }
 
-.modal-delete-client {
-  align-self: flex-start;
-  min-height: 40px;
-  padding: 9px 14px;
-  border: 1px solid #b91c1c;
-  border-radius: 6px;
-  background: transparent;
-  color: #b91c1c;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
 
-.modal-delete-client:hover {
-  background: #fef2f2;
-}
 
-:root[data-theme="dark"] .modal-delete-client {
-  border-color: #f87171;
-  color: #fca5a5;
-}
 
-:root[data-theme="dark"] .modal-delete-client:hover {
-  background: #422529;
-}
 
 @media (max-width: 700px) {
   .client-modal-overlay { padding: 0; }
@@ -583,10 +560,6 @@
     overflow-wrap: anywhere;
   }
 
-  .modal-delete-client {
-    width: 100%;
-    min-height: 44px;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -758,19 +731,6 @@
   margin: 0 0 10px;
   color: #b91c1c;
   font-size: 13px;
-}
-
-/* Keep Delete Client a compact secondary action on small screens. */
-@media (max-width: 700px) {
-  .modal-actions .modal-delete-client {
-    align-self: flex-start;
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 0;
-    min-height: 32px;
-    padding: 5px 9px;
-    font-size: 12px;
-  }
 }
 
 :root[data-theme="dark"] .client-modal-pianos {
