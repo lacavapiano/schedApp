@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { createClient, updateClient } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { createClient, updateClient, getPianos, getClients, updatePiano } from "../services/api";
 import "../styles/ClientModal.css";
 
 function AddClientModal({
@@ -41,6 +42,13 @@ function AddClientModal({
   });
 
   const [error, setError] = useState("");
+  const [clientPianos, setClientPianos] = useState([]);
+  const [allClients, setAllClients] = useState([]);
+  const [loadingPianos, setLoadingPianos] = useState(false);
+  const [pianoError, setPianoError] = useState("");
+  const [transferringPianoId, setTransferringPianoId] = useState(null);
+  const [transferClientId, setTransferClientId] = useState("");
+  const navigate = useNavigate();
 
   const isEditing = Boolean(client);
 
@@ -131,6 +139,71 @@ function AddClientModal({
       setContacts([]);
     }
   }, [client]);
+
+  async function loadClientPianos() {
+    if (!client?.id) {
+      setClientPianos([]);
+      return;
+    }
+
+    setLoadingPianos(true);
+    setPianoError("");
+
+    try {
+      const [pianoData, clientData] = await Promise.all([
+        getPianos(),
+        getClients(),
+      ]);
+
+      setClientPianos(
+        pianoData.filter(
+          (piano) =>
+            String(piano.client_id ?? piano.client?.id ?? "") ===
+            String(client.id)
+        )
+      );
+      setAllClients(clientData);
+    } catch (loadError) {
+      console.error(loadError);
+      setPianoError("Unable to load this client's pianos.");
+    } finally {
+      setLoadingPianos(false);
+    }
+  }
+
+  useEffect(() => {
+    loadClientPianos();
+  }, [client?.id]);
+
+  async function handleTransferPiano(piano) {
+    if (!transferClientId) {
+      setPianoError("Choose a client to transfer this piano to.");
+      return;
+    }
+
+    try {
+      setPianoError("");
+      await updatePiano(piano.id, {
+        client_id: transferClientId,
+        make: piano.make ?? null,
+        model: piano.model ?? null,
+        serial: piano.serial ?? null,
+        type: piano.type ?? null,
+        location: piano.location ?? null,
+        quiet_system: piano.quiet_system ?? null,
+        climate_control: piano.climate_control ?? null,
+        tuning_period: piano.tuning_period ?? null,
+      });
+
+      setTransferringPianoId(null);
+      setTransferClientId("");
+      await loadClientPianos();
+      if (onSaved) await onSaved();
+    } catch (transferError) {
+      console.error(transferError);
+      setPianoError(transferError.message || "Unable to transfer piano.");
+    }
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -1075,6 +1148,96 @@ function AddClientModal({
               rows="5"
             />
           </div>
+
+          {/* Client Pianos */}
+          {isEditing && (
+            <section className="client-modal-pianos" aria-label="Pianos attached to client">
+              <div className="client-modal-pianos-header">
+                <h3>Pianos</h3>
+                <span>{clientPianos.length}</span>
+              </div>
+
+              {pianoError && <p className="client-modal-piano-error">{pianoError}</p>}
+
+              {loadingPianos ? (
+                <p className="client-modal-pianos-empty">Loading pianos...</p>
+              ) : clientPianos.length === 0 ? (
+                <p className="client-modal-pianos-empty">No pianos are attached to this client.</p>
+              ) : (
+                <div className="client-modal-piano-list">
+                  {clientPianos.map((piano) => (
+                    <div className="client-modal-piano" key={piano.id}>
+                      <div className="client-modal-piano-info">
+                        <strong>{[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed piano"}</strong>
+                        <span>
+                          {[
+                            piano.serial ? `Serial: ${piano.serial}` : null,
+                            piano.type,
+                            piano.location,
+                          ].filter(Boolean).join(" · ") || "No additional details"}
+                        </span>
+                      </div>
+                      <div className="client-modal-piano-actions">
+                        <button
+                          type="button"
+                          className="client-modal-piano-action"
+                          onClick={() => {
+                            onClose();
+                            navigate(`/pianos/${piano.id}`);
+                          }}
+                        >
+                          View piano
+                        </button>
+                        <button
+                          type="button"
+                          className="client-modal-piano-action"
+                          onClick={() => {
+                            setPianoError("");
+                            setTransferringPianoId(
+                              transferringPianoId === piano.id ? null : piano.id
+                            );
+                            setTransferClientId("");
+                          }}
+                        >
+                          {transferringPianoId === piano.id ? "Cancel transfer" : "Transfer"}
+                        </button>
+                      </div>
+
+                      {transferringPianoId === piano.id && (
+                        <div className="client-modal-transfer">
+                          <label htmlFor={`transfer-client-${piano.id}`}>Transfer to client</label>
+                          <select
+                            id={`transfer-client-${piano.id}`}
+                            value={transferClientId}
+                            onChange={(event) => setTransferClientId(event.target.value)}
+                          >
+                            <option value="">Choose a client...</option>
+                            {allClients
+                              .filter((otherClient) => String(otherClient.id) !== String(client.id))
+                              .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
+                              .map((otherClient) => (
+                                <option key={otherClient.id} value={otherClient.id}>
+                                  {otherClient.name || "Unnamed client"}
+                                  {otherClient.type === "institution" ? " (Institution)" : ""}
+                                </option>
+                              ))}
+                          </select>
+                          <button
+                            type="button"
+                            className="client-modal-transfer-confirm"
+                            disabled={!transferClientId}
+                            onClick={() => handleTransferPiano(piano)}
+                          >
+                            Transfer piano
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Modal Actions */}
           <div className="modal-actions">
