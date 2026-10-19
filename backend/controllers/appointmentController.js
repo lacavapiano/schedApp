@@ -991,15 +991,11 @@ export async function deleteAppointment(req, res) {
           appointment.google_event_id
         );
       } catch (googleError) {
+        // Cancellation in schedApp must still succeed if Google is unavailable.
         console.error(
-          "Google Calendar event deletion failed:",
+          "Google Calendar event deletion failed while cancelling appointment:",
           googleError
         );
-
-        return res.status(500).json({
-          error:
-            "The appointment could not be deleted because its Google Calendar event could not be removed",
-        });
       }
     }
 
