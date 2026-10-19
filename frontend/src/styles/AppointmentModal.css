@@ -816,3 +816,108 @@
   }
 }
 
+/* Multiple service rows per piano, with environmental readings on their own row. */
+.appointment-piano-services {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appointment-piano-service {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color, #dedede);
+}
+
+.appointment-piano-service:last-of-type {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.appointment-piano .appointment-piano-service-row {
+  grid-template-columns: minmax(0, 1.7fr) minmax(140px, 0.75fr) minmax(135px, 0.7fr) auto;
+  align-items: end;
+}
+
+.appointment-piano .appointment-piano-service-row .appointment-form-field {
+  min-width: 0;
+}
+
+.appointment-piano-service-remove {
+  flex: 0 1 auto;
+}
+
+.appointment-piano-service-remove .appointment-remove-button {
+  min-height: 40px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+.appointment-add-service-button {
+  align-self: flex-start;
+}
+
+.appointment-piano .appointment-piano-environment-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 150px));
+  align-items: start;
+  gap: 14px;
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color, #dedede);
+}
+
+.appointment-piano .appointment-piano-environment-row .appointment-form-field {
+  min-width: 0;
+}
+
+.appointment-piano .appointment-discount-input-row {
+  grid-template-columns: minmax(0, 1fr) minmax(110px, 0.65fr);
+}
+
+@media (max-width: 900px) {
+  .appointment-piano .appointment-piano-service-row {
+    grid-template-columns: minmax(0, 1fr) minmax(130px, 0.8fr);
+  }
+
+  .appointment-piano .appointment-piano-service-row .appointment-service-field {
+    grid-column: auto;
+  }
+
+  .appointment-piano .appointment-piano-service-remove {
+    align-self: end;
+  }
+}
+
+@media (max-width: 600px) {
+  .appointment-piano-services {
+    gap: 12px;
+  }
+
+  .appointment-piano .appointment-piano-service-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .appointment-piano .appointment-piano-environment-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .appointment-piano .appointment-piano-environment-row .appointment-form-field {
+    margin: 0;
+  }
+
+  .appointment-piano .appointment-piano-service-remove .appointment-remove-button {
+    min-height: 32px;
+    padding: 0;
+  }
+
+  .appointment-piano .appointment-discount-input-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
