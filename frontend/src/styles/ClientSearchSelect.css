@@ -1,94 +1,198 @@
 .client-search-select {
   position: relative;
   width: 100%;
+  min-width: 0;
+  color: var(--text-primary, #222);
+  isolation: isolate;
 }
 
 .client-search-input-wrapper {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
 }
 
 .client-search-input-wrapper input {
+  display: block;
   width: 100%;
-  padding-right: 38px;
+  min-width: 0;
+  min-height: 42px;
   box-sizing: border-box;
+  margin: 0;
+  padding: 10px 42px 10px 12px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 7px;
+  background: var(--input-bg, #fff);
+  color: var(--input-text, #222);
+  font: inherit;
+  line-height: 1.35;
+  box-shadow: none;
+}
+
+.client-search-input-wrapper input:focus {
+  outline: none;
+  border-color: var(--text-secondary, #777);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-primary, #222) 12%, transparent);
 }
 
 .client-search-toggle {
   position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
+  inset-block: 1px;
+  right: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  min-width: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0 6px 6px 0;
   background: transparent;
-  color: #666;
+  color: var(--text-secondary, #666);
   cursor: pointer;
+  font: inherit;
   font-size: 16px;
-  padding: 4px;
+  box-shadow: none;
 }
 
-.client-search-toggle:hover {
-  color: #222;
+.client-search-toggle:hover:not(:disabled) {
+  background: var(--hover-bg, #f5f5f5);
+  color: var(--text-primary, #222);
 }
 
 .client-search-dropdown {
   position: absolute;
-  z-index: 1000;
+  z-index: 2000;
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  max-height: 260px;
+  width: 100%;
+  max-height: min(280px, 45vh);
+  overflow-x: hidden;
   overflow-y: auto;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+  padding: 4px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #222);
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-.client-search-option {
+.client-search-option,
+.client-search-create {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   width: 100%;
-  padding: 10px 12px;
-  border: none;
-  border-bottom: 1px solid #eee;
-  background: white;
+  min-width: 0;
+  min-height: 40px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-primary, #222);
   text-align: left;
-  cursor: pointer;
+  font: inherit;
   font-size: 14px;
+  line-height: 1.35;
+  cursor: pointer;
+  box-shadow: none;
+  transform: none;
+}
+
+.client-search-option + .client-search-option {
+  margin-top: 2px;
+}
+
+.client-search-option span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .client-search-option:hover,
-.client-search-option.selected {
-  background: #f5f7fa;
+.client-search-option.selected,
+.client-search-create:hover {
+  background: var(--hover-bg, #f5f7fa);
+  color: var(--text-primary, #222);
+}
+
+.client-search-option:focus-visible,
+.client-search-create:focus-visible,
+.client-search-toggle:focus-visible {
+  outline: 2px solid var(--text-secondary, #777);
+  outline-offset: -2px;
 }
 
 .client-search-option small {
-  color: #777;
+  flex: 0 0 auto;
+  color: var(--text-secondary, #777);
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .client-search-empty {
-  padding: 12px;
-  color: #777;
+  padding: 12px 10px;
+  color: var(--text-secondary, #777);
   font-size: 14px;
 }
 
 .client-search-create {
-  display: block;
-  width: 100%;
-  padding: 11px 12px;
-  border: none;
-  background: white;
-  color: #2563eb;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
+  justify-content: flex-start;
+  margin-top: 4px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+  border-top: 1px solid var(--border-color, #ddd);
+  border-radius: 0 0 5px 5px;
+  font-weight: 600;
 }
 
-.client-search-create:hover {
-  background: #f5f7fa;
+:root[data-theme="dark"] .client-search-input-wrapper input {
+  background: var(--input-bg, #20232a);
+  color: var(--input-text, #f3f4f6);
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-search-dropdown {
+  background: var(--surface, #20232a);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #454b56);
+}
+
+:root[data-theme="dark"] .client-search-option,
+:root[data-theme="dark"] .client-search-create {
+  background: transparent;
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-search-option:hover,
+:root[data-theme="dark"] .client-search-option.selected,
+:root[data-theme="dark"] .client-search-create:hover,
+:root[data-theme="dark"] .client-search-toggle:hover:not(:disabled) {
+  background: var(--hover-bg, #343a46);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .client-search-option small,
+:root[data-theme="dark"] .client-search-empty {
+  color: var(--text-secondary, #c0c6d0);
+}
+
+@media (max-width: 600px) {
+  .client-search-dropdown {
+    max-height: min(240px, 38vh);
+  }
+
+  .client-search-option,
+  .client-search-create {
+    min-height: 42px;
+    padding: 10px;
+  }
 }
