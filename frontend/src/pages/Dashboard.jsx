@@ -27,12 +27,13 @@ function Dashboard() {
     loadAppointments();
   }, []);
 
-	const sortedAppointments = [...appointments]
-	  .sort(
-	    (a, b) =>
-	      new Date(b.start_time) -
-	      new Date(a.start_time)
-	  );
+  const completedAppointments = appointments
+    .filter((appointment) => appointment.status?.toLowerCase() === "completed")
+    .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+
+  const upcomingAppointments = appointments
+    .filter((appointment) => appointment.status?.toLowerCase() !== "completed")
+    .sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
 
   function handleAppointmentClick(appointment) {
     setEditingAppointment(appointment);
@@ -67,13 +68,25 @@ function Dashboard() {
       <div className="dashboard">
         <section className="dashboard-section">
           <div className="dashboard-section-header">
-            <h2>Appointments</h2>
+            <h2>Upcoming</h2>
           </div>
 
           <AppointmentList
-            appointments={sortedAppointments}
+            appointments={upcomingAppointments}
             onAppointmentClick={handleAppointmentClick}
-            emptyMessage="No appointments."
+            emptyMessage="No upcoming appointments."
+          />
+        </section>
+
+        <section className="dashboard-section">
+          <div className="dashboard-section-header">
+            <h2>Completed</h2>
+          </div>
+
+          <AppointmentList
+            appointments={completedAppointments}
+            onAppointmentClick={handleAppointmentClick}
+            emptyMessage="No completed appointments."
           />
         </section>
       </div>
