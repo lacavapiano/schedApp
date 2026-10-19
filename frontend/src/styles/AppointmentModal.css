@@ -363,3 +363,19 @@
     opacity: 1;
   }
 }
+
+/* Appointment service pricing and stacked-discount preview */
+.appointment-service-field { flex: 1.5 1 220px; min-width: 200px; }
+.appointment-price-preview { margin: 10px 0 14px; padding: 12px 14px; border: 1px solid var(--border-color, #dedede); border-radius: 8px; background: var(--surface-muted, #f7f7f7); color: var(--text-primary, #222); }
+.appointment-price-preview-heading, .appointment-price-line, .appointment-pricing-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.appointment-price-preview-heading { margin-bottom: 8px; font-size: 13px; }
+.appointment-price-preview-heading span { color: var(--text-secondary, #666); text-align: right; }
+.appointment-price-line { padding: 4px 0; font-size: 13px; }
+.appointment-price-line > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.appointment-price-discount { color: var(--text-secondary, #666); }
+.appointment-price-total { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border-color, #ddd); font-size: 14px; }
+.appointment-pricing-summary { margin: 14px 0 6px; padding: 12px 14px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; }
+.appointment-pricing-summary strong { font-size: 18px; }
+:root[data-theme="dark"] .appointment-price-preview, :root[data-theme="dark"] .appointment-pricing-summary { background: var(--surface-muted, #2b2f38); color: var(--text-primary, #f3f4f6); border-color: var(--border-color, #484d58); }
+:root[data-theme="dark"] .appointment-price-preview-heading span, :root[data-theme="dark"] .appointment-price-discount { color: var(--text-secondary, #b9c0cc); }
+@media (max-width: 700px) { .appointment-service-field { min-width: 0; } .appointment-price-preview { padding: 10px 12px; } }
