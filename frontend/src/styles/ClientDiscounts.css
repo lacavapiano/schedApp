@@ -66,6 +66,9 @@
 }
 
 .client-discount-form .settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   align-items: stretch;
   min-width: 0;
 }
