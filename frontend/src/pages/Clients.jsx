@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { getClients, deleteClient } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { getClients } from "../services/api";
 import ClientTable from "../components/ClientTable";
 import PageLayout from "../components/PageLayout";
 import AddClientModal from "../components/AddClientModal";
 import "../styles/Clients.css";
 
 function Clients() {
+  const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddClient, setShowAddClient] = useState(false);
-  const [editingClient, setEditingClient] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   async function loadClients() {
@@ -25,26 +26,6 @@ function Clients() {
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function handleDelete(client) {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${client.name}?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await deleteClient(client.id);
-
-      if (editingClient?.id === client.id) setEditingClient(null);
-      await loadClients();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
     }
   }
 
@@ -104,22 +85,16 @@ function Clients() {
 
         <ClientTable
           clients={filteredClients}
-          onEdit={setEditingClient}
+          onSelect={(client) => navigate(`/clients/${client.id}`)}
         />
 
         {showAddClient && (
           <AddClientModal
             onClose={() => setShowAddClient(false)}
-            onClientAdded={loadClients}
-          />
-        )}
-
-        {editingClient && (
-          <AddClientModal
-            client={editingClient}
-            onClose={() => setEditingClient(null)}
-            onSaved={loadClients}
-            onDelete={handleDelete}
+            onClientAdded={async () => {
+              setShowAddClient(false);
+              await loadClients();
+            }}
           />
         )}
       </div>
