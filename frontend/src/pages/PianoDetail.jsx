@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getAppointments, getPiano } from "../services/api";
+import { deletePiano, getAppointments, getPiano } from "../services/api";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
+import "../styles/DetailActions.css";
 
 function formatDate(date) {
   if (!date) return "Not recorded";
@@ -49,6 +50,8 @@ function PianoDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const [deletingPiano, setDeletingPiano] = useState(false);
 
   async function loadPiano() {
     try {
@@ -91,6 +94,23 @@ function PianoDetail() {
     }
   }
 
+  async function handleDeletePiano() {
+    const pianoName = [piano?.make, piano?.model].filter(Boolean).join(" ") || "this piano";
+    const confirmed = window.confirm(`Delete ${pianoName}? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      setDeletingPiano(true);
+      setDeleteError("");
+      await deletePiano(piano.id);
+      navigate("/pianos", { replace: true });
+    } catch (deleteRequestError) {
+      console.error(deleteRequestError);
+      setDeleteError(deleteRequestError.message || "Unable to delete piano.");
+      setDeletingPiano(false);
+    }
+  }
+
   useEffect(() => {
     loadPiano();
   }, [id]);
@@ -125,14 +145,25 @@ function PianoDetail() {
   return (
     <PageLayout title="Piano Details">
       <div className="piano-detail-page">
-        <div className="piano-detail-toolbar">
-          <button className="piano-back-button" onClick={() => navigate("/pianos")}>
+        <div className="piano-detail-toolbar detail-action-toolbar">
+          <button className="piano-back-button detail-action-back-button" onClick={() => navigate("/pianos")}>
             ← Back to Pianos
           </button>
-          <button className="piano-edit-button" onClick={() => setShowEditForm(true)}>
-            Edit Piano
-          </button>
+          <div className="detail-action-toolbar-actions">
+            <button className="piano-edit-button detail-action-button" onClick={() => setShowEditForm(true)}>
+              Edit Piano
+            </button>
+            <button
+              className="detail-action-delete-button"
+              onClick={handleDeletePiano}
+              disabled={deletingPiano}
+            >
+              {deletingPiano ? "Deleting..." : "Delete Piano"}
+            </button>
+          </div>
         </div>
+
+        {deleteError && <p className="detail-action-delete-error" role="alert">{deleteError}</p>}
 
         <div className="piano-detail-header">
           <h2>{[piano.make, piano.model].filter(Boolean).join(" ") || "Piano"}</h2>
