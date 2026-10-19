@@ -119,7 +119,7 @@ function PianoClimateHistory({ history }) {
   const yFor = (value, min, max, bandTop) => bandTop + bandHeight - ((value - min) / Math.max(1, max - min)) * bandHeight;
   const tempPoints = records.map(({ item }, index) => validValue(item.temp) ? ({ x: x(index), y: yFor(Number(item.temp), tempMin, tempMax, tempTop), value: Number(item.temp) }) : null).filter(Boolean);
   const humPoints = records.map(({ item }, index) => validValue(item.hum) ? ({ x: x(index), y: yFor(Number(item.hum), humMin, humMax, humTop), value: Number(item.hum) }) : null).filter(Boolean);
-  const pathFor = (points) => points.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ");
+  const pathFor = (points) => points.map((point, index) => (index ? "L " : "M ") + point.x + " " + point.y).join(" ");
   const labelIndexes = [...new Set([0, Math.floor((records.length - 1) / 3), Math.floor(2 * (records.length - 1) / 3), records.length - 1])];
 
   return (
