@@ -79,7 +79,7 @@ function Pianos() {
         getPianos(),
         getAppointments(),
         getClients(),
-        getServiceTypes(),
+        getServiceTypes({ includeInactive: true }),
       ]);
 
       if (pianoResult.status === "rejected") throw pianoResult.reason;
