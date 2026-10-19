@@ -85,7 +85,10 @@ function PianoDetail() {
       let history = [];
 
       try {
-        const [appointments, serviceTypes] = await Promise.all([getAppointments(), getServiceTypes()]);
+        const [appointmentResult, serviceTypeResult] = await Promise.allSettled([getAppointments(), getServiceTypes()]);
+        if (appointmentResult.status === "rejected") throw appointmentResult.reason;
+        const appointments = appointmentResult.value;
+        const serviceTypes = serviceTypeResult.status === "fulfilled" ? serviceTypeResult.value : [];
         history = (appointments || [])
           .filter((appointment) => String(appointment.status || "").toLowerCase() === "completed")
           .flatMap((appointment) => {
@@ -98,7 +101,7 @@ function PianoDetail() {
           })
           .sort((a, b) => b.appointmentDate - a.appointmentDate);
 
-        const latestTuning = history.find(({ item }) => isTuningService(item, serviceTypes || []));
+        const latestTuning = history.find(({ appointment, item }) => isTuningService(item, serviceTypes, appointment.appointment_charges));
         lastTunedAt = latestTuning?.appointmentDate || null;
 
         // Charge snapshots contain the actual billed amounts and discounts. Fetch
