@@ -921,3 +921,62 @@
   }
 }
 
+/* Keep service controls compact without leaving empty grid columns for flat-rate services. */
+.appointment-piano .appointment-piano-service-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.appointment-piano .appointment-piano-service-row .appointment-service-field {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.appointment-piano .appointment-piano-service-row .appointment-hourly-field {
+  flex: 0 1 155px;
+  min-width: 125px;
+}
+
+.appointment-piano .appointment-piano-service-row .appointment-apply-discount-field {
+  flex: 0 1 145px;
+  min-width: 125px;
+}
+
+.appointment-piano .appointment-piano-service-row .appointment-piano-service-remove {
+  flex: 0 0 auto;
+}
+
+:root[data-theme="dark"] .appointment-piano .appointment-form-field {
+  background-color: transparent !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .appointment-piano .appointment-form-field {
+    background-color: transparent !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .appointment-piano .appointment-piano-service-row .appointment-service-field {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .appointment-piano .appointment-piano-service-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .appointment-piano .appointment-piano-service-row .appointment-service-field,
+  .appointment-piano .appointment-piano-service-row .appointment-hourly-field,
+  .appointment-piano .appointment-piano-service-row .appointment-apply-discount-field {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
