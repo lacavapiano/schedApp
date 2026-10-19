@@ -982,7 +982,7 @@
 
 
 
-/* Match every modal action to the existing Cancel / Save Changes button pair. */
+/* Unified button system scoped to the appointment modal. */
 .appointment-modal button:not(.appointment-modal-close) {
   display: inline-flex;
   align-items: center;
@@ -990,13 +990,13 @@
   gap: 6px;
   box-sizing: border-box;
   min-height: 36px;
-  padding: 8px 14px;
-  border: 1px solid var(--border-color, #d1d5db);
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #c9cdd3);
   border-radius: 6px;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: center;
   text-decoration: none;
   white-space: normal;
@@ -1010,78 +1010,84 @@
 }
 
 .appointment-modal button:not(.appointment-modal-close):disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
-/* The default is the same neutral treatment as Cancel. */
-.appointment-modal button:not(.appointment-modal-close) {
+.appointment-modal .appointment-add-button,
+.appointment-modal .appointment-cancel-button,
+.appointment-modal .appointment-apply-discount-button {
   background: var(--surface, #fff);
-  border-color: var(--border-color, #d1d5db);
-  color: var(--text-primary, #212529);
+  color: var(--text-primary, #222);
+  border-color: var(--border-color, #c9cdd3);
 }
 
-.appointment-modal button:not(.appointment-modal-close):hover:not(:disabled) {
-  background: var(--surface-muted, #f3f4f6);
+.appointment-modal .appointment-add-button:hover:not(:disabled),
+.appointment-modal .appointment-cancel-button:hover:not(:disabled),
+.appointment-modal .appointment-apply-discount-button:hover:not(:disabled) {
+  background: var(--surface-muted, #f1f2f4);
 }
 
-/* Save / Complete retain the stronger primary treatment. */
-.appointment-modal .appointment-save-button,
-.appointment-modal .appointment-complete-button {
-  background: var(--text-primary, #212529);
-  border-color: var(--text-primary, #212529);
-  color: var(--surface, #fff);
-}
-
-.appointment-modal .appointment-save-button:hover:not(:disabled),
-.appointment-modal .appointment-complete-button:hover:not(:disabled) {
-  opacity: 0.86;
-}
-
-/* Keep inline remove controls in the same button family rather than link-like red text. */
 .appointment-modal .appointment-remove-button,
 .appointment-modal .appointment-delete-button {
-  background: var(--surface, #fff);
-  border-color: var(--border-color, #d1d5db);
-  color: var(--text-primary, #212529);
-  text-decoration: none;
+  background: transparent;
+  color: var(--text-primary, #222);
+  border-color: var(--border-color, #c9cdd3);
 }
 
 .appointment-modal .appointment-remove-button:hover:not(:disabled),
 .appointment-modal .appointment-delete-button:hover:not(:disabled) {
-  background: var(--surface-muted, #f3f4f6);
+  background: var(--surface-muted, #f1f2f4);
   text-decoration: none;
 }
 
-:root[data-theme="dark"] .appointment-modal button:not(.appointment-modal-close) {
-  background: var(--surface-muted, #292d36);
-  border-color: var(--border-color, #545c69);
-  color: var(--text-primary, #f3f4f6);
+.appointment-modal .appointment-complete-button,
+.appointment-modal .appointment-save-button,
+.appointment-modal .appointment-inline-discount-actions .appointment-add-button {
+  background: var(--text-primary, #222);
+  color: var(--surface, #fff);
+  border-color: var(--text-primary, #222);
 }
 
-:root[data-theme="dark"] .appointment-modal button:not(.appointment-modal-close):hover:not(:disabled) {
+.appointment-modal .appointment-complete-button:hover:not(:disabled),
+.appointment-modal .appointment-save-button:hover:not(:disabled),
+.appointment-modal .appointment-inline-discount-actions .appointment-add-button:hover:not(:disabled) {
+  opacity: 0.86;
+}
+
+:root[data-theme="dark"] .appointment-modal .appointment-add-button,
+:root[data-theme="dark"] .appointment-modal .appointment-cancel-button,
+:root[data-theme="dark"] .appointment-modal .appointment-apply-discount-button,
+:root[data-theme="dark"] .appointment-modal .appointment-remove-button,
+:root[data-theme="dark"] .appointment-modal .appointment-delete-button {
+  background: var(--surface-muted, #292d36);
+  color: var(--text-primary, #f3f4f6);
+  border-color: var(--border-color, #545c69);
+}
+
+:root[data-theme="dark"] .appointment-modal .appointment-add-button:hover:not(:disabled),
+:root[data-theme="dark"] .appointment-modal .appointment-cancel-button:hover:not(:disabled),
+:root[data-theme="dark"] .appointment-modal .appointment-apply-discount-button:hover:not(:disabled),
+:root[data-theme="dark"] .appointment-modal .appointment-remove-button:hover:not(:disabled),
+:root[data-theme="dark"] .appointment-modal .appointment-delete-button:hover:not(:disabled) {
   background: var(--hover-bg, #343a46);
 }
 
+:root[data-theme="dark"] .appointment-modal .appointment-complete-button,
 :root[data-theme="dark"] .appointment-modal .appointment-save-button,
-:root[data-theme="dark"] .appointment-modal .appointment-complete-button {
+:root[data-theme="dark"] .appointment-modal .appointment-inline-discount-actions .appointment-add-button {
   background: var(--text-primary, #f3f4f6);
-  border-color: var(--text-primary, #f3f4f6);
   color: var(--surface, #191c22);
-}
-
-:root[data-theme="dark"] .appointment-modal .appointment-save-button:hover:not(:disabled),
-:root[data-theme="dark"] .appointment-modal .appointment-complete-button:hover:not(:disabled) {
-  opacity: 0.86;
+  border-color: var(--text-primary, #f3f4f6);
 }
 
 @media (max-width: 700px) {
   .appointment-modal button:not(.appointment-modal-close) {
     min-height: 40px;
-    padding: 9px 12px;
+    padding: 9px 11px;
   }
 
   .appointment-modal .appointment-piano-service-remove .appointment-remove-button {
-    min-height: 40px;
+    min-height: 36px;
   }
 }
