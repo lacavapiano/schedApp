@@ -68,7 +68,8 @@ function PianoDetail() {
   const [error, setError] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
   const [deleteError, setDeleteError] = useState("");
-  const [deletingPiano, setDeletingPiano] = useState(false);\n  const [serviceHistory, setServiceHistory] = useState([]);
+  const [deletingPiano, setDeletingPiano] = useState(false);
+  const [serviceHistory, setServiceHistory] = useState([]);
 
   async function loadPiano() {
     try {
