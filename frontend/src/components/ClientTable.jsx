@@ -25,6 +25,13 @@ function ClientTable({ clients, onEdit }) {
     return primary?.phone || phones[0]?.phone || "";
   };
 
+  const getTownZip = (client) => {
+    const addresses = client.client_addresses ?? [];
+    const address =
+      addresses.find((item) => item.is_primary) || addresses[0];
+    return [address?.city, address?.zip].filter(Boolean).join(" / ");
+  };
+
   if (clients.length === 0) {
     return (
       <div className="clients-empty">
@@ -39,6 +46,8 @@ function ClientTable({ clients, onEdit }) {
       {sortedClients.map((client) => {
         const email = getPrimaryEmail(client);
         const phone = getPrimaryPhone(client);
+        const townZip = getTownZip(client);
+        const pianoCount = Number(client.piano_count ?? client.pianos?.length ?? 0);
         const isInstitution = client.type === "institution";
 
         return (
@@ -78,6 +87,18 @@ function ClientTable({ clients, onEdit }) {
                   <span className="client-panel-contact-label">Email</span>
                   <span className={`client-panel-contact-value${email ? "" : " is-empty"}`}>
                     {email || "Not provided"}
+                  </span>
+                </div>
+                <div className="client-panel-contact-item">
+                  <span className="client-panel-contact-label">Town / ZIP</span>
+                  <span className={`client-panel-contact-value${townZip ? "" : " is-empty"}`}>
+                    {townZip || "Not provided"}
+                  </span>
+                </div>
+                <div className="client-panel-contact-item client-panel-piano-count">
+                  <span className="client-panel-contact-label">Pianos</span>
+                  <span className="client-panel-contact-value">
+                    {pianoCount}
                   </span>
                 </div>
               </div>
