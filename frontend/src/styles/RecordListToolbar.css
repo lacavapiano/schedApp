@@ -1,0 +1,77 @@
+/* Shared layout for list-page counts, search fields, and create actions. */
+.record-list-toolbar {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
+}
+
+.record-list-count {
+  color: var(--text-secondary, #6c757d);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.record-list-search {
+  width: 100%;
+  min-width: 0;
+  max-width: 520px;
+  justify-self: end;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+  font: inherit;
+  font-size: 14px;
+}
+
+.record-list-search::placeholder {
+  color: var(--text-secondary, #6c757d);
+  opacity: 1;
+}
+
+.record-list-search:focus {
+  outline: 2px solid var(--border-color, #999);
+  outline-offset: 1px;
+}
+
+@media (max-width: 700px) {
+  .record-list-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .record-list-count {
+    grid-column: 1 / -1;
+  }
+
+  .record-list-search {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: none;
+  }
+
+  .record-list-toolbar > .action-button {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .record-list-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .record-list-count,
+  .record-list-search,
+  .record-list-toolbar > .action-button {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+  }
+}
