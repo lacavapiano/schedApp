@@ -91,8 +91,9 @@ function Pianos() {
         if (Number.isNaN(appointmentDate.getTime())) return;
 
         (appointment.appointment_pianos || []).forEach((item) => {
-          if (!item.piano_id || !isTuningService(item)) return;
-          const key = String(item.piano_id);
+          const pianoId = item.piano_id ?? item.piano?.id;
+          if (!pianoId || !isTuningService(item)) return;
+          const key = String(pianoId);
           const previous = lastTunedByPiano.get(key);
           if (!previous || appointmentDate > previous) lastTunedByPiano.set(key, appointmentDate);
         });
