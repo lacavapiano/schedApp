@@ -19,7 +19,7 @@ import "../styles/AppointmentModal.css";
 import "../styles/ActionButtons.css";
 
 const EMPTY_PIANO = {
-  piano_id: "", service: "", service_type_id: "", billable_hours: "", temp: "", hum: "", notes: "",
+  piano_id: "", service: "", service_type_id: "", billable_hours: "", services: [{ service_type_id: "", billable_hours: "" }], temp: "", hum: "", notes: "",
 };
 
 const EMPTY_FORM = {
@@ -242,6 +242,7 @@ function AppointmentModal({
             service: item.service || "",
             service_type_id: item.service_type_id || "",
             billable_hours: item.billable_hours ?? "",
+            services: [{ service_type_id: item.service_type_id || "", billable_hours: item.billable_hours ?? "", service: item.service || "" }],
             temp: item.temp || "",
             hum: item.hum || "",
             notes: item.notes || "",
@@ -291,50 +292,62 @@ function AppointmentModal({
     if (!appointment?.id) return undefined;
     getAppointmentCharges(appointment.id).then((rows) => {
       if (cancelled) return;
-      const byPianoId = new Map((rows || []).map((row) => [row.appointment_piano_id, row]));
+      const byPianoId = new Map();
+      (rows || []).forEach((row) => {
+        const list = byPianoId.get(row.appointment_piano_id) || [];
+        list.push({ service_type_id: row.service_type_id || "", billable_hours: row.billable_hours ?? "", service: row.service_name || "" });
+        byPianoId.set(row.appointment_piano_id, list);
+      });
       setFormData((previous) => ({ ...previous, pianos: previous.pianos.map((piano) => {
-        const charge = byPianoId.get(piano.id);
-        return charge ? { ...piano, service_type_id: charge.service_type_id || "", billable_hours: charge.billable_hours ?? "", service: charge.service_name || piano.service || "" } : piano;
+        const services = byPianoId.get(piano.id);
+        return services?.length ? { ...piano, services, service_type_id: services[0].service_type_id, billable_hours: services[0].billable_hours, service: services[0].service } : piano;
       }) }));
     }).catch((err) => console.error("Failed to load saved appointment pricing:", err));
     return () => { cancelled = true; };
   }, [appointment?.id]);
 
   const pricingPreview = useMemo(() => formData.pianos.map((piano, pianoIndex) => {
-    const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
-    if (!service) return { service: null, ready: false, baseAmount: 0, finalAmount: 0, discounts: [] };
-    const hours = piano.billable_hours === "" ? null : Number(piano.billable_hours);
-    if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [] };
-    const baseAmount = Math.round(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
-    const relevant = [
-      ...clientDiscounts.filter((discount) => {
-        if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
-        if (discount.discount_type === "ongoing") return true;
-        return (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (piano.id && discount.applies_to_appointment_piano_id === piano.id);
-      }),
-      ...discountDrafts.filter((discount) => {
-        if (discount.service_type_id && discount.service_type_id !== service.id) return false;
-        if (discount.discount_type === "ongoing") return true;
-        return discount.scope === "piano" ? Number(discount.targetPianoIndex) === pianoIndex : true;
-      }),
-    ];
-    const global = relevant.filter((discount) => discount.discount_type === "ongoing" && !discount.service_type_id);
-    const scoped = relevant.filter((discount) => discount.discount_type === "ongoing" && discount.service_type_id === service.id);
-    const oneTime = relevant.filter((discount) => discount.discount_type === "one_time");
-    let remaining = baseAmount;
-    const discounts = [];
-    for (const discount of [...global, ...scoped, ...oneTime]) {
-      const before = remaining;
-      remaining = Math.round(remaining * (1 - Number(discount.discount_percent) / 100) * 100) / 100;
-      discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), percent: Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
-    }
-    return { service, ready: true, baseAmount, finalAmount: remaining, discounts };
+    const entries = (piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }]);
+    return entries.map((entry, serviceIndex) => {
+      const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
+      if (!service) return { service: null, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
+      const hours = entry.billable_hours === "" ? null : Number(entry.billable_hours);
+      if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
+      const baseAmount = Math.round(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
+      const relevant = [
+        ...clientDiscounts.filter((discount) => {
+          if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
+          if (discount.discount_type === "ongoing") return true;
+          return (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (piano.id && discount.applies_to_appointment_piano_id === piano.id);
+        }),
+        ...discountDrafts.filter((discount) => {
+          if (discount.service_type_id && discount.service_type_id !== service.id) return false;
+          if (discount.discount_type === "ongoing") return true;
+          return discount.scope === "piano" ? Number(discount.targetPianoIndex) === pianoIndex : true;
+        }),
+      ];
+      const global = relevant.filter((discount) => discount.discount_type === "ongoing" && !discount.service_type_id);
+      const scoped = relevant.filter((discount) => discount.discount_type === "ongoing" && discount.service_type_id === service.id);
+      const oneTime = relevant.filter((discount) => discount.discount_type === "one_time");
+      let remaining = baseAmount;
+      const discounts = [];
+      for (const discount of [...global, ...scoped, ...oneTime]) {
+        const before = remaining;
+        remaining = Math.round(remaining * (1 - Number(discount.discount_percent) / 100) * 100) / 100;
+        discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), percent: Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
+      }
+      return { service, ready: true, baseAmount, finalAmount: remaining, discounts, serviceIndex };
+    });
   }), [formData.pianos, serviceTypes, clientDiscounts, discountDrafts, appointment?.id]);
-  const estimatedTotal = pricingPreview.reduce((total, item) => total + (item.ready ? item.finalAmount : 0), 0);
-  const pricingReady = formData.pianos.filter((piano) => piano.piano_id).length > 0
-    && formData.pianos.filter((piano) => piano.piano_id).every((piano) => {
-      const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
-      return Boolean(service) && (service.pricing_method !== "hourly" || (Number.isFinite(Number(piano.billable_hours)) && Number(piano.billable_hours) > 0));
+  const estimatedTotal = pricingPreview.flat().reduce((total, item) => total + (item.ready ? item.finalAmount : 0), 0);
+  const pricingReady = formData.pianos.some((piano) => piano.piano_id)
+    && formData.pianos.filter((piano) => piano.piano_id).every((piano, pianoIndex) => {
+      const entries = piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }];
+      const previews = pricingPreview[pianoIndex] || [];
+      return entries.length > 0 && entries.every((entry, serviceIndex) => {
+        const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
+        return Boolean(service) && (service.pricing_method !== "hourly" || (Number.isFinite(Number(entry.billable_hours)) && Number(entry.billable_hours) > 0)) && Boolean(previews[serviceIndex]?.ready);
+      });
     });
 
   /*
@@ -378,22 +391,50 @@ function AppointmentModal({
     setError("");
   }
 
-  function handlePianoChange(
-    index,
-    field,
-    value
-  ) {
+  function handlePianoChange(index, field, value) {
     setFormData((previous) => ({
       ...previous,
-      pianos: previous.pianos.map(
-        (piano, pianoIndex) =>
-          pianoIndex === index
-            ? {
-                ...piano,
-                [field]: value,
-              }
-            : piano
-      ),
+      pianos: previous.pianos.map((piano, pianoIndex) => pianoIndex === index ? { ...piano, [field]: value } : piano),
+    }));
+  }
+
+  function handleServiceChange(pianoIndex, serviceIndex, field, value) {
+    setFormData((previous) => ({
+      ...previous,
+      pianos: previous.pianos.map((piano, index) => {
+        if (index !== pianoIndex) return piano;
+        const current = piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id || "", billable_hours: piano.billable_hours || "", service: piano.service || "" }];
+        const services = current.map((entry, idx) => {
+          if (idx !== serviceIndex) return entry;
+          if (field === "service_type_id") {
+            const service = serviceTypes.find((item) => item.id === value);
+            return { ...entry, service_type_id: value, service: service?.name || "", billable_hours: service?.pricing_method === "hourly" ? entry.billable_hours : "" };
+          }
+          return { ...entry, [field]: value };
+        });
+        return { ...piano, services, service_type_id: services[0]?.service_type_id || "", billable_hours: services[0]?.billable_hours || "", service: services[0]?.service || "" };
+      }),
+    }));
+  }
+
+  function addServiceToPiano(pianoIndex) {
+    setFormData((previous) => ({
+      ...previous,
+      pianos: previous.pianos.map((piano, index) => index === pianoIndex
+        ? { ...piano, services: [...(piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id || "", billable_hours: piano.billable_hours || "", service: piano.service || "" }]), { service_type_id: "", billable_hours: "", service: "" }] }
+        : piano),
+    }));
+  }
+
+  function removeServiceFromPiano(pianoIndex, serviceIndex) {
+    setFormData((previous) => ({
+      ...previous,
+      pianos: previous.pianos.map((piano, index) => {
+        if (index !== pianoIndex) return piano;
+        const services = (piano.services || []).filter((_, idx) => idx !== serviceIndex);
+        const nextServices = services.length ? services : [{ service_type_id: "", billable_hours: "", service: "" }];
+        return { ...piano, services: nextServices, service_type_id: nextServices[0]?.service_type_id || "", billable_hours: nextServices[0]?.billable_hours || "", service: nextServices[0]?.service || "" };
+      }),
     }));
   }
 
@@ -642,9 +683,13 @@ function AppointmentModal({
     for (let index = 0; index < formData.pianos.length; index += 1) {
       const piano = formData.pianos[index];
       if (!piano.piano_id) continue;
-      const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
-      if (!service) { setError(`Choose a configured service for Piano ${index + 1}.`); return; }
-      if (service.pricing_method === "hourly" && (!Number.isFinite(Number(piano.billable_hours)) || Number(piano.billable_hours) <= 0)) { setError(`Enter actual billable hours for "${service.name}" on Piano ${index + 1}.`); return; }
+      const entries = piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }];
+      for (let serviceIndex = 0; serviceIndex < entries.length; serviceIndex += 1) {
+        const entry = entries[serviceIndex];
+        const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
+        if (!service) { setError(`Choose a configured service for Piano ${index + 1}, service ${serviceIndex + 1}.`); return; }
+        if (service.pricing_method === "hourly" && (!Number.isFinite(Number(entry.billable_hours)) || Number(entry.billable_hours) <= 0)) { setError(`Enter actual billable hours for "${service.name}" on Piano ${index + 1}.`); return; }
+      }
     }
 
     setSaving(true);
@@ -698,7 +743,7 @@ function AppointmentModal({
                 : {}),
               piano_id: piano.piano_id,
               service:
-                piano.service || serviceTypes.find((service) => service.id === piano.service_type_id)?.name || null,
+                (piano.services?.[0]?.service || serviceTypes.find((service) => service.id === piano.services?.[0]?.service_type_id)?.name || piano.service || serviceTypes.find((service) => service.id === piano.service_type_id)?.name) || null,
               temp:
                 piano.temp || null,
               hum:
@@ -739,11 +784,14 @@ function AppointmentModal({
         await createClientDiscount(payload);
       }
 
-      const chargesToSave = formData.pianos.filter((piano) => piano.piano_id).map((piano) => {
+      const chargesToSave = formData.pianos.filter((piano) => piano.piano_id).flatMap((piano) => {
         const savedPiano = savedPianos.find((row) => String(row.piano_id || row.piano?.id) === String(piano.piano_id));
-        const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
-        return savedPiano && service ? { appointment_piano_id: savedPiano.id, service_type_id: service.id, billable_hours: service.pricing_method === "hourly" ? Number(piano.billable_hours) : null } : null;
-      }).filter(Boolean);
+        const entries = piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }];
+        return entries.map((entry) => {
+          const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
+          return savedPiano && service ? { appointment_piano_id: savedPiano.id, service_type_id: service.id, billable_hours: service.pricing_method === "hourly" ? Number(entry.billable_hours) : null } : null;
+        }).filter(Boolean);
+      });
       await saveAppointmentCharges(savedAppointment.id, chargesToSave);
       if (completeAfterSave) {
         await completeAppointment(savedAppointment.id);
