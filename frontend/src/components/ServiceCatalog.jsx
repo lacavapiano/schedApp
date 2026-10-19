@@ -151,7 +151,7 @@ export default function ServiceCatalog() {
           </div>
           {form.pricing_method === "flat_rate" && (
             <div className="settings-field service-duration-field">
-              <label htmlFor="service-default-duration">Default service time (minutes)</label>
+              <label htmlFor="service-default-duration">Default time (min)</label>
               <input id="service-default-duration" type="number" min="1" max="1440" step="1" inputMode="numeric" value={form.default_service_minutes} onChange={(event) => setForm({ ...form, default_service_minutes: event.target.value })} placeholder="e.g. 90" />
               <span className="settings-help-text">Used to calculate appointment end times. Leave blank if not applicable.</span>
             </div>
