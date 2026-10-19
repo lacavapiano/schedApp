@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { deletePiano, getAppointments, getPiano } from "../services/api";
+import { deletePiano, getAppointments, getAppointmentCharges, getPiano } from "../services/api";
 import PianoForm from "../components/PianoForm";
 import PageLayout from "../components/PageLayout";
 import "../styles/Pianos.css";
@@ -36,6 +36,22 @@ function getClientSummary(client) {
   ].filter(Boolean).join(" · ");
 }
 
+function getServiceName(item) {
+  if (typeof item?.service === "string") return item.service;
+  return item?.service?.name || item?.service_type?.name ||
+    item?.serviceType?.name || item?.service_type_name || "";
+}
+
+function isTuningService(item) {
+  return /tun/i.test(getServiceName(item));
+}
+
+function formatCurrency(value) {
+  const amount = Number(value);
+  if (value === null || value === undefined || value === "" || !Number.isFinite(amount)) return "Not recorded";
+  return amount.toLocaleString(undefined, { style: "currency", currency: "USD" });
+}
+
 function getNextTuningDate(lastTunedAt, tuningPeriod) {
   if (!lastTunedAt || !Number(tuningPeriod) || Number(tuningPeriod) <= 0) return null;
   const nextDate = new Date(lastTunedAt);
@@ -52,7 +68,7 @@ function PianoDetail() {
   const [error, setError] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
   const [deleteError, setDeleteError] = useState("");
-  const [deletingPiano, setDeletingPiano] = useState(false);
+  const [deletingPiano, setDeletingPiano] = useState(false);\n  const [serviceHistory, setServiceHistory] = useState([]);
 
   async function loadPiano() {
     try {
@@ -61,26 +77,46 @@ function PianoDetail() {
 
       const data = await getPiano(id);
       let lastTunedAt = null;
+      let history = [];
 
       try {
         const appointments = await getAppointments();
-        appointments.forEach((appointment) => {
-          if (String(appointment.status || "").toLowerCase() !== "completed") return;
-          const appointmentDate = new Date(appointment.start_time);
-          if (Number.isNaN(appointmentDate.getTime())) return;
+        history = (appointments || [])
+          .filter((appointment) => String(appointment.status || "").toLowerCase() === "completed")
+          .flatMap((appointment) => {
+            const appointmentDate = new Date(appointment.start_time);
+            if (Number.isNaN(appointmentDate.getTime())) return [];
 
-          const hasTuning = (appointment.appointment_pianos || []).some(
-            (item) => String(item.piano_id) === String(data.id) && /tun/i.test(item.service || "")
-          );
+            return (appointment.appointment_pianos || [])
+              .filter((item) => String(item.piano_id ?? item.piano?.id) === String(data.id))
+              .map((item) => ({ appointment, item, appointmentDate }));
+          })
+          .sort((a, b) => b.appointmentDate - a.appointmentDate);
 
-          if (hasTuning && (!lastTunedAt || appointmentDate > lastTunedAt)) {
-            lastTunedAt = appointmentDate;
+        const latestTuning = history.find(({ item }) => isTuningService(item));
+        lastTunedAt = latestTuning?.appointmentDate || null;
+
+        // Charge snapshots contain the actual billed amounts and discounts. Fetch
+        // them per completed visit so the history stays tied to the existing pricing records.
+        history = await Promise.all(history.map(async (entry) => {
+          try {
+            const charges = await getAppointmentCharges(entry.appointment.id);
+            return {
+              ...entry,
+              charges: (charges || []).filter((charge) =>
+                !charge.appointment_piano_id || String(charge.appointment_piano_id) === String(entry.item.id)
+              ),
+            };
+          } catch (chargeError) {
+            console.warn("Unable to load service charges for appointment:", entry.appointment.id, chargeError);
+            return { ...entry, charges: [] };
           }
-        });
+        }));
       } catch (appointmentError) {
-        console.error("Unable to load tuning history:", appointmentError);
+        console.error("Unable to load service history:", appointmentError);
       }
 
+      setServiceHistory(history);
       setPiano({
         ...data,
         lastTunedAt,
@@ -254,6 +290,80 @@ function PianoDetail() {
             </div>
           </section>
         </div>
+
+        <section className="piano-detail-section piano-service-history-section record-detail-section" aria-labelledby="piano-service-history-title">
+          <div className="piano-service-history-heading">
+            <div>
+              <h3 id="piano-service-history-title">Service History</h3>
+              <p>Completed visits for this piano, newest first.</p>
+            </div>
+            <span className="piano-service-history-count">{serviceHistory.length} {serviceHistory.length === 1 ? "visit" : "visits"}</span>
+          </div>
+
+          {serviceHistory.length ? (
+            <div className="piano-service-history-list">
+              {serviceHistory.map(({ appointment, item, appointmentDate, charges = [] }) => {
+                const billedTotal = charges.reduce((sum, charge) => sum + Number(charge.final_amount || 0), 0);
+                const serviceName = getServiceName(item) || "Service";
+                const notes = item.notes || appointment.notes;
+                return (
+                  <article className="piano-service-history-entry" key={item.id || `${appointment.id}-${item.piano_id}`}>
+                    <div className="piano-service-history-entry-top">
+                      <div>
+                        <time className="piano-service-history-date" dateTime={appointmentDate.toISOString()}>{formatDate(appointmentDate)}</time>
+                        <span className="piano-service-history-service">{serviceName}</span>
+                      </div>
+                      <span className="piano-service-history-status">Completed</span>
+                    </div>
+
+                    <div className="piano-service-history-measurements">
+                      <div><span className="piano-detail-label">Temperature</span><span>{item.temp !== null && item.temp !== undefined && item.temp !== "" ? `${item.temp}°` : "—"}</span></div>
+                      <div><span className="piano-detail-label">Humidity</span><span>{item.hum !== null && item.hum !== undefined && item.hum !== "" ? `${item.hum}%` : "—"}</span></div>
+                    </div>
+
+                    <div className="piano-service-history-notes">
+                      <span className="piano-detail-label">Service notes</span>
+                      <p>{notes || "No service notes recorded."}</p>
+                    </div>
+
+                    <div className="piano-service-history-billing">
+                      <div>
+                        <span className="piano-detail-label">Billed</span>
+                        <strong>{charges.length ? formatCurrency(billedTotal) : "No charge details"}</strong>
+                      </div>
+                      <div>
+                        <span className="piano-detail-label">Payment received</span>
+                        <strong>{formatCurrency(appointment.payment)}</strong>
+                      </div>
+                      <div>
+                        <span className="piano-detail-label">Payment type</span>
+                        <strong>{appointment.payment_type || "—"}</strong>
+                      </div>
+                      <div>
+                        <span className="piano-detail-label">Invoice</span>
+                        <strong>{appointment.invoice || "—"}</strong>
+                      </div>
+                    </div>
+
+                    {charges.length > 0 && (
+                      <div className="piano-service-history-charges">
+                        <span className="piano-detail-label">Charge details</span>
+                        {charges.map((charge) => (
+                          <div className="piano-service-history-charge" key={charge.id}>
+                            <span>{charge.service_name}{charge.discount_amount > 0 ? ` · ${formatCurrency(charge.discount_amount)} discount` : ""}</span>
+                            <strong>{formatCurrency(charge.final_amount)}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="piano-service-history-empty">No completed service history has been recorded for this piano yet.</div>
+          )}
+        </section>
 
         {showEditForm && (
           <PianoForm
