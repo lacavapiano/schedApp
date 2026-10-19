@@ -9,6 +9,13 @@ import "../styles/ClientDetail.css";
 import "../styles/ActionButtons.css";
 import "../styles/RecordDetailLayout.css";
 
+function ClientDetailSection({ title, count, children }) {
+  if (count > 3) {
+    return <details className="client-detail-section record-detail-section client-detail-collapsible"><summary><h3>{title} <span className="client-detail-count">({count})</span></h3></summary><div className="client-detail-collapsible-content">{children}</div></details>;
+  }
+  return <section className="client-detail-section record-detail-section"><h3>{title}</h3>{children}</section>;
+}
+
 function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -317,9 +324,8 @@ function ClientDetail() {
 
         {client.client_addresses?.length > 1 && (
           <section className="client-detail-section record-detail-section">
-            <h3>Addresses</h3>
-
-            <div className="client-detail-list">
+            {client.client_addresses.length > 3 ? (
+              <details className="client-detail-collapsible"><summary><h3>Addresses <span className="client-detail-count">({client.client_addresses.length})</span></h3></summary><div className="client-detail-list">
               {client.client_addresses.map((address) => (
                 <div
                   className="client-detail-list-item client-detail-address-item"
@@ -360,14 +366,19 @@ function ClientDetail() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div></details>
+            ) : (
+              <><h3>Addresses</h3><div className="client-detail-list">{client.client_addresses.map((address) => (
+                <div className="client-detail-list-item client-detail-address-item" key={address.id}>
+                  <div>{address.address && <div>{address.address}</div>}{address.apt && <div>{address.apt}</div>}<div>{address.city}{address.city && (address.state || address.zip) && ", "}{address.state}{address.state && address.zip && " "}{address.zip}</div></div>
+                  <div className="client-detail-item-meta">{address.label && <span className="client-detail-item-label">{address.label}</span>}{address.is_primary && <span className="client-detail-primary">Primary</span>}</div>
+                </div>
+              ))}</div></>
+            )}
           </section>
         )}
 
-        <section className="client-detail-section record-detail-section">
-          <div className="client-detail-section-header record-section-title">
-            <h3>Contacts</h3>
-          </div>
+        <ClientDetailSection title="Contacts" count={client.client_contacts?.length || 0}>
 
           {client.client_contacts?.length > 0 ? (
             <div className="client-contacts">
@@ -434,9 +445,23 @@ function ClientDetail() {
               No contacts associated with this client.
             </p>
           )}
+        </ClientDetailSection>
+
+                <section className="client-detail-section record-detail-section">
+          <h3>Notes</h3>
+
+          {client.notes ? (
+            <p className="client-detail-notes">
+              {client.notes}
+            </p>
+          ) : (
+            <p className="client-detail-empty">
+              No notes for this client.
+            </p>
+          )}
         </section>
 
-        <section className="client-detail-section record-detail-section">
+<section className="client-detail-section record-detail-section">
           <div className="section-header">
             <h2>Pianos</h2>
 
@@ -448,7 +473,8 @@ function ClientDetail() {
             </button>
           </div>
 
-          {client.pianos?.length > 0 ? (
+          {client.pianos?.length > 3 ? (
+            <details className="client-detail-collapsible client-pianos-disclosure"><summary><span>Pianos</span><span className="client-detail-count">({client.pianos.length})</span></summary><div className="client-pianos-list">
             <div className="client-pianos-list">
               {client.pianos.map((piano) => (
                 <div
@@ -477,8 +503,8 @@ function ClientDetail() {
                   </div>
                 </div>
               ))}
-            </div>
-          ) : (
+            </div></details>
+          ) : client.pianos?.length > 0 ? (
             <p className="empty-section">
               No pianos associated with this client.
             </p>
@@ -486,20 +512,6 @@ function ClientDetail() {
         </section>
 
         <ClientDiscounts clientId={client.id} />
-
-        <section className="client-detail-section record-detail-section">
-          <h3>Notes</h3>
-
-          {client.notes ? (
-            <p className="client-detail-notes">
-              {client.notes}
-            </p>
-          ) : (
-            <p className="client-detail-empty">
-              No notes for this client.
-            </p>
-          )}
-        </section>
 
         {showEditModal && (
           <AddClientModal
