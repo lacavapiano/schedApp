@@ -316,7 +316,8 @@ export default function ClientDiscounts({ clientId }) {
         <p className="client-discounts-empty">Loading discounts...</p>
       ) : visibleDiscounts.length === 0 ? (
         <p className="client-discounts-empty">No discounts configured for this client.</p>
-      ) : (
+      ) : visibleDiscounts.length > 3 ? (
+        <details className="client-detail-collapsible client-discounts-disclosure"><summary><span>Configured discounts</span><span className="client-detail-count">({visibleDiscounts.length})</span></summary>
         <div className="client-discounts-list">
           {visibleDiscounts.map((discount) => (
             <article className={`client-discount-row ${discount.is_active ? "" : "client-discount-row-inactive"}`} key={discount.id}>
@@ -341,6 +342,15 @@ export default function ClientDiscounts({ clientId }) {
                   {discount.is_active ? "Archive" : "Reactivate"}
                 </button>
               </div>
+            </article>
+          ))}
+        </div></details>
+      ) : (
+        <div className="client-discounts-list">
+          {visibleDiscounts.map((discount) => (
+            <article className={`client-discount-row ${discount.is_active ? "" : "client-discount-row-inactive"}`} key={discount.id}>
+              <div className="client-discount-main"><div className="client-discount-field"><span className="client-discount-field-label">Discount</span><strong className="client-discount-field-value client-discount-percent">{formatPercent(discount.discount_percent)}</strong></div><div className="client-discount-field"><span className="client-discount-field-label">Type / Service</span><span className="client-discount-field-value">{discountScope(discount)}</span></div><div className="client-discount-field"><span className="client-discount-field-label">Applies to</span><span className="client-discount-field-value">{discountTarget(discount)}</span></div></div>
+              <div className="client-discount-actions">{!discount.is_active && <span className="client-discount-archived">Archived</span>}<button type="button" className="settings-secondary-button" onClick={() => startEdit(discount)}>Edit %</button><button type="button" className="settings-secondary-button" onClick={() => toggleActive(discount)}>{discount.is_active ? "Archive" : "Reactivate"}</button></div>
             </article>
           ))}
         </div>
