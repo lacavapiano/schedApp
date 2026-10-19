@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getClients, getPianos, deleteClient } from "../services/api";
+import { getClients, deleteClient } from "../services/api";
 import ClientTable from "../components/ClientTable";
 import PageLayout from "../components/PageLayout";
 import AddClientModal from "../components/AddClientModal";
@@ -14,18 +14,11 @@ function Clients() {
 
   async function loadClients() {
     try {
-      const [data, pianoData] = await Promise.all([
-        getClients(),
-        getPianos(),
-      ]);
+      const data = await getClients();
       setClients(
         data.map((client) => ({
           ...client,
-          piano_count: pianoData.filter((piano) => {
-            const attachedClientId =
-              piano.client?.id ?? piano.client_id ?? piano.owner_id;
-            return String(attachedClientId ?? "") === String(client.id);
-          }).length,
+          piano_count: Array.isArray(client.pianos) ? client.pianos.length : 0,
         }))
       );
     } catch (err) {
@@ -108,7 +101,7 @@ function Clients() {
             + Add Client
           </button>
         </div>
-        
+
         <ClientTable
           clients={filteredClients}
           onEdit={setEditingClient}
