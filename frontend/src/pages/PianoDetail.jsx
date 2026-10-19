@@ -89,25 +89,37 @@ function PianoClimateHistory({ history }) {
   }
 
   const width = 800;
-  const height = 260;
-  const left = 48;
-  const right = 48;
-  const top = 24;
-  const bottom = 48;
+  const height = 340;
+  const left = 76;
+  const right = 24;
+  const top = 28;
+  const bottom = 42;
   const plotWidth = width - left - right;
-  const plotHeight = height - top - bottom;
-  const temps = records.map(({ item }) => Number(item.temp)).filter(Number.isFinite);
-  const hums = records.map(({ item }) => Number(item.hum)).filter(Number.isFinite);
-  const tempMin = temps.length ? Math.floor(Math.min(...temps) - 2) : 0;
-  const tempMax = temps.length ? Math.ceil(Math.max(...temps) + 2) : 1;
-  const humMin = hums.length ? Math.max(0, Math.floor(Math.min(...hums) - 5)) : 0;
-  const humMax = hums.length ? Math.min(100, Math.ceil(Math.max(...hums) + 5)) : 1;
+  const bandHeight = 104;
+  const gap = 36;
+  const tempTop = top;
+  const humTop = top + bandHeight + gap;
+  const validValue = (value) => value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value));
+  const temps = records.map(({ item }) => item.temp).filter(validValue).map(Number);
+  const hums = records.map(({ item }) => item.hum).filter(validValue).map(Number);
+  const paddedRange = (values, padding, minLimit = -Infinity, maxLimit = Infinity) => {
+    if (!values.length) return [0, 1];
+    let min = Math.max(minLimit, Math.floor(Math.min(...values) - padding));
+    let max = Math.min(maxLimit, Math.ceil(Math.max(...values) + padding));
+    if (max <= min) {
+      min = Math.max(minLimit, min - 1);
+      max = Math.min(maxLimit, max + 1);
+    }
+    if (max <= min) max = min + 1;
+    return [min, max];
+  };
+  const [tempMin, tempMax] = paddedRange(temps, 2);
+  const [humMin, humMax] = paddedRange(hums, 5, 0, 100);
   const x = (index) => left + (records.length < 2 ? plotWidth / 2 : index * plotWidth / (records.length - 1));
-  const yTemp = (value) => top + plotHeight - ((value - tempMin) / Math.max(1, tempMax - tempMin)) * plotHeight;
-  const yHum = (value) => top + plotHeight - ((value - humMin) / Math.max(1, humMax - humMin)) * plotHeight;
-  const tempPoints = records.map(({ item }, index) => ({ x: x(index), y: yTemp(Number(item.temp)), value: Number(item.temp) })).filter((point) => Number.isFinite(point.value));
-  const humPoints = records.map(({ item }, index) => ({ x: x(index), y: yHum(Number(item.hum)), value: Number(item.hum) })).filter((point) => Number.isFinite(point.value));
-  const pathFor = (points) => points.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ");
+  const yFor = (value, min, max, bandTop) => bandTop + bandHeight - ((value - min) / Math.max(1, max - min)) * bandHeight;
+  const tempPoints = records.map(({ item }, index) => validValue(item.temp) ? ({ x: x(index), y: yFor(Number(item.temp), tempMin, tempMax, tempTop), value: Number(item.temp) }) : null).filter(Boolean);
+  const humPoints = records.map(({ item }, index) => validValue(item.hum) ? ({ x: x(index), y: yFor(Number(item.hum), humMin, humMax, humTop), value: Number(item.hum) }) : null).filter(Boolean);
+  const pathFor = (points) => points.map((point, index) => \`\${index ? "L" : "M"} \${point.x} \${point.y}\`).join(" ");
   const labelIndexes = [...new Set([0, Math.floor((records.length - 1) / 3), Math.floor(2 * (records.length - 1) / 3), records.length - 1])];
 
   return (
@@ -120,26 +132,30 @@ function PianoClimateHistory({ history }) {
         <span className="piano-climate-count">{records.length} {records.length === 1 ? "reading" : "readings"}</span>
       </div>
       <div className="piano-climate-legend">
-        <span><i className="piano-climate-key piano-climate-key--temp" /> Temperature (°)</span>
+        <span><i className="piano-climate-key piano-climate-key--temp" /> Temperature (°F)</span>
         <span><i className="piano-climate-key piano-climate-key--hum" /> Humidity (%)</span>
       </div>
       <div className="piano-climate-chart-wrap">
-        <svg className="piano-climate-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Temperature and humidity readings over time">
+        <svg className="piano-climate-chart piano-climate-chart--stacked" viewBox={\`0 0 \${width} \${height}\`} role="img" aria-label="Temperature in degrees Fahrenheit shown in the upper graph and relative humidity percentage shown in the lower graph, over time">
+          <text x="16" y={tempTop + bandHeight / 2} textAnchor="middle" transform={\`rotate(-90 16 \${tempTop + bandHeight / 2})\`} className="piano-climate-axis-title piano-climate-axis-title--temp">Temperature (°F)</text>
+          <text x="16" y={humTop + bandHeight / 2} textAnchor="middle" transform={\`rotate(-90 16 \${humTop + bandHeight / 2})\`} className="piano-climate-axis-title piano-climate-axis-title--hum">Humidity (%)</text>
           {[0, 1, 2, 3].map((tick) => {
-            const y = top + (plotHeight * tick) / 3;
+            const tempY = tempTop + (bandHeight * tick) / 3;
+            const humY = humTop + (bandHeight * tick) / 3;
             const tempLabel = Math.round(tempMax - ((tempMax - tempMin) * tick) / 3);
             const humLabel = Math.round(humMax - ((humMax - humMin) * tick) / 3);
             return <g key={tick}>
-              <line x1={left} x2={width - right} y1={y} y2={y} className="piano-climate-gridline" />
-              <text x={left - 9} y={y + 4} textAnchor="end" className="piano-climate-axis-label">{temps.length ? tempLabel : "—"}</text>
-              <text x={width - right + 9} y={y + 4} textAnchor="start" className="piano-climate-axis-label">{hums.length ? humLabel : "—"}</text>
+              <line x1={left} x2={width - right} y1={tempY} y2={tempY} className="piano-climate-gridline" />
+              <line x1={left} x2={width - right} y1={humY} y2={humY} className="piano-climate-gridline" />
+              <text x={left - 10} y={tempY + 4} textAnchor="end" className="piano-climate-axis-label">{temps.length ? tempLabel : "—"}</text>
+              <text x={left - 10} y={humY + 4} textAnchor="end" className="piano-climate-axis-label">{hums.length ? humLabel : "—"}</text>
             </g>;
           })}
           {tempPoints.length > 0 && <path d={pathFor(tempPoints)} className="piano-climate-line piano-climate-line--temp" />}
           {humPoints.length > 0 && <path d={pathFor(humPoints)} className="piano-climate-line piano-climate-line--hum" />}
-          {tempPoints.map((point, index) => <circle key={`t-${index}`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--temp"><title>{point.value}°</title></circle>)}
-          {humPoints.map((point, index) => <circle key={`h-${index}`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--hum"><title>{point.value}%</title></circle>)}
-          {labelIndexes.map((index) => <text key={index} x={x(index)} y={height - 17} textAnchor={index === 0 ? "start" : index === records.length - 1 ? "end" : "middle"} className="piano-climate-date-label">{formatDate(records[index].appointmentDate)}</text>)}
+          {tempPoints.map((point, index) => <circle key={\`t-\${index}\`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--temp"><title>{point.value}°F</title></circle>)}
+          {humPoints.map((point, index) => <circle key={\`h-\${index}\`} cx={point.x} cy={point.y} r="3.5" className="piano-climate-point piano-climate-point--hum"><title>{point.value}%</title></circle>)}
+          {labelIndexes.map((index) => <text key={index} x={x(index)} y={height - 14} textAnchor={index === 0 ? "start" : index === records.length - 1 ? "end" : "middle"} className="piano-climate-date-label">{formatDate(records[index].appointmentDate)}</text>)}
         </svg>
       </div>
     </section>
