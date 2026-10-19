@@ -7,6 +7,7 @@ import pianoRoutes from "./routes/pianos.js";
 import appointmentRoutes from "./routes/appointments.js";
 import settingsRoutes from "./routes/settings.js";
 import googleRoutes from "./routes/google.js";
+import pricingRoutes from "./routes/pricing.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.use("/api/pianos", pianoRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/google", googleRoutes);
+app.use("/api/pricing", pricingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
