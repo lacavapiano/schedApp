@@ -5,6 +5,10 @@ import {
   createAppointment,
   updateAppointment,
   deleteAppointment,
+  getServiceTypes,
+  getClientDiscounts,
+  getAppointmentCharges,
+  saveAppointmentCharges,
 } from "../services/api";
 import ClientSearchSelect from "./ClientSearchSelect";
 import AddClientModal from "./AddClientModal";
@@ -13,11 +17,7 @@ import "../styles/AppointmentModal.css";
 import "../styles/ActionButtons.css";
 
 const EMPTY_PIANO = {
-  piano_id: "",
-  service: "tuning",
-  temp: "",
-  hum: "",
-  notes: "",
+  piano_id: "", service: "", service_type_id: "", billable_hours: "", temp: "", hum: "", notes: "",
 };
 
 const EMPTY_FORM = {
@@ -133,6 +133,8 @@ function AppointmentModal({
 
   const [clients, setClients] = useState([]);
   const [allPianos, setAllPianos] = useState([]);
+  const [serviceTypes, setServiceTypes] = useState([]);
+  const [clientDiscounts, setClientDiscounts] = useState([]);
   const [formData, setFormData] = useState(EMPTY_FORM);
 
   const [loadingData, setLoadingData] = useState(true);
@@ -150,13 +152,10 @@ function AppointmentModal({
       try {
         setLoadingData(true);
 
-        const [clientData, pianoData] = await Promise.all([
-          getClients(),
-          getPianos(),
-        ]);
-
+        const [clientData, pianoData, serviceData] = await Promise.all([getClients(), getPianos(), getServiceTypes()]);
         setClients(clientData || []);
         setAllPianos(pianoData || []);
+        setServiceTypes(serviceData || []);
       } catch (error) {
         console.error("Failed to load appointment data:", error);
         setError("Failed to load clients and pianos.");
@@ -233,8 +232,9 @@ function AppointmentModal({
               item.piano_id ||
               item.piano?.id ||
               "",
-            service:
-              item.service || "tuning",
+            service: item.service || "",
+            service_type_id: item.service_type_id || "",
+            billable_hours: item.billable_hours ?? "",
             temp: item.temp || "",
             hum: item.hum || "",
             notes: item.notes || "",
@@ -270,6 +270,53 @@ function AppointmentModal({
       }));
     }
   }, [formData.client_id, clientAddresses]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!formData.client_id) { setClientDiscounts([]); return undefined; }
+    getClientDiscounts(formData.client_id).then((rows) => { if (!cancelled) setClientDiscounts(rows || []); })
+      .catch((err) => { console.error("Failed to load client discounts:", err); if (!cancelled) setClientDiscounts([]); });
+    return () => { cancelled = true; };
+  }, [formData.client_id]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!appointment?.id) return undefined;
+    getAppointmentCharges(appointment.id).then((rows) => {
+      if (cancelled) return;
+      const byPianoId = new Map((rows || []).map((row) => [row.appointment_piano_id, row]));
+      setFormData((previous) => ({ ...previous, pianos: previous.pianos.map((piano) => {
+        const charge = byPianoId.get(piano.id);
+        return charge ? { ...piano, service_type_id: charge.service_type_id || "", billable_hours: charge.billable_hours ?? "", service: charge.service_name || piano.service || "" } : piano;
+      }) }));
+    }).catch((err) => console.error("Failed to load saved appointment pricing:", err));
+    return () => { cancelled = true; };
+  }, [appointment?.id]);
+
+  const pricingPreview = useMemo(() => formData.pianos.map((piano) => {
+    const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
+    if (!service) return { service: null, ready: false, baseAmount: 0, finalAmount: 0, discounts: [] };
+    const hours = piano.billable_hours === "" ? null : Number(piano.billable_hours);
+    if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [] };
+    const baseAmount = Math.round(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
+    const relevant = clientDiscounts.filter((discount) => {
+      if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
+      if (discount.discount_type === "ongoing") return true;
+      return (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (piano.id && discount.applies_to_appointment_piano_id === piano.id);
+    });
+    const global = relevant.filter((discount) => discount.discount_type === "ongoing" && !discount.service_type_id);
+    const scoped = relevant.filter((discount) => discount.discount_type === "ongoing" && discount.service_type_id === service.id);
+    const oneTime = relevant.filter((discount) => discount.discount_type === "one_time");
+    let remaining = baseAmount;
+    const discounts = [];
+    for (const discount of [...global, ...scoped, ...oneTime]) {
+      const before = remaining;
+      remaining = Math.round(remaining * (1 - Number(discount.discount_percent) / 100) * 100) / 100;
+      discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), percent: Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
+    }
+    return { service, ready: true, baseAmount, finalAmount: remaining, discounts };
+  }), [formData.pianos, serviceTypes, clientDiscounts, appointment?.id]);
+  const estimatedTotal = pricingPreview.reduce((total, item) => total + (item.ready ? item.finalAmount : 0), 0);
 
   /*
    * Pianos belonging to the selected client.
@@ -345,7 +392,7 @@ function AppointmentModal({
       ...previous,
       pianos: [
         ...previous.pianos,
-        { ...EMPTY_PIANO },
+        { ...EMPTY_PIANO, service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "", service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "" },
       ],
     }));
 
@@ -537,6 +584,14 @@ function AppointmentModal({
       return;
     }
 
+    for (let index = 0; index < formData.pianos.length; index += 1) {
+      const piano = formData.pianos[index];
+      if (!piano.piano_id) continue;
+      const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
+      if (!service) { setError(`Choose a configured service for Piano ${index + 1}.`); return; }
+      if (service.pricing_method === "hourly" && (!Number.isFinite(Number(piano.billable_hours)) || Number(piano.billable_hours) <= 0)) { setError(`Enter actual billable hours for "${service.name}" on Piano ${index + 1}.`); return; }
+    }
+
     setSaving(true);
 
     try {
@@ -588,7 +643,7 @@ function AppointmentModal({
                 : {}),
               piano_id: piano.piano_id,
               service:
-                piano.service || null,
+                piano.service || serviceTypes.find((service) => service.id === piano.service_type_id)?.name || null,
               temp:
                 piano.temp || null,
               hum:
@@ -598,16 +653,16 @@ function AppointmentModal({
             })),
       };
 
-      if (isEditing) {
-        await updateAppointment(
-          appointment.id,
-          appointmentData
-        );
-      } else {
-        await createAppointment(
-          appointmentData
-        );
-      }
+      const savedAppointment = isEditing
+        ? await updateAppointment(appointment.id, appointmentData)
+        : await createAppointment(appointmentData);
+      const savedPianos = savedAppointment?.appointment_pianos || [];
+      const chargesToSave = formData.pianos.filter((piano) => piano.piano_id).map((piano) => {
+        const savedPiano = savedPianos.find((row) => String(row.piano_id || row.piano?.id) === String(piano.piano_id));
+        const service = serviceTypes.find((item) => item.id === piano.service_type_id || (!piano.service_type_id && piano.service && item.name.toLowerCase() === piano.service.toLowerCase()));
+        return savedPiano && service ? { appointment_piano_id: savedPiano.id, service_type_id: service.id, billable_hours: service.pricing_method === "hourly" ? Number(piano.billable_hours) : null } : null;
+      }).filter(Boolean);
+      await saveAppointmentCharges(savedAppointment.id, chargesToSave);
 
       if (onSaved) {
         await onSaved();
@@ -716,11 +771,10 @@ function AppointmentModal({
           pianos: [
             ...previous.pianos,
             {
+              ...EMPTY_PIANO,
               piano_id: piano.id,
-              service: "tuning",
-              temp: "",
-              hum: "",
-              notes: "",
+              service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "",
+              service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "",
             },
           ],
         }));
@@ -1029,94 +1083,48 @@ function AppointmentModal({
                       </div>
 
                       <div className="appointment-form-row">
-                        <div className="appointment-form-field">
-                          <label>
-                            Service
-                          </label>
-
+                        <div className="appointment-form-field appointment-service-field">
+                          <label>Service *</label>
                           <select
-                            value={
-                              appointmentPiano.service
-                            }
-                            onChange={(
-                              event
-                            ) =>
-                              handlePianoChange(
-                                index,
-                                "service",
-                                event.target
-                                  .value
-                              )
-                            }
+                            value={appointmentPiano.service_type_id || serviceTypes.find((service) => appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase())?.id || ""}
+                            onChange={(event) => {
+                              const service = serviceTypes.find((item) => item.id === event.target.value);
+                              handlePianoChange(index, "service_type_id", event.target.value);
+                              handlePianoChange(index, "service", service?.name || "");
+                              if (service?.pricing_method !== "hourly") handlePianoChange(index, "billable_hours", "");
+                            }}
+                            required
                           >
-                            <option value="tuning">
-                              Tuning
-                            </option>
-
-                            <option value="repair">
-                              Repair
-                            </option>
-
-                            <option value="regulation">
-                              Regulation
-                            </option>
-
-                            <option value="voicing">
-                              Voicing
-                            </option>
-
-                            <option value="inspection">
-                              Inspection
-                            </option>
-
-                            <option value="other">
-                              Other
-                            </option>
+                            <option value="">Select configured service</option>
+                            {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `$${Number(service.price).toFixed(2)}/hr` : `$${Number(service.price).toFixed(2)} flat`}</option>)}
                           </select>
                         </div>
-
+                        {(() => {
+                          const selectedService = serviceTypes.find((service) => service.id === appointmentPiano.service_type_id || (!appointmentPiano.service_type_id && appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase()));
+                          return selectedService?.pricing_method === "hourly" ? (
+                            <div className="appointment-form-field">
+                              <label>Actual billable hours *</label>
+                              <input type="number" min="0.01" step="0.25" inputMode="decimal" value={appointmentPiano.billable_hours} onChange={(event) => handlePianoChange(index, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
+                            </div>
+                          ) : null;
+                        })()}
                         <div className="appointment-form-field">
                           <label>Temp</label>
-
-                          <input
-                            type="text"
-                            value={
-                              appointmentPiano.temp
-                            }
-                            onChange={(
-                              event
-                            ) =>
-                              handlePianoChange(
-                                index,
-                                "temp",
-                                event.target
-                                  .value
-                              )
-                            }
-                          />
+                          <input type="text" value={appointmentPiano.temp} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
                         </div>
-
                         <div className="appointment-form-field">
                           <label>Hum</label>
-
-                          <input
-                            type="text"
-                            value={
-                              appointmentPiano.hum
-                            }
-                            onChange={(
-                              event
-                            ) =>
-                              handlePianoChange(
-                                index,
-                                "hum",
-                                event.target
-                                  .value
-                              )
-                            }
-                          />
+                          <input type="text" value={appointmentPiano.hum} onChange={(event) => handlePianoChange(index, "hum", event.target.value)} />
                         </div>
                       </div>
+                      {pricingPreview[index]?.service && (
+                        <div className="appointment-price-preview">
+                          <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{pricingPreview[index].service.name}</span></div>
+                          <div className="appointment-price-line"><span>Base price{pricingPreview[index].service.pricing_method === "hourly" ? ` (${appointmentPiano.billable_hours || "—"} hr × $${Number(pricingPreview[index].service.price).toFixed(2)})` : ""}</span><span>{pricingPreview[index].ready ? `$${pricingPreview[index].baseAmount.toFixed(2)}` : "Enter actual hours"}</span></div>
+                          {pricingPreview[index].discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.percent}%)</span><span>−${discount.amount.toFixed(2)}</span></div>)}
+                          <div className="appointment-price-line appointment-price-total"><strong>Service total</strong><strong>{pricingPreview[index].ready ? `$${pricingPreview[index].finalAmount.toFixed(2)}` : "—"}</strong></div>
+                        </div>
+                      )}
 
                       <div className="appointment-form-field">
                         <label>
@@ -1142,6 +1150,13 @@ function AppointmentModal({
                       </div>
                     </div>
                   )
+                )}
+
+                {formData.pianos.length > 0 && (
+                  <div className="appointment-pricing-summary">
+                    <span>Estimated appointment total</span>
+                    <strong>{"$" + estimatedTotal.toFixed(2)}</strong>
+                  </div>
                 )}
 
                 <div className="appointment-piano-actions">
