@@ -227,3 +227,26 @@
     color: var(--text-secondary, #b8bec8);
   }
 }
+
+
+/* Client card overview fields */
+.client-panel-contact {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.client-panel-piano-count .client-panel-contact-value {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+@media (max-width: 900px) {
+  .client-panel-contact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .client-panel-contact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
