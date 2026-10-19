@@ -1,0 +1,132 @@
+/* Shared action buttons: use these classes for consistent controls across pages and forms. */
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  box-sizing: border-box;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.action-button:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.action-button--primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.action-button--primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.action-button--primary:active:not(:disabled) {
+  background: #1e40af;
+  border-color: #1e40af;
+}
+
+.action-button--secondary {
+  background: var(--surface, #fff);
+  border-color: var(--border-color, #d1d5db);
+  color: var(--text-primary, #212529);
+}
+
+.action-button--secondary:hover:not(:disabled) {
+  background: var(--surface-muted, #f3f4f6);
+}
+
+.action-button--danger {
+  background: transparent;
+  border-color: #b91c1c;
+  color: #b91c1c;
+}
+
+.action-button--danger:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.action-button--quiet {
+  min-height: 32px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-primary, #212529);
+}
+
+.action-button--quiet:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.action-button-error {
+  margin: 0 0 16px;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .action-button {
+    min-height: 40px;
+    padding: 9px 12px;
+    white-space: normal;
+  }
+}
+
+:root[data-theme="dark"] .action-button--primary {
+  background: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #17191e;
+}
+
+:root[data-theme="dark"] .action-button--primary:hover:not(:disabled) {
+  background: #dbe0e7;
+  border-color: #dbe0e7;
+}
+
+:root[data-theme="dark"] .action-button--secondary {
+  background: var(--surface-muted, #292d36);
+  border-color: var(--border-color, #545c69);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .action-button--secondary:hover:not(:disabled) {
+  background: var(--hover-bg, #343a46);
+}
+
+:root[data-theme="dark"] .action-button--danger {
+  border-color: #ff8a8a;
+  color: #ffb4b4;
+}
+
+:root[data-theme="dark"] .action-button--danger:hover:not(:disabled) {
+  background: #3a2024;
+}
+
+:root[data-theme="dark"] .action-button--quiet,
+:root:not([data-theme="light"]) .action-button--quiet {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .action-button-error {
+  color: #ffb4b4;
+}
