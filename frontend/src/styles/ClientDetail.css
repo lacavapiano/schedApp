@@ -22,18 +22,7 @@
   text-decoration: underline;
 }
 
-.client-detail-button {
-  padding: 9px 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: white;
-  font-size: 14px;
-  cursor: pointer;
-}
 
-.client-detail-button:hover {
-  background: #f5f5f5;
-}
 
 .client-detail-header {
   margin-bottom: 24px;
@@ -254,31 +243,9 @@
   color: #777;
 }
 
-/* Add Piano button */
-.client-detail-button {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #2563eb;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
 
-.client-detail-button:hover {
-  background-color: #1d4ed8;
-}
 
-.client-detail-button:active {
-  background-color: #1e40af;
-}
 
-.client-detail-button:focus-visible {
-  outline: 2px solid #93c5fd;
-  outline-offset: 2px;
-}
 
 .section-header {
   display: flex;
@@ -291,20 +258,7 @@
   margin: 0;
 }
 
-.client-detail-button {
-  padding: 7px 12px;
-  border: none;
-  border-radius: 6px;
-  background-color: #2563eb;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
 
-.client-detail-button:hover {
-  background-color: #1d4ed8;
-}
 
 @media (max-width: 600px) {
   .client-detail-grid,
@@ -352,52 +306,15 @@
 }
 
 
-.client-detail-toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.client-detail-delete-button {
-  padding: 7px 12px;
-  border: 1px solid #b91c1c;
-  border-radius: 6px;
-  background: transparent;
-  color: #b91c1c;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.client-detail-delete-button:hover:not(:disabled) {
-  background: #fef2f2;
-}
-
-.client-detail-delete-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.client-detail-delete-error {
-  margin: 0 0 16px;
-  color: #b91c1c;
-  font-size: 14px;
-}
-
-:root[data-theme="dark"] .client-detail-delete-button:hover:not(:disabled) {
-  background: #3a2024;
-}
-
-@media (max-width: 700px) {
-  .client-detail-toolbar-actions {
-    width: 100%;
-  }
-}
 
 
-/* Improve contrast for the client record in dark mode without changing global styles. */
-:root[data-theme="dark"] .client-detail-page,
+
+
+
+
+
+
+/* Dark-mode contrast for the client record. */:root[data-theme="dark"] .client-detail-page,
 :root[data-theme="dark"] .client-detail-page p,
 :root[data-theme="dark"] .client-detail-page span,
 :root[data-theme="dark"] .client-detail-page strong,
@@ -459,33 +376,10 @@
   color: var(--text-primary, #f3f4f6);
 }
 
-:root[data-theme="dark"] .client-detail-page .client-detail-button,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-button {
-  background: #f3f4f6 !important;
-  color: #17191e !important;
-  border-color: #f3f4f6 !important;
-}
 
-:root[data-theme="dark"] .client-detail-page .client-detail-button:hover,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-button:hover {
-  background: #dbe0e7 !important;
-}
 
-:root[data-theme="dark"] .client-detail-page .client-detail-delete-button,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-delete-button {
-  color: #ffb4b4 !important;
-  border-color: #ff8a8a !important;
-}
 
-:root[data-theme="dark"] .client-detail-page .client-detail-delete-button:hover:not(:disabled),
-:root:not([data-theme="light"]) .client-detail-page .client-detail-delete-button:hover:not(:disabled) {
-  background: #3a2024 !important;
-}
 
-:root[data-theme="dark"] .client-detail-page .client-detail-delete-error,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-delete-error {
-  color: #ffb4b4 !important;
-}
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) .client-detail-page .client-detail-section {
