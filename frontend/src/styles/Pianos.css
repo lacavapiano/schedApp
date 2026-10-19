@@ -2,33 +2,9 @@
   width: 100%;
 }
 
-.pianos-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
 
-.pianos-count {
-  color: #666;
-  font-size: 14px;
-  white-space: nowrap;
-}
 
-.piano-search {
-  flex: 1;
-  max-width: 450px;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-  box-sizing: border-box;
-}
 
-.piano-search:focus {
-  outline: none;
-  border-color: #555;
-}
 
 
 
@@ -220,15 +196,8 @@
 
 
 @media (max-width: 700px) {
-  .pianos-toolbar {
-    flex-wrap: wrap;
-  }
 
-  .piano-search {
-    order: 3;
-    flex-basis: 100%;
-    max-width: none;
-  }
+
 
   .piano-detail-grid,
   .piano-form-grid {
@@ -242,8 +211,8 @@
 }
 
 @media (max-width: 700px) {
-  .pianos-toolbar { flex-wrap: wrap; align-items: stretch; gap: 10px; }
-  .piano-search { flex: 1 1 100%; width: 100%; max-width: none; }
+
+
 
 
 
@@ -412,11 +381,9 @@
     align-self: flex-start;
   }
 }
-
-
-.piano-search,
 .piano-form-grid input,
-.piano-form-grid select {
+.piano-form-grid select
+{
   color: var(--text-primary, #212529);
   background: var(--surface, #fff);
   border-color: var(--border-color, #ccc);
@@ -427,10 +394,9 @@
   color: var(--text-secondary, #6c757d);
   opacity: 1;
 }
-
-.piano-search:focus,
 .piano-form-grid input:focus,
-.piano-form-grid select:focus {
+.piano-form-grid select:focus
+{
   border-color: var(--text-secondary, #777);
   outline: 2px solid var(--border-color, #ccc);
   outline-offset: 1px;
