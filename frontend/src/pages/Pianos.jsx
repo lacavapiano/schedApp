@@ -98,7 +98,7 @@ function Pianos() {
 
         (appointment.appointment_pianos || []).forEach((item) => {
           const pianoId = item.piano_id ?? item.piano?.id;
-          if (!pianoId || !isTuningService(item, serviceTypes)) return;
+          if (!pianoId || !isTuningService(item, serviceTypes, appointment.appointment_charges)) return;
           const key = String(pianoId);
           const previous = lastTunedByPiano.get(key);
           if (!previous || appointmentDate > previous) lastTunedByPiano.set(key, appointmentDate);
