@@ -1212,12 +1212,6 @@ function AppointmentModal({
                                     {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `$${Number(service.price).toFixed(2)}/hr` : `$${Number(service.price).toFixed(2)} flat`}</option>)}
                                   </select>
                                 </div>
-                                {selectedService?.pricing_method === "hourly" && (
-                                  <div className="appointment-form-field appointment-hourly-field">
-                                    <label htmlFor={`billable-hours-${index}-${serviceIndex}`}>Actual billable hours *</label>
-                                    <input id={`billable-hours-${index}-${serviceIndex}`} type="text" inputMode="decimal" autoComplete="off" value={serviceEntry.billable_hours ?? ""} onChange={(event) => handleServiceChange(index, serviceIndex, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
-                                  </div>
-                                )}
                                 <div className="appointment-form-field appointment-apply-discount-field">
                                   <label>Discount</label>
                                   <button type="button" className="appointment-add-button appointment-apply-discount-button" disabled={!selectedServiceId} onClick={() => {
@@ -1231,6 +1225,12 @@ function AppointmentModal({
                                   <div className="appointment-form-field appointment-piano-service-remove">
                                     <label> </label>
                                     <button type="button" className="appointment-remove-button" onClick={() => removeServiceFromPiano(index, serviceIndex)}>Remove service</button>
+                                  </div>
+                                )}
+                                {selectedService?.pricing_method === "hourly" && (
+                                  <div className="appointment-form-field appointment-hourly-field">
+                                    <label htmlFor={`billable-hours-${index}-${serviceIndex}`}>Actual billable hours *</label>
+                                    <input id={`billable-hours-${index}-${serviceIndex}`} type="text" inputMode="decimal" autoComplete="off" value={serviceEntry.billable_hours ?? ""} onChange={(event) => handleServiceChange(index, serviceIndex, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
                                   </div>
                                 )}
                               </div>
