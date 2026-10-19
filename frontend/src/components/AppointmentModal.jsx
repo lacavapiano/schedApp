@@ -1147,120 +1147,121 @@ function AppointmentModal({
                         </select>
                       </div>
 
-                      <div className="appointment-form-row">
-                        <div className="appointment-form-field appointment-service-field">
-                          <label>Service *</label>
-                          <select
-                            value={appointmentPiano.service_type_id || serviceTypes.find((service) => appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase())?.id || ""}
-                            onChange={(event) => {
-                              const service = serviceTypes.find((item) => item.id === event.target.value);
-                              handlePianoChange(index, "service_type_id", event.target.value);
-                              handlePianoChange(index, "service", service?.name || "");
-                              if (service?.pricing_method !== "hourly") handlePianoChange(index, "billable_hours", "");
-                            }}
-                            required
-                          >
-                            <option value="">Select configured service</option>
-                            {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `${Number(service.price).toFixed(2)}/hr` : `${Number(service.price).toFixed(2)} flat`}</option>)}
-                          </select>
-                        </div>
-                        <div className="appointment-form-field appointment-apply-discount-field">
-                          <label>Discount</label>
-                          <button
-                            type="button"
-                            className="appointment-add-button appointment-apply-discount-button"
-                            disabled={!appointmentPiano.service_type_id && !appointmentPiano.service}
-                            onClick={() => {
-                              setActiveDiscountPianoIndex(activeDiscountPianoIndex === index ? null : index);
-                              setDiscountType("one_time");
-                              setDiscountPercent("");
-                              setError("");
-                            }}
-                          >
-                            {activeDiscountPianoIndex === index ? "Close discount" : "Apply discount"}
-                          </button>
-                        </div>
-                        {(() => {
-                          const selectedService = serviceTypes.find((service) => service.id === appointmentPiano.service_type_id || (!appointmentPiano.service_type_id && appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase()));
-                          return selectedService?.pricing_method === "hourly" ? (
-                            <div className="appointment-form-field appointment-hourly-field">
-                              <label htmlFor={`billable-hours-${index}`}>Actual billable hours *</label>
-                              <input id={`billable-hours-${index}`} type="text" inputMode="decimal" autoComplete="off" value={appointmentPiano.billable_hours} onChange={(event) => handlePianoChange(index, "billable_hours", event.target.value)} placeholder="e.g. 1.5" aria-label="Actual billable hours" required />
+                      <div className="appointment-piano-services">
+                        {(appointmentPiano.services?.length ? appointmentPiano.services : [{ service_type_id: appointmentPiano.service_type_id || "", billable_hours: appointmentPiano.billable_hours || "", service: appointmentPiano.service || "" }]).map((serviceEntry, serviceIndex) => {
+                          const selectedService = serviceTypes.find((service) => service.id === serviceEntry.service_type_id || (!serviceEntry.service_type_id && serviceEntry.service && service.name.toLowerCase() === serviceEntry.service.toLowerCase()));
+                          const discountEditorKey = `${index}:${serviceIndex}`;
+                          const selectedServiceId = selectedService?.id || serviceEntry.service_type_id;
+                          const existingDiscounts = clientDiscounts.filter((discount) => discount.is_active && (!discount.service_type_id || discount.service_type_id === selectedServiceId) && (discount.discount_type === "ongoing" || (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (appointmentPiano.id && discount.applies_to_appointment_piano_id === appointmentPiano.id)));
+                          const preview = pricingPreview[index]?.[serviceIndex];
+                          return (
+                            <div className="appointment-piano-service" key={`${appointmentPiano.id || index}-service-${serviceIndex}`}>
+                              <div className="appointment-form-row appointment-piano-service-row">
+                                <div className="appointment-form-field appointment-service-field">
+                                  <label>Service {serviceIndex + 1} *</label>
+                                  <select value={serviceEntry.service_type_id || selectedService?.id || ""} onChange={(event) => handleServiceChange(index, serviceIndex, "service_type_id", event.target.value)} required>
+                                    <option value="">Select configured service</option>
+                                    {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `$${Number(service.price).toFixed(2)}/hr` : `$${Number(service.price).toFixed(2)} flat`}</option>)}
+                                  </select>
+                                </div>
+                                {selectedService?.pricing_method === "hourly" && (
+                                  <div className="appointment-form-field appointment-hourly-field">
+                                    <label htmlFor={`billable-hours-${index}-${serviceIndex}`}>Actual billable hours *</label>
+                                    <input id={`billable-hours-${index}-${serviceIndex}`} type="text" inputMode="decimal" autoComplete="off" value={serviceEntry.billable_hours ?? ""} onChange={(event) => handleServiceChange(index, serviceIndex, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
+                                  </div>
+                                )}
+                                <div className="appointment-form-field appointment-apply-discount-field">
+                                  <label>Discount</label>
+                                  <button type="button" className="appointment-add-button appointment-apply-discount-button" disabled={!selectedServiceId} onClick={() => {
+                                    setActiveDiscountPianoIndex(activeDiscountPianoIndex === discountEditorKey ? null : discountEditorKey);
+                                    setDiscountType("one_time");
+                                    setDiscountPercent("");
+                                    setError("");
+                                  }}>{activeDiscountPianoIndex === discountEditorKey ? "Close discount" : "Apply discount"}</button>
+                                </div>
+                                {appointmentPiano.services?.length > 1 && (
+                                  <div className="appointment-form-field appointment-piano-service-remove">
+                                    <label> </label>
+                                    <button type="button" className="appointment-remove-button" onClick={() => removeServiceFromPiano(index, serviceIndex)}>Remove service</button>
+                                  </div>
+                                )}
+                              </div>
+                              {activeDiscountPianoIndex === discountEditorKey && (
+                                <div className="appointment-inline-discount-editor">
+                                  <div className="appointment-inline-discount-heading">
+                                    <strong>Discount for this service</strong>
+                                    <span>{selectedService?.name || "Selected service"}</span>
+                                  </div>
+                                  <div className="appointment-form-row appointment-discount-input-row">
+                                    <div className="appointment-form-field">
+                                      <label htmlFor={`appointment-discount-type-${index}-${serviceIndex}`}>Discount type</label>
+                                      <select id={`appointment-discount-type-${index}-${serviceIndex}`} value={discountType} onChange={(event) => setDiscountType(event.target.value)}>
+                                        <option value="one_time">One-time — this appointment only</option>
+                                        <option value="ongoing">Ongoing — future appointments too</option>
+                                      </select>
+                                    </div>
+                                    <div className="appointment-form-field appointment-discount-percent-field">
+                                      <label htmlFor={`appointment-discount-percent-${index}-${serviceIndex}`}>Discount (%)</label>
+                                      <input id={`appointment-discount-percent-${index}-${serviceIndex}`} type="number" min="0.01" max="100" step="0.01" value={discountPercent} onChange={(event) => setDiscountPercent(event.target.value)} placeholder="e.g. 10" />
+                                    </div>
+                                  </div>
+                                  <div className="appointment-inline-discount-actions">
+                                    <button type="button" className="appointment-add-button" onClick={() => {
+                                      const percent = Number(discountPercent);
+                                      if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+                                        setError("Enter a discount percentage greater than 0 and no more than 100.");
+                                        return;
+                                      }
+                                      if (!selectedServiceId) {
+                                        setError("Choose a service before applying a discount.");
+                                        return;
+                                      }
+                                      setError("");
+                                      setDiscountDrafts((previous) => [...previous, {
+                                        draftId: `discount-${Date.now()}-${previous.length}`,
+                                        discount_percent: percent,
+                                        discount_type: discountType,
+                                        service_type_id: selectedServiceId,
+                                        scope: "piano",
+                                        targetPianoIndex: index,
+                                        is_active: true,
+                                      }]);
+                                      setDiscountPercent("");
+                                      setActiveDiscountPianoIndex(null);
+                                    }}>Add discount</button>
+                                    <button type="button" className="appointment-remove-button" onClick={() => setActiveDiscountPianoIndex(null)}>Cancel</button>
+                                  </div>
+                                </div>
+                              )}
+                              {existingDiscounts.length > 0 && (
+                                <div className="appointment-applied-discounts">
+                                  {existingDiscounts.map((discount) => <span key={discount.id}>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>)}
+                                </div>
+                              )}
+                              {preview?.service && (
+                                <div className="appointment-price-preview">
+                                  <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{preview.service.name}</span></div>
+                                  <div className="appointment-price-line"><span>Base price{preview.service.pricing_method === "hourly" ? ` (${serviceEntry.billable_hours || "—"} hr × $${Number(preview.service.price).toFixed(2)})` : ""}</span><span>{preview.ready ? `$${preview.baseAmount.toFixed(2)}` : "Enter actual hours"}</span></div>
+                                  {preview.discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.percent}%)</span><span>−${discount.amount.toFixed(2)}</span></div>)}
+                                  <div className="appointment-price-line appointment-price-total"><strong>Service total</strong><strong>{preview.ready ? `$${preview.finalAmount.toFixed(2)}` : "—"}</strong></div>
+                                </div>
+                              )}
                             </div>
-                          ) : null;
-                        })()}
+                          );
+                        })}
+                        <button type="button" className="appointment-add-button appointment-add-service-button" onClick={() => addServiceToPiano(index)}>+ Add service to this piano</button>
+                      </div>
+
+                      <div className="appointment-form-row appointment-piano-environment-row">
                         <div className="appointment-form-field">
                           <label>Temp</label>
                           <input type="text" className={completionMode && !String(appointmentPiano.temp ?? "").trim() ? "completion-field-missing" : ""} value={appointmentPiano.temp} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
                         </div>
                         <div className="appointment-form-field">
-                          <label>Hum</label>
+                          <label>Humidity</label>
                           <input type="text" className={completionMode && !String(appointmentPiano.hum ?? "").trim() ? "completion-field-missing" : ""} value={appointmentPiano.hum} onChange={(event) => handlePianoChange(index, "hum", event.target.value)} />
                         </div>
                       </div>
-                      {activeDiscountPianoIndex === index && (
-                        <div className="appointment-inline-discount-editor">
-                          <div className="appointment-inline-discount-heading">
-                            <strong>Discount for this service</strong>
-                            <span>{pricingPreview[index]?.service?.name || appointmentPiano.service || "Selected service"}</span>
-                          </div>
-                          <div className="appointment-form-row">
-                            <div className="appointment-form-field">
-                              <label htmlFor={`appointment-discount-type-${index}`}>Discount type</label>
-                              <select id={`appointment-discount-type-${index}`} value={discountType} onChange={(event) => setDiscountType(event.target.value)}>
-                                <option value="one_time">One-time — this appointment only</option>
-                                <option value="ongoing">Ongoing — future appointments too</option>
-                              </select>
-                            </div>
-                            <div className="appointment-form-field appointment-discount-percent-field">
-                              <label htmlFor={`appointment-discount-percent-${index}`}>Discount (%)</label>
-                              <input id={`appointment-discount-percent-${index}`} type="number" min="0.01" max="100" step="0.01" value={discountPercent} onChange={(event) => setDiscountPercent(event.target.value)} placeholder="e.g. 10" />
-                            </div>
-                          </div>
-                          <div className="appointment-inline-discount-actions">
-                            <button type="button" className="appointment-add-button" onClick={() => {
-                              const percent = Number(discountPercent);
-                              if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
-                                setError("Enter a discount percentage greater than 0 and no more than 100.");
-                                return;
-                              }
-                              const serviceId = appointmentPiano.service_type_id || serviceTypes.find((service) => appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase())?.id || "";
-                              if (!serviceId) {
-                                setError("Choose a service before applying a discount.");
-                                return;
-                              }
-                              setError("");
-                              setDiscountDrafts((previous) => [...previous, {
-                                draftId: `discount-${Date.now()}-${previous.length}`,
-                                discount_percent: percent,
-                                discount_type: discountType,
-                                service_type_id: serviceId,
-                                scope: "piano",
-                                targetPianoIndex: index,
-                                is_active: true,
-                              }]);
-                              setDiscountPercent("");
-                              setActiveDiscountPianoIndex(null);
-                            }}>Add discount</button>
-                            <button type="button" className="appointment-remove-button" onClick={() => setActiveDiscountPianoIndex(null)}>Cancel</button>
-                          </div>
-                        </div>
-                      )}
-                      {(clientDiscounts.filter((discount) => discount.is_active && (!discount.service_type_id || discount.service_type_id === (appointmentPiano.service_type_id || serviceTypes.find((service) => appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase())?.id)) && (discount.discount_type === "ongoing" || (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (appointmentPiano.id && discount.applies_to_appointment_piano_id === appointmentPiano.id))).length > 0 && (
-                        <div className="appointment-applied-discounts">
-                          {clientDiscounts.filter((discount) => discount.is_active && (!discount.service_type_id || discount.service_type_id === (appointmentPiano.service_type_id || serviceTypes.find((service) => appointmentPiano.service && service.name.toLowerCase() === appointmentPiano.service.toLowerCase())?.id)) && (discount.discount_type === "ongoing" || (appointment?.id && discount.applies_to_appointment_id === appointment.id) || (appointmentPiano.id && discount.applies_to_appointment_piano_id === appointmentPiano.id))).map((discount) => (
-                            <span key={discount.id}>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>
-                          ))}
-                        </div>
-                      ))}
-                      {pricingPreview[index]?.service && (
-                        <div className="appointment-price-preview">
-                          <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{pricingPreview[index].service.name}</span></div>
-                          <div className="appointment-price-line"><span>Base price{pricingPreview[index].service.pricing_method === "hourly" ? ` (${appointmentPiano.billable_hours || "—"} hr × $${Number(pricingPreview[index].service.price).toFixed(2)})` : ""}</span><span>{pricingPreview[index].ready ? `$${pricingPreview[index].baseAmount.toFixed(2)}` : "Enter actual hours"}</span></div>
-                          {pricingPreview[index].discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.percent}%)</span><span>−${discount.amount.toFixed(2)}</span></div>)}
-                          <div className="appointment-price-line appointment-price-total"><strong>Service total</strong><strong>{pricingPreview[index].ready ? `$${pricingPreview[index].finalAmount.toFixed(2)}` : "—"}</strong></div>
-                        </div>
-                      )}
 
                       <div className="appointment-form-field">
                         <label>
