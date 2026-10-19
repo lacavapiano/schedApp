@@ -1444,3 +1444,278 @@
     max-width: 34ch;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Piano detail page audit
+   Keep detail panels aligned with the compact client-record design, with
+   consistent spacing, responsive controls, and theme-aware contrast.
+   -------------------------------------------------------------------------- */
+.piano-detail-page {
+  width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  color: var(--text-primary, #212529);
+}
+
+.piano-detail-page *,
+.piano-detail-page *::before,
+.piano-detail-page *::after { box-sizing: border-box; }
+
+.piano-detail-page .piano-detail-toolbar {
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.piano-detail-page .piano-detail-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0 0 16px;
+}
+
+.piano-detail-page .piano-detail-header h2 {
+  min-width: 0;
+  margin: 0;
+  font-size: clamp(20px, 2.4vw, 25px);
+  line-height: 1.25;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-page .piano-type-badge {
+  padding: 3px 8px;
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 5px;
+  background: var(--surface-muted, #f1f3f5);
+  color: var(--text-secondary, #626b76);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.piano-detail-page .piano-detail-grid {
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.piano-detail-page .piano-detail-section {
+  min-width: 0;
+  padding: 15px;
+  margin: 0;
+  border-color: var(--border-color, #dee2e6);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
+}
+
+.piano-detail-page .piano-detail-section > h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.piano-detail-page .piano-detail-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 12px 16px;
+}
+
+.piano-detail-page .piano-detail-fields > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-page .piano-detail-label {
+  color: var(--text-secondary, #6c757d);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.piano-detail-page .piano-detail-fields > div > span:not(.piano-detail-label),
+.piano-detail-page .piano-detail-client-summary {
+  min-width: 0;
+  color: var(--text-primary, #212529);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-page .piano-detail-owner { align-items: flex-start; text-align: left; }
+
+.piano-detail-page .piano-detail-owner .piano-client-link {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary, #212529);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-page .piano-detail-owner .piano-client-link:hover { text-decoration: underline; }
+
+.piano-detail-page .piano-detail-client-summary {
+  color: var(--text-secondary, #6c757d);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.piano-detail-page .piano-climate-history { margin: 0 0 12px; }
+
+.piano-detail-page .piano-service-history-section {
+  margin-top: 0;
+  padding: 15px;
+}
+
+.piano-detail-page .piano-service-history-billing {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 260px;
+}
+
+.piano-detail-page .piano-service-history-charge > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.piano-detail-page .action-button-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.piano-detail-page .action-button-error { margin: 0 0 12px; overflow-wrap: anywhere; }
+
+.piano-detail-page .piano-client-link:focus-visible,
+.piano-detail-page .action-button:focus-visible {
+  outline: 2px solid var(--text-primary, #212529);
+  outline-offset: 3px;
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-detail-section,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-section {
+  border-color: var(--border-color, #454b56);
+  background: var(--surface, #20232a);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-detail-header h2,
+:root[data-theme="dark"] .piano-detail-page .piano-detail-fields > div > span:not(.piano-detail-label),
+:root[data-theme="dark"] .piano-detail-page .piano-detail-client-summary,
+:root[data-theme="dark"] .piano-detail-page .piano-detail-owner .piano-client-link,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-header h2,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-fields > div > span:not(.piano-detail-label),
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-client-summary,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-owner .piano-client-link {
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-detail-label,
+:root[data-theme="dark"] .piano-detail-page .piano-detail-client-summary,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-label,
+:root:not([data-theme="light"]) .piano-detail-page .piano-detail-client-summary {
+  color: var(--text-secondary, #b8bec8);
+}
+
+:root[data-theme="dark"] .piano-detail-page .piano-type-badge,
+:root:not([data-theme="light"]) .piano-detail-page .piano-type-badge {
+  border-color: var(--border-color, #454b56);
+  background: var(--surface-muted, #2b2f38);
+  color: var(--text-secondary, #c0c6d0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .piano-detail-page .piano-detail-section {
+    border-color: var(--border-color, #454b56);
+    background: var(--surface, #20232a);
+    color: var(--text-primary, #f3f4f6);
+  }
+}
+
+@media (max-width: 700px) {
+  .piano-detail-page .piano-detail-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .piano-detail-page .piano-detail-toolbar > .action-button { align-self: flex-start; }
+
+  .piano-detail-page .action-button-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .piano-detail-page .action-button-group .action-button {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    white-space: normal;
+  }
+
+  .piano-detail-page .piano-detail-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .piano-detail-page .piano-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .piano-detail-page .piano-detail-section,
+  .piano-detail-page .piano-service-history-section {
+    padding: 13px;
+    border-radius: 8px;
+  }
+
+  .piano-detail-page .piano-detail-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .piano-detail-page .piano-detail-fields > div { gap: 2px; }
+  .piano-detail-page .piano-climate-history { margin-bottom: 10px; }
+
+  .piano-detail-page .piano-service-history-entry-top {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .piano-detail-page .piano-service-history-billing { max-width: none; }
+}
+
+@media (max-width: 380px) {
+  .piano-detail-page .action-button-group { grid-template-columns: minmax(0, 1fr); }
+
+  .piano-detail-page .piano-detail-section,
+  .piano-detail-page .piano-service-history-section { padding: 11px; }
+
+  .piano-detail-page .piano-service-history-entry { padding: 9px; }
+  .piano-detail-page .piano-service-history-status { white-space: normal; }
+}
+
