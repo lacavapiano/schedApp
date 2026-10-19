@@ -951,3 +951,19 @@
     white-space: nowrap;
   }
 }
+
+/* Center the ownership value beneath its label on the piano detail page. */
+.piano-detail-owner {
+  align-items: center;
+  text-align: center;
+}
+
+.piano-detail-owner .piano-detail-label,
+.piano-detail-owner .piano-client-link {
+  width: 100%;
+  text-align: center;
+}
+
+.piano-detail-owner .piano-client-link {
+  align-self: stretch;
+}
