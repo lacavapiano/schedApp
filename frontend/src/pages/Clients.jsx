@@ -5,6 +5,7 @@ import ClientTable from "../components/ClientTable";
 import PageLayout from "../components/PageLayout";
 import AddClientModal from "../components/AddClientModal";
 import "../styles/Clients.css";
+import "../styles/ActionButtons.css";
 
 function Clients() {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ function Clients() {
           />
 
           <button
-            className="add-client-button"
+            className="add-client-button action-button action-button--primary"
             onClick={() => setShowAddClient(true)}
           >
             + Add Client
