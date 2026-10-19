@@ -11,6 +11,7 @@ function Dashboard() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingAppointment, setEditingAppointment] = useState(null);
+  const [showCancelled, setShowCancelled] = useState(false);
 
   async function loadAppointments() {
     try {
@@ -31,8 +32,15 @@ function Dashboard() {
     .filter((appointment) => appointment.status?.toLowerCase() === "completed")
     .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
 
+  const cancelledAppointments = appointments
+    .filter((appointment) => appointment.status?.toLowerCase() === "cancelled")
+    .sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+
   const upcomingAppointments = appointments
-    .filter((appointment) => appointment.status?.toLowerCase() !== "completed")
+    .filter((appointment) => {
+      const status = appointment.status?.toLowerCase();
+      return status !== "completed" && status !== "cancelled";
+    })
     .sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
 
   function handleAppointmentClick(appointment) {
@@ -88,6 +96,28 @@ function Dashboard() {
             onAppointmentClick={handleAppointmentClick}
             emptyMessage="No completed appointments."
           />
+        </section>
+
+        <section className="dashboard-section dashboard-cancelled-section">
+          <div className="dashboard-section-header dashboard-cancelled-header">
+            <h2>Cancelled</h2>
+            <label className="dashboard-cancelled-toggle">
+              <input
+                type="checkbox"
+                checked={showCancelled}
+                onChange={(event) => setShowCancelled(event.target.checked)}
+              />
+              <span>Show cancelled appointments ({cancelledAppointments.length})</span>
+            </label>
+          </div>
+
+          {showCancelled && (
+            <AppointmentList
+              appointments={cancelledAppointments}
+              onAppointmentClick={handleAppointmentClick}
+              emptyMessage="No cancelled appointments."
+            />
+          )}
         </section>
       </div>
 
