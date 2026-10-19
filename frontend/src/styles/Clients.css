@@ -14,33 +14,9 @@
   font-size: 28px;
 }
 
-.clients-count {
-  color: #666;
-  font-size: 14px;
-  white-space: nowrap;
-}
 
-.clients-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
 
-.client-search {
-  flex: 1;
-  max-width: 450px;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-  box-sizing: border-box;
-}
 
-.client-search:focus {
-  outline: none;
-  border-color: #555;
-}
 
 
 
@@ -52,7 +28,7 @@
 
 @media (max-width: 700px) {
   .clients-header { align-items: flex-start; flex-wrap: wrap; gap: 8px; }
-  .clients-toolbar { flex-wrap: wrap; align-items: stretch; gap: 10px; }
-  .client-search { flex: 1 1 100%; width: 100%; max-width: none; }
+
+
 
 }
