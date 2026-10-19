@@ -599,3 +599,220 @@
     gap: 0;
   }
 }
+
+/* Refined layout for the piano cards inside the appointment modal. */
+.appointment-piano {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: 18px;
+  border: 1px solid var(--border-color, #dedede);
+  border-radius: 10px;
+  background: var(--surface-muted, #fafafa);
+  color: var(--text-primary, #222);
+}
+
+.appointment-piano-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color, #dedede);
+}
+
+.appointment-piano-header > * {
+  min-width: 0;
+}
+
+.appointment-piano-header strong,
+.appointment-piano-header h3 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.appointment-piano .appointment-form-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(145px, 0.9fr) repeat(2, minmax(85px, 0.55fr));
+  align-items: end;
+  gap: 14px;
+  margin: 0;
+}
+
+.appointment-piano .appointment-form-field {
+  min-width: 0;
+  margin: 0;
+  gap: 7px;
+  background: transparent;
+}
+
+.appointment-piano .appointment-form-field label {
+  display: block;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-secondary, #555);
+}
+
+.appointment-piano .appointment-form-field input,
+.appointment-piano .appointment-form-field select,
+.appointment-piano .appointment-form-field textarea {
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #222);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.appointment-piano .appointment-form-field textarea {
+  min-height: 84px;
+}
+
+.appointment-piano .appointment-service-field {
+  min-width: 0;
+  flex: initial;
+}
+
+.appointment-piano .appointment-apply-discount-field {
+  min-width: 0;
+  flex: initial;
+  justify-content: flex-end;
+}
+
+.appointment-piano .appointment-apply-discount-field label {
+  margin-bottom: 0;
+}
+
+.appointment-piano .appointment-apply-discount-button {
+  min-height: 40px;
+  padding: 8px 10px;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.appointment-piano .appointment-hourly-field {
+  min-width: 0;
+  max-width: none;
+  flex: initial;
+}
+
+.appointment-piano .appointment-price-preview,
+.appointment-piano .appointment-inline-discount-editor {
+  margin: 0;
+}
+
+.appointment-piano .appointment-applied-discounts {
+  margin: 0;
+}
+
+.appointment-piano .appointment-applied-discounts span {
+  line-height: 1.4;
+}
+
+.appointment-piano .appointment-piano-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+:root[data-theme="dark"] .appointment-piano {
+  background: var(--surface-muted, #2b2f38);
+  border-color: var(--border-color, #484d58);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .appointment-piano .appointment-piano-header {
+  background: transparent;
+  border-color: var(--border-color, #484d58);
+  color: var(--text-primary, #f3f4f6);
+}
+
+:root[data-theme="dark"] .appointment-piano .appointment-form-field,
+:root[data-theme="dark"] .appointment-piano .appointment-form-field label {
+  background: transparent;
+  color: var(--text-secondary, #b9c0cc);
+}
+
+:root[data-theme="dark"] .appointment-piano .appointment-form-field input,
+:root[data-theme="dark"] .appointment-piano .appointment-form-field select,
+:root[data-theme="dark"] .appointment-piano .appointment-form-field textarea {
+  background: var(--surface, #191c22);
+  border-color: var(--border-color, #555b67);
+  color: var(--text-primary, #f3f4f6);
+  -webkit-text-fill-color: var(--text-primary, #f3f4f6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .appointment-piano {
+    background: var(--surface-muted, #2b2f38);
+    border-color: var(--border-color, #484d58);
+    color: var(--text-primary, #f3f4f6);
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano .appointment-piano-header {
+    background: transparent;
+    border-color: var(--border-color, #484d58);
+    color: var(--text-primary, #f3f4f6);
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano .appointment-form-field,
+  :root:not([data-theme="light"]) .appointment-piano .appointment-form-field label {
+    background: transparent;
+    color: var(--text-secondary, #b9c0cc);
+  }
+
+  :root:not([data-theme="light"]) .appointment-piano .appointment-form-field input,
+  :root:not([data-theme="light"]) .appointment-piano .appointment-form-field select,
+  :root:not([data-theme="light"]) .appointment-piano .appointment-form-field textarea {
+    background: var(--surface, #191c22);
+    border-color: var(--border-color, #555b67);
+    color: var(--text-primary, #f3f4f6);
+    -webkit-text-fill-color: var(--text-primary, #f3f4f6);
+  }
+}
+
+@media (max-width: 900px) {
+  .appointment-piano .appointment-form-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .appointment-piano .appointment-service-field {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .appointment-piano {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 8px;
+  }
+
+  .appointment-piano .appointment-form-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .appointment-piano .appointment-service-field {
+    grid-column: auto;
+  }
+
+  .appointment-piano .appointment-apply-discount-button {
+    width: 100%;
+  }
+
+  .appointment-piano .appointment-piano-header {
+    align-items: flex-start;
+  }
+}
+
