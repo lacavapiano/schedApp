@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import PageLayout from "../components/PageLayout";
+import ServiceCatalog from "../components/ServiceCatalog";
 import {
   getSettings,
   getGoogleStatus,
@@ -254,6 +255,8 @@ function Settings() {
             {error}
           </div>
         )}
+
+        <ServiceCatalog />
 
         <section className="settings-section">
           <div className="settings-section-header">
