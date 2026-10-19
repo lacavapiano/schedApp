@@ -364,3 +364,19 @@
     display: none;
   }
 }
+
+
+/* Final desktop spacing: retain the compact grid, with slightly more breathing room. */
+@media (min-width: 901px) {
+  .client-panel {
+    padding: 10px 14px;
+  }
+
+  .client-panel-main {
+    gap: 16px;
+  }
+
+  .client-panel-contact {
+    gap: 14px;
+  }
+}
