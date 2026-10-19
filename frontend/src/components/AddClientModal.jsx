@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createClient, updateClient } from "../services/api";
 import "../styles/ClientModal.css";
+import "../styles/ActionButtons.css";
 
 function AddClientModal({
   onClose,
@@ -1078,10 +1079,10 @@ function AddClientModal({
           {/* Modal Actions */}
           <div className="modal-actions">
             <div className="modal-primary-actions">
-              <button type="button" className="modal-cancel" onClick={onClose}>
+              <button type="button" className="modal-cancel action-button action-button--secondary" onClick={onClose}>
                 Cancel
               </button>
-              <button type="submit" className="modal-save">
+              <button type="submit" className="modal-save action-button action-button--primary">
                 {isEditing ? "Save Changes" : "Save Client"}
               </button>
             </div>
