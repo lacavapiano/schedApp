@@ -302,7 +302,6 @@ export async function createAppointment(req, res) {
       client_address_id = null,
       start_time,
       end_time,
-      status = "scheduled",
       notes = null,
       payment = null,
       payment_type = null,
@@ -381,7 +380,7 @@ export async function createAppointment(req, res) {
         client_address_id,
         start_time,
         end_time,
-        status,
+        status: "scheduled",
         notes,
         payment,
         payment_type,
@@ -538,7 +537,7 @@ export async function updateAppointment(req, res) {
       error: existingError,
     } = await supabase
       .from("appointments")
-      .select("id, google_event_id")
+      .select("id, google_event_id, status")
       .eq("id", id)
       .single();
 
@@ -564,7 +563,6 @@ export async function updateAppointment(req, res) {
       client_address_id = null,
       start_time,
       end_time,
-      status = "scheduled",
       notes = null,
       payment = null,
       payment_type = null,
@@ -646,7 +644,6 @@ export async function updateAppointment(req, res) {
         client_address_id,
         start_time,
         end_time,
-        status,
         notes,
         payment,
         payment_type,
@@ -830,6 +827,111 @@ export async function updateAppointment(req, res) {
   }
 }
 
+
+export async function completeAppointment(req, res) {
+  try {
+    const accessToken = getAccessToken(req);
+    if (!accessToken) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const supabase = getSupabaseForUser(accessToken);
+    const { id } = req.params;
+
+    const { data: appointment, error: appointmentError } = await supabase
+      .from("appointments")
+      .select("id, status, payment, payment_type, miles, appointment_pianos(id, temp, hum)")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (appointmentError) {
+      return res.status(500).json({ error: appointmentError.message });
+    }
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+    if (appointment.status !== "scheduled") {
+      return res.status(400).json({ error: "Only scheduled appointments can be completed." });
+    }
+
+    const missing = [];
+    if (appointment.miles === null || appointment.miles === undefined || appointment.miles === "") {
+      missing.push("mileage");
+    }
+    if (appointment.payment === null || appointment.payment === undefined || appointment.payment === "") {
+      missing.push("payment amount");
+    }
+    if (!String(appointment.payment_type || "").trim()) {
+      missing.push("payment type");
+    }
+    for (const [index, piano] of (appointment.appointment_pianos || []).entries()) {
+      if (piano.temp === null || piano.temp === undefined || !String(piano.temp).trim()) {
+        missing.push(`temperature for piano ${index + 1}`);
+      }
+      if (piano.hum === null || piano.hum === undefined || !String(piano.hum).trim()) {
+        missing.push(`humidity for piano ${index + 1}`);
+      }
+    }
+    if (missing.length) {
+      return res.status(400).json({
+        error: `Fill in the following before completing: ${missing.join(", ")}.`,
+        missing,
+      });
+    }
+
+    const { data: charges, error: chargesError } = await supabase
+      .from("appointment_charges")
+      .select("appointment_piano_id, final_amount")
+      .eq("appointment_id", id);
+
+    if (chargesError) {
+      return res.status(500).json({ error: "Unable to verify appointment balance." });
+    }
+
+    const pianos = appointment.appointment_pianos || [];
+    const pricedPianoIds = new Set((charges || []).map((charge) => charge.appointment_piano_id).filter(Boolean));
+    const unpricedPianos = pianos.filter((piano) => !pricedPianoIds.has(piano.id));
+    if (unpricedPianos.length) {
+      return res.status(400).json({
+        error: "Every piano on the appointment must have a calculated service price before it can be completed.",
+      });
+    }
+
+    const totalDue = Math.round((charges || []).reduce((sum, charge) => sum + Number(charge.final_amount || 0), 0) * 100) / 100;
+    const amountPaid = Number(appointment.payment);
+    if (!Number.isFinite(amountPaid) || amountPaid < 0) {
+      return res.status(400).json({ error: "Enter a valid payment amount." });
+    }
+    if (amountPaid + 0.00001 < totalDue) {
+      return res.status(400).json({
+        error: `This appointment cannot be completed until it is paid in full. Total due: ${totalDue.toFixed(2)}; paid: ${amountPaid.toFixed(2)}.`,
+        total_due: totalDue,
+        amount_paid: amountPaid,
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("appointments")
+      .update({ status: "completed", updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("status", "scheduled")
+      .select(appointmentSelect)
+      .maybeSingle();
+
+    if (error) {
+      return res.status(500).json({ error: "Unable to complete appointment." });
+    }
+    if (!data) {
+      return res.status(409).json({ error: "Appointment status changed. Refresh and try again." });
+    }
+
+    return res.json(data);
+  } catch (error) {
+    console.error("Unexpected error completing appointment:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
 export async function deleteAppointment(req, res) {
   try {
     const accessToken = getAccessToken(req);
@@ -901,29 +1003,24 @@ export async function deleteAppointment(req, res) {
       }
     }
 
-    /*
-     * Now delete the schedApp appointment.
-     *
-     * appointment_pianos should be removed by your
-     * existing database foreign-key cascade if configured.
-     */
-    const { error } = await supabase
+    // Keep the appointment and its service/pricing history; mark it cancelled.
+    const { data: cancelledAppointment, error } = await supabase
       .from("appointments")
-      .delete()
-      .eq("id", id);
+      .update({
+        status: "cancelled",
+        google_event_id: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select(appointmentSelect)
+      .single();
 
     if (error) {
-      console.error(
-        "Error deleting appointment:",
-        error
-      );
-
-      return res.status(500).json({
-        error: "Unable to delete appointment",
-      });
+      console.error("Error cancelling appointment:", error);
+      return res.status(500).json({ error: "Unable to cancel appointment" });
     }
 
-    return res.status(204).send();
+    return res.json(cancelledAppointment);
   } catch (error) {
     console.error(
       "Unexpected error deleting appointment:",
