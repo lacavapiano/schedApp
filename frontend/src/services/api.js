@@ -669,3 +669,34 @@ export async function updateClientDiscount(discountId, discountData) {
   }
   return response.json();
 }
+
+export async function getAppointmentCharges(appointmentId) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/pricing/appointment-charges?appointment_id=${encodeURIComponent(appointmentId)}`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch appointment charges");
+  }
+  return response.json();
+}
+
+export async function saveAppointmentCharges(appointmentId, charges) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/pricing/appointment-charges`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ appointment_id: appointmentId, charges }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to calculate appointment pricing");
+  }
+  return response.json();
+}
