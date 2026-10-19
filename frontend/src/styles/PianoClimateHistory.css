@@ -104,3 +104,20 @@
     fill: var(--text-secondary, #b8bec8);
   }
 }
+
+.piano-climate-chart--stacked {
+  min-width: 420px;
+}
+.piano-climate-axis-title {
+  fill: var(--text-secondary, #6c757d);
+  font-size: 11px;
+  font-weight: 600;
+}
+:root[data-theme="dark"] .piano-climate-axis-title {
+  fill: var(--text-secondary, #b8bec8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .piano-climate-axis-title {
+    fill: var(--text-secondary, #b8bec8);
+  }
+}
