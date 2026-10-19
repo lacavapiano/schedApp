@@ -178,7 +178,7 @@ function ClientDetail() {
             ← Back to Clients
           </button>
 
-          <div className="action-button-group client-detail-toolbar-actions">
+          <div className="action-button-group">
             <button
               className="action-button action-button--primary"
               onClick={() => setShowEditModal(true)}
@@ -439,7 +439,7 @@ function ClientDetail() {
             <h2>Pianos</h2>
 
             <button
-              className="client-detail-button detail-action-button"
+              className="action-button action-button--primary"
               onClick={() => setShowAddPiano(true)}
             >
               Add Piano
