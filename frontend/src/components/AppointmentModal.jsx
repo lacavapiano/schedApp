@@ -1252,7 +1252,7 @@ function AppointmentModal({
                             <span key={discount.id}>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>
                           ))}
                         </div>
-                      )}
+                      ))}
                       {pricingPreview[index]?.service && (
                         <div className="appointment-price-preview">
                           <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{pricingPreview[index].service.name}</span></div>
