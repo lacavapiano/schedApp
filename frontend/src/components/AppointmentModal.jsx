@@ -5,6 +5,7 @@ import {
   createAppointment,
   updateAppointment,
   deleteAppointment,
+  completeAppointment,
   getServiceTypes,
   getClientDiscounts,
   getAppointmentCharges,
@@ -140,6 +141,7 @@ function AppointmentModal({
   const [loadingData, setLoadingData] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [completionMode, setCompletionMode] = useState(false);
   const [error, setError] = useState("");
   const [showClientModal, setShowClientModal] = useState(false);
   const [showPianoModal, setShowPianoModal] = useState(false);
@@ -544,8 +546,8 @@ function AppointmentModal({
     }));
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  async function handleSubmit(event, completeAfterSave = false) {
+    event?.preventDefault();
 
     setError("");
 
@@ -587,6 +589,39 @@ function AppointmentModal({
         "The end time must be after the start time."
       );
       return;
+    }
+
+    if (completeAfterSave) {
+      const missing = [];
+      if (formData.miles.trim() === "") missing.push("mileage");
+      if (formData.payment.trim() === "") missing.push("payment amount");
+      if (!formData.payment_type.trim()) missing.push("payment type");
+      formData.pianos.filter((piano) => piano.piano_id).forEach((piano, index) => {
+        if (!String(piano.temp ?? "").trim()) missing.push(`temperature for piano ${index + 1}`);
+        if (!String(piano.hum ?? "").trim()) missing.push(`humidity for piano ${index + 1}`);
+      });
+      if (missing.length) {
+        setCompletionMode(true);
+        setError(`Before completing, fill in: ${missing.join(", ")}.`);
+        return;
+      }
+      const selectedPianos = formData.pianos.filter((piano) => piano.piano_id);
+      if (selectedPianos.length && !pricingReady) {
+        setCompletionMode(true);
+        setError("Complete service pricing for every piano before completing this appointment.");
+        return;
+      }
+      const paid = Number(formData.payment);
+      if (!Number.isFinite(paid) || paid < 0) {
+        setCompletionMode(true);
+        setError("Enter a valid payment amount before completing this appointment.");
+        return;
+      }
+      if (paid + 0.00001 < estimatedTotal) {
+        setCompletionMode(true);
+        setError(`This appointment must be paid in full before completion. Total due: ${estimatedTotal.toFixed(2)}; paid: ${paid.toFixed(2)}.`);
+        return;
+      }
     }
 
     for (let index = 0; index < formData.pianos.length; index += 1) {
@@ -668,6 +703,9 @@ function AppointmentModal({
         return savedPiano && service ? { appointment_piano_id: savedPiano.id, service_type_id: service.id, billable_hours: service.pricing_method === "hourly" ? Number(piano.billable_hours) : null } : null;
       }).filter(Boolean);
       await saveAppointmentCharges(savedAppointment.id, chargesToSave);
+      if (completeAfterSave) {
+        await completeAppointment(savedAppointment.id);
+      }
 
       if (onSaved) {
         await onSaved();
@@ -682,7 +720,7 @@ function AppointmentModal({
 
       setError(
         error.message ||
-          "Failed to save appointment."
+          (completeAfterSave ? "Failed to complete appointment." : "Failed to save appointment.")
       );
     } finally {
       setSaving(false);
@@ -695,7 +733,7 @@ function AppointmentModal({
     }
 
     const confirmed = window.confirm(
-      "Are you sure you want to delete this appointment?"
+      "Cancel this appointment? It will be marked cancelled and retained in your history."
     );
 
     if (!confirmed) {
@@ -953,31 +991,11 @@ function AppointmentModal({
                 </div>
               </div>
 
-              {/* Status */}
-              <div className="appointment-form-field">
-                <label htmlFor="appointment-status">
-                  Status
-                </label>
-
-                <select
-                  id="appointment-status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                >
-                  <option value="scheduled">
-                    Scheduled
-                  </option>
-
-                  <option value="completed">
-                    Completed
-                  </option>
-
-                  <option value="cancelled">
-                    Cancelled
-                  </option>
-                </select>
-              </div>
+              {isEditing && (
+                <div className="appointment-status-readout">
+                  Status: <strong>{appointment.status || "scheduled"}</strong>
+                </div>
+              )}
 
               {/* Pianos */}
               <div className="appointment-section">
@@ -1115,11 +1133,11 @@ function AppointmentModal({
                         })()}
                         <div className="appointment-form-field">
                           <label>Temp</label>
-                          <input type="text" value={appointmentPiano.temp} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
+                          <input type="text" value={appointmentPiano.temp} required={completionMode} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
                         </div>
                         <div className="appointment-form-field">
                           <label>Hum</label>
-                          <input type="text" value={appointmentPiano.hum} onChange={(event) => handlePianoChange(index, "hum", event.target.value)} />
+                          <input type="text" value={appointmentPiano.hum} required={completionMode} onChange={(event) => handlePianoChange(index, "hum", event.target.value)} />
                         </div>
                       </div>
                       {pricingPreview[index]?.service && (
@@ -1201,6 +1219,7 @@ function AppointmentModal({
                   <input
                     id="appointment-payment"
                     type="number"
+                    required={completionMode}
                     min="0"
                     step="0.01"
                     name="payment"
@@ -1217,6 +1236,7 @@ function AppointmentModal({
                   <select
                     id="appointment-payment-type"
                     name="payment_type"
+                    required={completionMode}
                     value={
                       formData.payment_type
                     }
@@ -1260,6 +1280,7 @@ function AppointmentModal({
                   <input
                     id="appointment-miles"
                     type="number"
+                    required={completionMode}
                     min="0"
                     step="0.1"
                     name="miles"
@@ -1315,12 +1336,22 @@ function AppointmentModal({
                     }
                   >
                     {deleting
-                      ? "Deleting..."
-                      : "Delete"}
+                      ? "Cancelling..."
+                      : "Cancel Appointment"}
                   </button>
                 )}
 
                 <div className="appointment-modal-actions-right">
+                  {isEditing && (appointment.status || "scheduled") === "scheduled" && (
+                    <button
+                      type="button"
+                      className="appointment-complete-button action-button action-button--primary"
+                      onClick={() => handleSubmit(null, true)}
+                      disabled={saving || deleting}
+                    >
+                      {saving && completionMode ? "Completing..." : "Complete Appointment"}
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="appointment-cancel-button action-button action-button--secondary"
