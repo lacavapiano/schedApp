@@ -412,7 +412,7 @@ function AppointmentModal({
           if (idx !== serviceIndex) return entry;
           if (field === "service_type_id") {
             const service = serviceTypes.find((item) => item.id === value);
-            return { ...entry, service_type_id: value, service: service?.name || "", billable_hours: service?.pricing_method === "hourly" ? entry.billable_hours : "" };
+            return { ...entry, service_type_id: value, service: service?.name || "", billable_hours: service?.pricing_method === "hourly" ? (entry.billable_hours === "" || entry.billable_hours == null ? "1" : entry.billable_hours) : "" };
           }
           return { ...entry, [field]: value };
         });
