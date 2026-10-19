@@ -1,10 +1,7 @@
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import "../styles/ClientTable.css";
 
-function ClientTable({ clients, onEdit, onDelete }) {
-  const navigate = useNavigate();
-
+function ClientTable({ clients, onEdit }) {
   const sortedClients = useMemo(
     () =>
       [...clients].sort((a, b) =>
@@ -45,64 +42,46 @@ function ClientTable({ clients, onEdit, onDelete }) {
         const isInstitution = client.type === "institution";
 
         return (
-          <article className="client-panel" key={client.id}>
+          <article
+            className="client-panel"
+            key={client.id}
+            role="button"
+            tabIndex={0}
+            aria-label={`Edit ${client.name || "client"}`}
+            onClick={() => onEdit(client)}
+            onKeyDown={(event) => {
+              if (event.target !== event.currentTarget) return;
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onEdit(client);
+              }
+            }}
+          >
             <div className="client-panel-main">
               <div className="client-panel-heading">
-                <button
-                  type="button"
-                  className="client-panel-name"
-                  onClick={() => navigate(`/clients/${client.id}`)}
-                  title={`View ${client.name ?? "client"} details`}
-                >
+                <span className="client-panel-name">
                   {client.name || "Unnamed client"}
-                </button>
+                </span>
                 <span className={`client-type-tag${isInstitution ? " institution" : ""}`}>
                   {isInstitution ? "Institution" : "Individual"}
                 </span>
               </div>
 
               <div className="client-panel-contact">
-                {phone ? (
-                  <a className="client-panel-contact-item" href={`tel:${phone}`}>
-                    <span className="client-panel-contact-label">Phone</span>
-                    <span className="client-panel-contact-value">{phone}</span>
-                  </a>
-                ) : (
-                  <div className="client-panel-contact-item">
-                    <span className="client-panel-contact-label">Phone</span>
-                    <span className="client-panel-contact-value is-empty">Not provided</span>
-                  </div>
-                )}
-
-                {email ? (
-                  <a className="client-panel-contact-item" href={`mailto:${email}`}>
-                    <span className="client-panel-contact-label">Email</span>
-                    <span className="client-panel-contact-value">{email}</span>
-                  </a>
-                ) : (
-                  <div className="client-panel-contact-item">
-                    <span className="client-panel-contact-label">Email</span>
-                    <span className="client-panel-contact-value is-empty">Not provided</span>
-                  </div>
-                )}
+                <div className="client-panel-contact-item">
+                  <span className="client-panel-contact-label">Phone</span>
+                  <span className={`client-panel-contact-value${phone ? "" : " is-empty"}`}>
+                    {phone || "Not provided"}
+                  </span>
+                </div>
+                <div className="client-panel-contact-item">
+                  <span className="client-panel-contact-label">Email</span>
+                  <span className={`client-panel-contact-value${email ? "" : " is-empty"}`}>
+                    {email || "Not provided"}
+                  </span>
+                </div>
               </div>
-            </div>
-
-            <div className="client-panel-actions">
-              <button
-                type="button"
-                className="table-action-button edit-button"
-                onClick={() => onEdit(client)}
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                className="table-action-button delete-button"
-                onClick={() => onDelete(client)}
-              >
-                Delete
-              </button>
+              <div className="client-panel-hint">Tap to edit client</div>
             </div>
           </article>
         );
