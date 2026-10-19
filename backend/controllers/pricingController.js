@@ -22,11 +22,14 @@ async function getUserContext(req, res) {
 }
 
 function validService(body) {
+  const duration = body.default_service_minutes;
+  const validDuration = duration == null || duration === "" || (Number.isInteger(Number(duration)) && Number(duration) >= 1 && Number(duration) <= 1440);
   return typeof body.name === "string"
     && body.name.trim().length > 0
     && ["hourly", "flat_rate"].includes(body.pricing_method)
     && Number.isFinite(Number(body.price))
-    && Number(body.price) >= 0;
+    && Number(body.price) >= 0
+    && validDuration;
 }
 
 export async function getServiceTypes(req, res) {
