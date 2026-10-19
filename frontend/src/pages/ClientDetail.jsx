@@ -197,15 +197,9 @@ function ClientDetail() {
         {deleteError && <p className="client-detail-delete-error" role="alert">{deleteError}</p>}
 
         <div className="client-detail-header">
-          <div>
-            <h2>{client.name}</h2>
-
-            <span className="client-type-badge">
-              {client.type === "institution"
-                ? "Institution"
-                : "Individual"}
-            </span>
-          </div>
+          <span className="client-type-badge">
+            {client.type === "institution" ? "Institution" : "Individual"}
+          </span>
         </div>
 
         <div className="client-detail-grid">
