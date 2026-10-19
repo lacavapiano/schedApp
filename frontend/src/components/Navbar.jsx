@@ -38,8 +38,8 @@ function Navbar() {
 
   const navLinks = [
     { to: "/", label: "Dashboard", end: true },
-    { to: "/clients", label: "Clients" },
     { to: "/calendar", label: "Calendar" },
+    { to: "/clients", label: "Clients" },
     { to: "/pianos", label: "Pianos" },
     { to: "/settings", label: "Settings" },
   ];
