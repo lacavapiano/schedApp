@@ -17,6 +17,12 @@ function formatDate(date) {
   });
 }
 
+function formatCurrency(value) {
+  const amount = Number(value);
+  if (value === null || value === undefined || value === "" || !Number.isFinite(amount)) return "Not recorded";
+  return amount.toLocaleString(undefined, { style: "currency", currency: "USD" });
+}
+
 function getPrimaryValue(items = [], field) {
   return items.find((item) => item.is_primary)?.[field] || items[0]?.[field] || "";
 }
