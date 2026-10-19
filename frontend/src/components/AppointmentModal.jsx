@@ -414,7 +414,7 @@ function AppointmentModal({
       ...previous,
       pianos: [
         ...previous.pianos,
-        { ...EMPTY_PIANO, service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "", service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "" },
+        { ...EMPTY_PIANO, service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "", service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "", services: [{ service_type_id: serviceTypes.find((service) => /tun/i.test(service.name))?.id || "", billable_hours: "", service: serviceTypes.find((service) => /tun/i.test(service.name))?.name || "" }] },
       ],
     }));
 
