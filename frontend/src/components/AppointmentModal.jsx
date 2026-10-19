@@ -1133,7 +1133,7 @@ function AppointmentModal({
                         })()}
                         <div className="appointment-form-field">
                           <label>Temp</label>
-                          <input type="text" value={appointmentPiano.temp} required={completionMode} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
+                          <input type="text" className={completionMode && !String(appointmentPiano.temp ?? "").trim() ? "completion-field-missing" : ""} value={appointmentPiano.temp} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
                         </div>
                         <div className="appointment-form-field">
                           <label>Hum</label>
@@ -1218,6 +1218,7 @@ function AppointmentModal({
 
                   <input
                     id="appointment-payment"
+                    className={completionMode && formData.payment.trim() === "" ? "completion-field-missing" : ""}
                     type="number"
                     required={completionMode}
                     min="0"
@@ -1235,6 +1236,7 @@ function AppointmentModal({
 
                   <select
                     id="appointment-payment-type"
+                    className={completionMode && !formData.payment_type.trim() ? "completion-field-missing" : ""}
                     name="payment_type"
                     required={completionMode}
                     value={
@@ -1279,6 +1281,7 @@ function AppointmentModal({
 
                   <input
                     id="appointment-miles"
+                    className={completionMode && formData.miles.trim() === "" ? "completion-field-missing" : ""}
                     type="number"
                     required={completionMode}
                     min="0"
