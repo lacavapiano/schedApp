@@ -281,3 +281,190 @@ export async function updateClientDiscount(req, res) {
     return res.status(500).json({ error: "Unable to update client discount" });
   }
 }
+
+
+function roundMoney(value) {
+  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+}
+
+function effectivePercent(discounts) {
+  const remaining = discounts.reduce(
+    (product, discount) => product * (1 - Number(discount.discount_percent) / 100),
+    1
+  );
+  return Math.round((1 - remaining) * 10000) / 100;
+}
+
+export async function getAppointmentCharges(req, res) {
+  try {
+    const context = await getUserContext(req, res);
+    if (!context) return;
+    const { supabase } = context;
+    const appointmentId = req.query.appointment_id;
+
+    if (!appointmentId) {
+      return res.status(400).json({ error: "appointment_id is required" });
+    }
+
+    const { data: appointment, error: appointmentError } = await supabase
+      .from("appointments")
+      .select("id")
+      .eq("id", appointmentId)
+      .maybeSingle();
+    if (appointmentError || !appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    const { data, error } = await supabase
+      .from("appointment_charges")
+      .select("*")
+      .eq("appointment_id", appointmentId)
+      .order("created_at", { ascending: true });
+    if (error) return res.status(500).json({ error: error.message });
+    return res.json(data || []);
+  } catch (error) {
+    console.error("Error fetching appointment charges:", error);
+    return res.status(500).json({ error: "Unable to fetch appointment charges" });
+  }
+}
+
+export async function saveAppointmentCharges(req, res) {
+  try {
+    const context = await getUserContext(req, res);
+    if (!context) return;
+    const { supabase, user } = context;
+    const { appointment_id: appointmentId, charges = [] } = req.body || {};
+
+    if (!appointmentId || !Array.isArray(charges)) {
+      return res.status(400).json({ error: "appointment_id and a charges array are required" });
+    }
+
+    const { data: appointment, error: appointmentError } = await supabase
+      .from("appointments")
+      .select("id, owner_id, client_id")
+      .eq("id", appointmentId)
+      .maybeSingle();
+    if (appointmentError || !appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    const { data: appointmentPianos, error: pianoError } = await supabase
+      .from("appointment_pianos")
+      .select("id, appointment_id")
+      .eq("appointment_id", appointmentId);
+    if (pianoError) return res.status(500).json({ error: pianoError.message });
+
+    const appointmentPianoIds = new Set((appointmentPianos || []).map((row) => row.id));
+    const submittedIds = charges.map((charge) => charge.appointment_piano_id);
+    if (submittedIds.some((id) => !id || !appointmentPianoIds.has(id))) {
+      return res.status(400).json({ error: "Every priced service must belong to this appointment" });
+    }
+    if (new Set(submittedIds).size !== submittedIds.length) {
+      return res.status(400).json({ error: "Each appointment service can only be priced once" });
+    }
+
+    const serviceIds = [...new Set(charges.map((charge) => charge.service_type_id).filter(Boolean))];
+    const { data: serviceRows, error: serviceError } = serviceIds.length
+      ? await supabase.from("service_types")
+          .select("id, owner_id, name, pricing_method, price")
+          .in("id", serviceIds)
+      : { data: [], error: null };
+    if (serviceError) return res.status(500).json({ error: serviceError.message });
+
+    const servicesById = new Map((serviceRows || []).map((service) => [service.id, service]));
+    const { data: discounts, error: discountsError } = await supabase
+      .from("client_discounts")
+      .select("id, service_type_id, discount_percent, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id")
+      .eq("client_id", appointment.client_id)
+      .eq("is_active", true);
+    if (discountsError) return res.status(500).json({ error: discountsError.message });
+
+    const rowsToInsert = [];
+    const responseRows = [];
+
+    for (const input of charges) {
+      const service = servicesById.get(input.service_type_id);
+      if (!service) {
+        return res.status(400).json({ error: "Choose a valid configured service for every priced piano" });
+      }
+      if (service.owner_id !== user.id) {
+        return res.status(400).json({ error: "The selected service does not belong to this account" });
+      }
+
+      const hours = input.billable_hours === "" || input.billable_hours === null || input.billable_hours === undefined
+        ? null
+        : Number(input.billable_hours);
+      if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) {
+        return res.status(400).json({ error: `Enter actual billable hours for hourly service "${service.name}".` });
+      }
+      if (service.pricing_method === "flat_rate" && hours !== null && (!Number.isFinite(hours) || hours < 0)) {
+        return res.status(400).json({ error: "Billable hours must be zero or greater" });
+      }
+
+      const baseAmount = roundMoney(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1));
+      const matchingRules = (discounts || []).filter((rule) => {
+        if (rule.service_type_id && rule.service_type_id !== service.id) return false;
+        if (rule.discount_type === "ongoing") return true;
+        return rule.applies_to_appointment_id === appointmentId
+          || rule.applies_to_appointment_piano_id === input.appointment_piano_id;
+      });
+      const globalRules = matchingRules.filter((rule) => rule.discount_type === "ongoing" && !rule.service_type_id);
+      const serviceRules = matchingRules.filter((rule) => rule.discount_type === "ongoing" && rule.service_type_id === service.id);
+      const oneTimeRules = matchingRules.filter((rule) => rule.discount_type === "one_time");
+      const orderedRules = [...globalRules, ...serviceRules, ...oneTimeRules];
+
+      let runningAmount = baseAmount;
+      const breakdown = [];
+      for (const rule of orderedRules) {
+        const before = runningAmount;
+        runningAmount = roundMoney(runningAmount * (1 - Number(rule.discount_percent) / 100));
+        breakdown.push({
+          id: rule.id,
+          type: rule.discount_type === "one_time" ? "one_time" : (rule.service_type_id ? "service" : "global"),
+          percent: Number(rule.discount_percent),
+          amount: roundMoney(before - runningAmount),
+          remaining: runningAmount,
+        });
+      }
+      const finalAmount = runningAmount;
+      const row = {
+        owner_id: user.id,
+        appointment_id: appointmentId,
+        appointment_piano_id: input.appointment_piano_id,
+        service_type_id: service.id,
+        service_name: service.name,
+        pricing_method: service.pricing_method,
+        unit_price: Number(service.price),
+        billable_hours: service.pricing_method === "hourly" ? hours : null,
+        base_amount: baseAmount,
+        global_discount_percent: effectivePercent(globalRules),
+        service_discount_percent: effectivePercent(serviceRules),
+        one_time_discount_percent: effectivePercent(oneTimeRules),
+        discount_rule_ids: orderedRules.map((rule) => rule.id),
+        discount_amount: roundMoney(baseAmount - finalAmount),
+        final_amount: finalAmount,
+        updated_at: new Date().toISOString(),
+      };
+      rowsToInsert.push(row);
+      responseRows.push({ ...row, discount_breakdown: breakdown });
+    }
+
+    const { error: deleteError } = await supabase
+      .from("appointment_charges")
+      .delete()
+      .eq("appointment_id", appointmentId);
+    if (deleteError) return res.status(500).json({ error: deleteError.message });
+
+    if (rowsToInsert.length) {
+      const { error: insertError } = await supabase
+        .from("appointment_charges")
+        .insert(rowsToInsert);
+      if (insertError) return res.status(500).json({ error: insertError.message });
+    }
+
+    return res.json(responseRows);
+  } catch (error) {
+    console.error("Error saving appointment charges:", error);
+    return res.status(500).json({ error: "Unable to calculate and save appointment charges" });
+  }
+}
