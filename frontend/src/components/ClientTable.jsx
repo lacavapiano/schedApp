@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import "../styles/ClientTable.css";
 
-function ClientTable({ clients, onEdit }) {
+function ClientTable({ clients, onSelect }) {
   const sortedClients = useMemo(
     () =>
       [...clients].sort((a, b) =>
@@ -56,13 +56,13 @@ function ClientTable({ clients, onEdit }) {
             key={client.id}
             role="button"
             tabIndex={0}
-            aria-label={`Edit ${client.name || "client"}`}
-            onClick={() => onEdit(client)}
+            aria-label={`View ${client.name || "client"} record`}
+            onClick={() => onSelect(client)}
             onKeyDown={(event) => {
               if (event.target !== event.currentTarget) return;
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
-                onEdit(client);
+                onSelect(client);
               }
             }}
           >
@@ -102,7 +102,7 @@ function ClientTable({ clients, onEdit }) {
                   </span>
                 </div>
               </div>
-              <div className="client-panel-hint">Tap to edit client</div>
+              <div className="client-panel-hint">Tap to view record</div>
             </div>
           </article>
         );
