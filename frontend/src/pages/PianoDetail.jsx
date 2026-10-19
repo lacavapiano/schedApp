@@ -194,7 +194,7 @@ function PianoDetail() {
             </div>
           </section>
 
-          <section className="piano-detail-section">
+          <section className="piano-detail-section record-detail-section">
             <h3>Location & Ownership</h3>
             <div className="piano-detail-fields">
               <div>
@@ -220,7 +220,7 @@ function PianoDetail() {
             </div>
           </section>
 
-          <section className="piano-detail-section">
+          <section className="piano-detail-section record-detail-section">
             <h3>Equipment</h3>
             <div className="piano-detail-fields">
               <div>
@@ -234,7 +234,7 @@ function PianoDetail() {
             </div>
           </section>
 
-          <section className="piano-detail-section">
+          <section className="piano-detail-section record-detail-section">
             <h3>Maintenance</h3>
             <div className="piano-detail-fields">
               <div>
