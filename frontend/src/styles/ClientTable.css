@@ -305,3 +305,62 @@
     font-size: 10px;
   }
 }
+
+
+/* Desktop density pass: treat each record as a single grid row. */
+@media (min-width: 901px) {
+  .client-panel {
+    padding: 8px 12px;
+  }
+
+  .client-panel-main {
+    grid-template-columns: minmax(150px, 0.85fr) minmax(0, 3.2fr);
+    align-items: center;
+    gap: 14px;
+  }
+
+  .client-panel-heading {
+    gap: 5px;
+  }
+
+  .client-panel-name {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .client-type-tag {
+    padding: 1px 5px;
+    font-size: 9px;
+  }
+
+  .client-panel-contact {
+    grid-template-columns: minmax(100px, 1fr) minmax(140px, 1.4fr) minmax(90px, 0.9fr) 48px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .client-panel-contact-item,
+  .client-panel-contact-item:first-child {
+    padding: 0;
+    border: 0;
+  }
+
+  .client-panel-contact-label {
+    margin: 0;
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  .client-panel-contact-value {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .client-panel-piano-count .client-panel-contact-value {
+    font-size: 13px;
+  }
+
+  .client-panel-hint {
+    display: none;
+  }
+}
