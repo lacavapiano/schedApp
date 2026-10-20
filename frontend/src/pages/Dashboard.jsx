@@ -32,7 +32,7 @@ function Dashboard() {
 
   const completedAppointments = appointments
     .filter((appointment) => appointment.status?.toLowerCase() === "completed")
-    .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+    .sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
 
   const cancelledAppointments = appointments
     .filter((appointment) => appointment.status?.toLowerCase() === "cancelled")
@@ -43,7 +43,7 @@ function Dashboard() {
       const status = appointment.status?.toLowerCase();
       return status !== "completed" && status !== "cancelled";
     })
-    .sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+    .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
 
   function handleAppointmentClick(appointment) {
     setEditingAppointment(appointment);
