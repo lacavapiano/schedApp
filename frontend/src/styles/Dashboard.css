@@ -502,3 +502,66 @@
   .income-total-card { padding: 15px; }
   .dashboard-tabs button { flex: 1; }
 }
+
+
+/* Income analytics: compact, responsive pie chart and legible mobile controls. */
+.income-report { min-width: 0; }
+.income-report > .income-header { padding: 18px 20px 0; }
+.income-header h2 { margin: 0; color: var(--text-primary); font-size: 20px; }
+.income-visualization {
+  display: grid;
+  grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: 20px;
+}
+.income-pie-wrap { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 8px; }
+.income-pie {
+  width: min(100%, 220px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 7%);
+}
+.income-pie-hole {
+  width: 57%;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  text-align: center;
+  padding: 6px;
+}
+.income-pie-hole strong { max-width: 100%; color: var(--text-primary); font-size: clamp(11px, 1.5vw, 15px); overflow-wrap: anywhere; }
+.income-pie-hole span { color: var(--text-secondary); font-size: 11px; }
+.income-breakdown-row { grid-template-columns: 10px minmax(0, 1fr) auto; gap: 8px 10px; }
+.income-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+.income-breakdown-row .income-breakdown-label small { line-height: 1.4; }
+.income-breakdown-row > strong { white-space: nowrap; }
+@media (max-width: 650px) {
+  .income-report > .income-header { padding: 15px 12px 0; gap: 14px; }
+  .income-header p { line-height: 1.45; }
+  .income-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .income-filters label { font-size: 12px; }
+  .income-filters select { min-height: 42px; padding: 9px 8px; font-size: 14px; }
+  .income-summary { padding: 12px; gap: 18px; }
+  .income-total-card { padding: 14px; gap: 6px; }
+  .income-total-card strong { font-size: 29px; }
+  .income-breakdown h3 { margin-bottom: 8px; line-height: 1.35; }
+  .income-visualization { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .income-pie-wrap { padding: 6px 0 12px; }
+  .income-pie { width: min(62vw, 210px); }
+  .income-pie-hole strong { font-size: 13px; }
+  .income-breakdown-row { padding: 10px 0; gap: 8px; }
+  .income-breakdown-label span { font-size: 13px; }
+  .income-breakdown-row > strong { font-size: 13px; }
+}
+@media (max-width: 360px) {
+  .income-filters { grid-template-columns: minmax(0, 1fr); }
+  .income-pie { width: min(70vw, 190px); }
+}
