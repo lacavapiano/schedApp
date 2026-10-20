@@ -145,7 +145,7 @@ function Dashboard() {
             </div>
           </section>
         ) : (<>
-
+        <div className="dashboard-toolbar">
           <button
             type="button"
             className="dashboard-new-appointment-button"
