@@ -186,23 +186,29 @@ function Dashboard() {
             <div className="income-summary">
               <div className="income-total-card"><span>Total recorded income</span><strong>{currency.format(incomeTotal)}</strong><small>{paidAppointments.length} paid appointment{paidAppointments.length === 1 ? "" : "s"}</small></div>
               <div className="income-breakdown"><h3>Breakdown by {({month:"month",year:"year",type:"client type",city:"town / city",zip:"ZIP code",service:"service type",client:"client",payment:"payment type"})[incomeGroupBy]}</h3>
-                {incomeRows.length ? (["month", "year"].includes(incomeGroupBy) ? (
-                  <div className="income-line-chart">
-                    <div className="income-line-chart-heading"><strong>Income over time</strong><span>{incomeGroupBy === "month" ? "Monthly totals" : "Yearly totals"}</span></div>
-                    <div className="income-line-chart-scroll">
-                      <svg viewBox={`0 0 ${lineChartWidth} ${lineChartHeight}`} role="img" aria-label={`Line chart of income by ${incomeGroupBy}`} preserveAspectRatio="xMidYMid meet">
-                        {[0, 1, 2, 3].map((tick) => {
-                          const y = lineChartPadding.top + lineChartPlotHeight * tick / 3;
-                          const value = lineChartMax * (1 - tick / 3);
-                          return <g key={tick}><line x1={lineChartPadding.left} x2={lineChartWidth - lineChartPadding.right} y1={y} y2={y} className="income-line-grid" /><text x={lineChartPadding.left - 9} y={y + 4} textAnchor="end" className="income-line-axis-label">{currency.format(value).replace(/\.00$/, "")}</text></g>;
-                        })}
-                        {lineChartPoints.length > 1 && <polyline points={lineChartPoints.map((point) => `${point.x},${point.y}`).join(" ")} className="income-line-path" />}
-                        {lineChartPoints.map((point) => <g key={point.label}><circle cx={point.x} cy={point.y} r="4" className="income-line-point"><title>{point.axisLabel}: {currency.format(point.amount)}</title></circle><text x={point.x} y={lineChartHeight - 15} textAnchor="middle" className="income-line-axis-label">{point.axisLabel}</text></g>)}
-                      </svg>
-                    </div>
-                  </div>
-                ) : <div className="income-pie-wrap"><div className="income-pie" role="img" aria-label={`Income share by ${incomeGroupBy}`} style={{background: `conic-gradient(${incomePieStops})`}}><div className="income-pie-hole"><strong>{currency.format(incomeTotal)}</strong><span>total</span></div></div></div>}
-                <div className="income-breakdown-list">{incomeRows.map((row, index) => <div className="income-breakdown-row" key={row.label}><span className="income-legend-dot" style={{background: chartPalette[index % chartPalette.length]}} /><div className="income-breakdown-label"><span>{row.label}</span><small>{row.count.toLocaleString(undefined, {maximumFractionDigits: 1})} appointment{row.count === 1 ? "" : "s"} · {incomeTotal > 0 ? ((row.amount / incomeTotal) * 100).toFixed(1) : "0.0"}%</small></div><strong>{currency.format(row.amount)}</strong></div>)}</div> : <p>No recorded payments for this period.</p>}
+                {incomeRows.length ? (
+                  <>
+                    {["month", "year"].includes(incomeGroupBy) ? (
+                      <div className="income-line-chart">
+                        <div className="income-line-chart-heading"><strong>Income over time</strong><span>{incomeGroupBy === "month" ? "Monthly totals" : "Yearly totals"}</span></div>
+                        <div className="income-line-chart-scroll">
+                          <svg viewBox={`0 0 ${lineChartWidth} ${lineChartHeight}`} role="img" aria-label={`Line chart of income by ${incomeGroupBy}`} preserveAspectRatio="xMidYMid meet">
+                            {[0, 1, 2, 3].map((tick) => {
+                              const y = lineChartPadding.top + lineChartPlotHeight * tick / 3;
+                              const value = lineChartMax * (1 - tick / 3);
+                              return <g key={tick}><line x1={lineChartPadding.left} x2={lineChartWidth - lineChartPadding.right} y1={y} y2={y} className="income-line-grid" /><text x={lineChartPadding.left - 9} y={y + 4} textAnchor="end" className="income-line-axis-label">{currency.format(value).replace(/\\.00$/, "")}</text></g>;
+                            })}
+                            {lineChartPoints.length > 1 && <polyline points={lineChartPoints.map((point) => `${point.x},${point.y}`).join(" ")} className="income-line-path" />}
+                            {lineChartPoints.map((point) => <g key={point.label}><circle cx={point.x} cy={point.y} r="4" className="income-line-point"><title>{point.axisLabel}: {currency.format(point.amount)}</title></circle><text x={point.x} y={lineChartHeight - 15} textAnchor="middle" className="income-line-axis-label">{point.axisLabel}</text></g>)}
+                          </svg>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="income-pie-wrap"><div className="income-pie" role="img" aria-label={`Income share by ${incomeGroupBy}`} style={{background: `conic-gradient(${incomePieStops})`}}><div className="income-pie-hole"><strong>{currency.format(incomeTotal)}</strong><span>total</span></div></div></div>
+                    )}
+                    <div className="income-breakdown-list">{incomeRows.map((row, index) => <div className="income-breakdown-row" key={row.label}><span className="income-legend-dot" style={{background: chartPalette[index % chartPalette.length]}} /><div className="income-breakdown-label"><span>{row.label}</span><small>{row.count.toLocaleString(undefined, {maximumFractionDigits: 1})} appointment{row.count === 1 ? "" : "s"} · {incomeTotal > 0 ? ((row.amount / incomeTotal) * 100).toFixed(1) : "0.0"}%</small></div><strong>{currency.format(row.amount)}</strong></div>)}</div>
+                  </>
+                ) : <p>No recorded payments for this period.</p>}
               </div>
             </div>
           </section>
