@@ -625,3 +625,8 @@
   .income-line-chart svg { max-width: none; }
   .income-line-axis-label { font-size: 12px; }
 }
+
+.income-line-chart svg {
+  width: auto;
+  max-width: none;
+}
