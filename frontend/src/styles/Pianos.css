@@ -1950,3 +1950,19 @@
   }
 }
 
+
+
+/* Mobile piano panels: left-align the Owner field with the other details. */
+@media (max-width: 560px) {
+  .piano-panel-details > .piano-panel-client {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .piano-panel-details > .piano-panel-client > .piano-panel-label,
+  .piano-panel-details > .piano-panel-client > .piano-panel-client-link,
+  .piano-panel-details > .piano-panel-client > .piano-panel-value {
+    width: auto;
+    text-align: left;
+  }
+}
