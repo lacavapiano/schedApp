@@ -1113,3 +1113,39 @@
     min-height: 36px;
   }
 }
+
+
+/* Prevent native date/time controls from exceeding the modal width on phones. */
+@media (max-width: 700px) {
+  .appointment-modal form,
+  .appointment-modal .appointment-form-row,
+  .appointment-modal .appointment-form-field {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .appointment-modal .appointment-form-field {
+    width: 100%;
+    flex: 1 1 0;
+  }
+
+  .appointment-modal .appointment-form-field input,
+  .appointment-modal .appointment-form-field select,
+  .appointment-modal .appointment-form-field textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .appointment-modal .appointment-form-field input[type="date"],
+  .appointment-modal .appointment-form-field input[type="time"] {
+    min-width: 0;
+    max-width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 16px;
+  }
+}
