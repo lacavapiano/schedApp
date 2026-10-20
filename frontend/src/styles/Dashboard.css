@@ -584,3 +584,44 @@
   .income-line-chart svg { min-width: 560px; }
   .income-line-chart-scroll { overflow-x: auto; padding: 4px 2px 10px; }
 }
+
+
+/* Mobile-friendly time series: wider plot, scrollable month labels, and a clear average reference. */
+.income-line-chart-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.income-line-chart svg {
+  min-width: 0;
+}
+.income-line-average {
+  stroke: #d97706;
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+  opacity: 0.95;
+}
+.income-line-average-label {
+  fill: #d97706;
+  font-size: 11px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+@media (max-width: 650px) {
+  .income-line-chart { padding-bottom: 12px; }
+  .income-line-chart-heading {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .income-line-chart-heading span { font-size: 11px; }
+  .income-line-chart-scroll { margin-right: -4px; }
+  .income-line-chart svg { max-width: none; }
+  .income-line-axis-label { font-size: 12px; }
+}
