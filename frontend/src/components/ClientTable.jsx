@@ -102,7 +102,6 @@ function ClientTable({ clients, onSelect }) {
                   </span>
                 </div>
               </div>
-              <div className="client-panel-hint">Tap to view record</div>
             </div>
           </article>
         );
