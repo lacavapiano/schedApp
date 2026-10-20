@@ -565,3 +565,22 @@
   .income-filters { grid-template-columns: minmax(0, 1fr); }
   .income-pie { width: min(70vw, 190px); }
 }
+
+
+/* Time-based income trends */
+.income-line-chart { min-width: 0; padding: 12px 0 18px; }
+.income-line-chart-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 8px; }
+.income-line-chart-heading strong { color: var(--text-primary); font-size: 14px; }
+.income-line-chart-heading span { color: var(--text-secondary); font-size: 12px; }
+.income-line-chart-scroll { width: 100%; min-width: 0; }
+.income-line-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.income-line-grid { stroke: var(--border-color); stroke-width: 1; stroke-dasharray: 3 4; }
+.income-line-axis-label { fill: var(--text-secondary); font-size: 11px; }
+.income-line-path { fill: none; stroke: #2463a6; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.income-line-point { fill: var(--surface); stroke: #2463a6; stroke-width: 2.5; }
+@media (max-width: 650px) {
+  .income-line-chart { padding-top: 8px; }
+  .income-line-chart-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .income-line-chart svg { min-width: 560px; }
+  .income-line-chart-scroll { overflow-x: auto; padding: 4px 2px 10px; }
+}
