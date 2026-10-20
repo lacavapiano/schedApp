@@ -63,26 +63,44 @@ function Dashboard() {
   const incomeGroups = new Map();
   paidAppointments.forEach((appointment) => {
     const date = new Date(appointment.start_time);
-    let label, sortKey;
+    const payment = Number(String(appointment.payment ?? 0).replace(/[$,]/g, ""));
+    let labels;
     switch (incomeGroupBy) {
-      case "year": label = String(date.getFullYear()); sortKey = date.getFullYear(); break;
-      case "type": label = appointment.client?.type || "Unknown client type"; sortKey = label; break;
-      case "zip": label = appointment.client_address?.zip || appointment.client?.zip || "No ZIP code"; sortKey = label; break;
-      case "client": label = appointment.client?.name || "Unknown client"; sortKey = label; break;
-      case "payment": label = appointment.payment_type || "Unspecified payment type"; sortKey = label; break;
-      default: sortKey = date.getFullYear() * 12 + date.getMonth(); label = date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      case "year": labels = [String(date.getFullYear())]; break;
+      case "type": labels = [appointment.client?.type || "Unknown client type"]; break;
+      case "zip": labels = [appointment.client_address?.zip || appointment.client?.zip || "No ZIP code"]; break;
+      case "city": labels = [appointment.client_address?.city || appointment.client?.city || "No town recorded"]; break;
+      case "client": labels = [appointment.client?.name || "Unknown client"]; break;
+      case "payment": labels = [appointment.payment_type || "Unspecified payment type"]; break;
+      case "service": {
+        const services = [...new Set((appointment.appointment_pianos || []).map((item) => item.service?.trim()).filter(Boolean))];
+        labels = services.length ? services : ["No service recorded"];
+        break;
+      }
+      default: labels = [date.toLocaleDateString("en-US", { month: "long", year: "numeric" })];
     }
-    const key = String(sortKey);
-    const row = incomeGroups.get(key) || { label, amount: 0, count: 0, sortKey };
-    row.amount += Number(String(appointment.payment ?? 0).replace(/[$,]/g, ""));
-    row.count += 1;
-    incomeGroups.set(key, row);
+    // Split a multi-service appointment evenly so the chart still represents 100% of recorded income.
+    labels.forEach((label) => {
+      const sortKey = incomeGroupBy === "month" ? date.getFullYear() * 12 + date.getMonth() : label;
+      const key = String(sortKey);
+      const row = incomeGroups.get(key) || { label, amount: 0, count: 0, sortKey };
+      row.amount += payment / labels.length;
+      row.count += 1 / labels.length;
+      incomeGroups.set(key, row);
+    });
   });
   const incomeRows = [...incomeGroups.values()].sort((a, b) =>
     typeof a.sortKey === "number" && typeof b.sortKey === "number" ? b.sortKey - a.sortKey : String(a.label).localeCompare(String(b.label))
   );
   const incomeTotal = paidAppointments.reduce((sum, appointment) =>
     sum + Number(String(appointment.payment ?? 0).replace(/[$,]/g, "")), 0);
+  const chartPalette = ["#30343b", "#626a75", "#929aa5", "#bcc2ca", "#e0e3e7", "#737d70", "#a6afa1", "#c5cbbf", "#8b7d70", "#b7a99b"];
+  let chartCursor = 0;
+  const incomePieStops = incomeRows.map((row, index) => {
+    const start = chartCursor;
+    chartCursor += incomeTotal > 0 ? (row.amount / incomeTotal) * 100 : 0;
+    return `${chartPalette[index % chartPalette.length]} ${start}% ${chartCursor}%`;
+  }).join(", ");
 
   function handleAppointmentClick(appointment) {
     setEditingAppointment(appointment);
@@ -134,13 +152,13 @@ function Dashboard() {
               <div><h2>Income</h2><p>Based on appointment payments and appointment dates. Cancelled appointments are excluded.</p></div>
               <div className="income-filters">
                 <label>Period<select value={incomePeriod} onChange={(event) => setIncomePeriod(event.target.value)}><option value="year">This year</option><option value="12months">Last 12 months</option><option value="all">All time</option></select></label>
-                <label>Group by<select value={incomeGroupBy} onChange={(event) => setIncomeGroupBy(event.target.value)}><option value="month">Month</option><option value="year">Year</option><option value="type">Client type</option><option value="zip">ZIP code</option><option value="client">Client</option><option value="payment">Payment type</option></select></label>
+                <label>Group by<select value={incomeGroupBy} onChange={(event) => setIncomeGroupBy(event.target.value)}><option value="month">Month</option><option value="year">Year</option><option value="type">Client type</option><option value="city">Town / city</option><option value="zip">ZIP code</option><option value="service">Service type</option><option value="client">Client</option><option value="payment">Payment type</option></select></label>
               </div>
             </div>
             <div className="income-summary">
               <div className="income-total-card"><span>Total recorded income</span><strong>{currency.format(incomeTotal)}</strong><small>{paidAppointments.length} paid appointment{paidAppointments.length === 1 ? "" : "s"}</small></div>
-              <div className="income-breakdown"><h3>Breakdown by {({month:"month",year:"year",type:"client type",zip:"ZIP code",client:"client",payment:"payment type"})[incomeGroupBy]}</h3>
-                {incomeRows.length ? <div className="income-breakdown-list">{incomeRows.map((row) => <div className="income-breakdown-row" key={row.label}><div className="income-breakdown-label"><span>{row.label}</span><small>{row.count} appointment{row.count === 1 ? "" : "s"}</small></div><strong>{currency.format(row.amount)}</strong><div className="income-bar-track"><span style={{width: `${incomeTotal > 0 ? (row.amount / incomeTotal) * 100 : 0}%`}} /></div></div>)}</div> : <p>No recorded payments for this period.</p>}
+              <div className="income-breakdown"><h3>Breakdown by {({month:"month",year:"year",type:"client type",city:"town / city",zip:"ZIP code",service:"service type",client:"client",payment:"payment type"})[incomeGroupBy]}</h3>
+                {incomeRows.length ? <div className="income-visualization"><div className="income-pie-wrap"><div className="income-pie" role="img" aria-label={`Income share by ${incomeGroupBy}`} style={{background: `conic-gradient(${incomePieStops})`}}><div className="income-pie-hole"><strong>{currency.format(incomeTotal)}</strong><span>total</span></div></div></div><div className="income-breakdown-list">{incomeRows.map((row, index) => <div className="income-breakdown-row" key={row.label}><span className="income-legend-dot" style={{background: chartPalette[index % chartPalette.length]}} /><div className="income-breakdown-label"><span>{row.label}</span><small>{row.count.toLocaleString(undefined, {maximumFractionDigits: 1})} appointment{row.count === 1 ? "" : "s"} · {incomeTotal > 0 ? ((row.amount / incomeTotal) * 100).toFixed(1) : "0.0"}%</small></div><strong>{currency.format(row.amount)}</strong></div>)}</div></div> : <p>No recorded payments for this period.</p>}
               </div>
             </div>
           </section>
