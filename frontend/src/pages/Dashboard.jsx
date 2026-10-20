@@ -17,6 +17,7 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("appointments");
   const [incomePeriod, setIncomePeriod] = useState("year");
   const [incomeGroupBy, setIncomeGroupBy] = useState("month");
+  const [incomeSortOrder, setIncomeSortOrder] = useState("amount-desc");
 
   async function loadAppointments() {
     try {
@@ -89,12 +90,18 @@ function Dashboard() {
       incomeGroups.set(key, row);
     });
   });
-  const incomeRows = [...incomeGroups.values()].sort((a, b) =>
-    typeof a.sortKey === "number" && typeof b.sortKey === "number" ? b.sortKey - a.sortKey : String(a.label).localeCompare(String(b.label))
-  );
+  const incomeRows = [...incomeGroups.values()].sort((a, b) => {
+    if (incomeSortOrder === "amount-desc") return b.amount - a.amount || String(a.label).localeCompare(String(b.label));
+    if (incomeSortOrder === "amount-asc") return a.amount - b.amount || String(a.label).localeCompare(String(b.label));
+    if (incomeSortOrder === "label-desc") return String(b.label).localeCompare(String(a.label));
+    if (incomeSortOrder === "label-asc") return String(a.label).localeCompare(String(b.label));
+    return typeof a.sortKey === "number" && typeof b.sortKey === "number"
+      ? b.sortKey - a.sortKey
+      : String(a.label).localeCompare(String(b.label));
+  });
   const incomeTotal = paidAppointments.reduce((sum, appointment) =>
     sum + Number(String(appointment.payment ?? 0).replace(/[$,]/g, "")), 0);
-  const chartPalette = ["#30343b", "#626a75", "#929aa5", "#bcc2ca", "#e0e3e7", "#737d70", "#a6afa1", "#c5cbbf", "#8b7d70", "#b7a99b"];
+  const chartPalette = ["#2463a6", "#d97706", "#16836b", "#b83280", "#7048a8", "#c24135", "#64748b", "#8b7a16", "#0e7490", "#6d4c41", "#4d7c0f", "#a21caf"];
   let chartCursor = 0;
   const incomePieStops = incomeRows.map((row, index) => {
     const start = chartCursor;
@@ -152,7 +159,7 @@ function Dashboard() {
               <div><h2>Income</h2><p>Based on appointment payments and appointment dates. Cancelled appointments are excluded.</p></div>
               <div className="income-filters">
                 <label>Period<select value={incomePeriod} onChange={(event) => setIncomePeriod(event.target.value)}><option value="year">This year</option><option value="12months">Last 12 months</option><option value="all">All time</option></select></label>
-                <label>Group by<select value={incomeGroupBy} onChange={(event) => setIncomeGroupBy(event.target.value)}><option value="month">Month</option><option value="year">Year</option><option value="type">Client type</option><option value="city">Town / city</option><option value="zip">ZIP code</option><option value="service">Service type</option><option value="client">Client</option><option value="payment">Payment type</option></select></label>
+                <label>Group by<select value={incomeGroupBy} onChange={(event) => setIncomeGroupBy(event.target.value)}><option value="month">Month</option><option value="year">Year</option><option value="type">Client type</option><option value="city">Town / city</option><option value="zip">ZIP code</option><option value="service">Service type</option><option value="client">Client</option><option value="payment">Payment type</option></select></label><label>Sort order<select value={incomeSortOrder} onChange={(event) => setIncomeSortOrder(event.target.value)}><option value="amount-desc">Income: high to low</option><option value="amount-asc">Income: low to high</option><option value="label-asc">Name: A to Z</option><option value="label-desc">Name: Z to A</option><option value="date-desc">Date: newest first</option></select></label>
               </div>
             </div>
             <div className="income-summary">
