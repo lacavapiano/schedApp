@@ -108,12 +108,17 @@ function Dashboard() {
         return Number(a.label) - Number(b.label);
       })
     : [];
-  const lineChartWidth = 720;
-  const lineChartHeight = 240;
-  const lineChartPadding = { top: 20, right: 20, bottom: 42, left: 58 };
+  // Give each time bucket enough horizontal space to keep labels readable on small screens.
+  const lineChartWidth = Math.max(720, 110 + incomeTimeRows.length * (incomeGroupBy === "month" ? 58 : 72));
+  const lineChartHeight = 260;
+  const lineChartPadding = { top: 24, right: 24, bottom: 54, left: 70 };
   const lineChartMax = Math.max(1, ...incomeTimeRows.map((row) => row.amount));
+  const lineChartAverage = incomeTimeRows.length
+    ? incomeTimeRows.reduce((sum, row) => sum + row.amount, 0) / incomeTimeRows.length
+    : 0;
   const lineChartPlotWidth = lineChartWidth - lineChartPadding.left - lineChartPadding.right;
   const lineChartPlotHeight = lineChartHeight - lineChartPadding.top - lineChartPadding.bottom;
+  const lineChartAverageY = lineChartPadding.top + lineChartPlotHeight - (lineChartAverage / lineChartMax) * lineChartPlotHeight;
   const lineChartPoints = incomeTimeRows.map((row, index) => ({
     ...row,
     x: lineChartPadding.left + (incomeTimeRows.length <= 1 ? lineChartPlotWidth / 2 : index * lineChartPlotWidth / (incomeTimeRows.length - 1)),
@@ -198,8 +203,10 @@ function Dashboard() {
                               const value = lineChartMax * (1 - tick / 3);
                               return <g key={tick}><line x1={lineChartPadding.left} x2={lineChartWidth - lineChartPadding.right} y1={y} y2={y} className="income-line-grid" /><text x={lineChartPadding.left - 9} y={y + 4} textAnchor="end" className="income-line-axis-label">{currency.format(value).replace(/\\.00$/, "")}</text></g>;
                             })}
+                            <line x1={lineChartPadding.left} x2={lineChartWidth - lineChartPadding.right} y1={lineChartAverageY} y2={lineChartAverageY} className="income-line-average" />
+                            <text x={lineChartWidth - lineChartPadding.right} y={Math.max(13, lineChartAverageY - 7)} textAnchor="end" className="income-line-average-label">Average {currency.format(lineChartAverage)}</text>
                             {lineChartPoints.length > 1 && <polyline points={lineChartPoints.map((point) => `${point.x},${point.y}`).join(" ")} className="income-line-path" />}
-                            {lineChartPoints.map((point) => <g key={point.label}><circle cx={point.x} cy={point.y} r="4" className="income-line-point"><title>{point.axisLabel}: {currency.format(point.amount)}</title></circle><text x={point.x} y={lineChartHeight - 15} textAnchor="middle" className="income-line-axis-label">{point.axisLabel}</text></g>)}
+                            {lineChartPoints.map((point) => <g key={point.label}><circle cx={point.x} cy={point.y} r="4.5" className="income-line-point"><title>{point.axisLabel}: {currency.format(point.amount)}</title></circle><text x={point.x} y={lineChartHeight - 17} textAnchor="middle" className="income-line-axis-label">{point.axisLabel}</text></g>)}
                           </svg>
                         </div>
                       </div>
