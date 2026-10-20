@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getClient, getAppointments, deleteClient } from "../services/api";
+import { getClient, getAppointments, getServiceTypes, deleteClient } from "../services/api";
 import AddClientModal from "../components/AddClientModal";
 import PianoForm from "../components/PianoForm";
 import ClientDiscounts from "../components/ClientDiscounts";
@@ -14,6 +14,25 @@ function ClientDetailSection({ title, count, children }) {
     return <details className="client-detail-section record-detail-section client-detail-collapsible"><summary><h3>{title} <span className="client-detail-count">({count})</span></h3></summary><div className="client-detail-collapsible-content">{children}</div></details>;
   }
   return <section className="client-detail-section record-detail-section"><h3>{title}</h3>{children}</section>;
+}
+
+function getServiceName(item) {
+  if (typeof item?.service === "string") return item.service.trim();
+  return item?.service?.name || item?.service_type?.name ||
+    item?.serviceType?.name || item?.service_type_name || "";
+}
+
+function isTuningService(item, serviceTypes = []) {
+  const serviceName = getServiceName(item).trim().toLocaleLowerCase();
+  const serviceTypeId = item?.service_type_id ?? item?.serviceTypeId ??
+    item?.service_type?.id ?? item?.serviceType?.id;
+  const catalogService = serviceTypes.find((service) =>
+    (serviceTypeId != null && String(service.id) === String(serviceTypeId)) ||
+    (serviceName && String(service.name || "").trim().toLocaleLowerCase() === serviceName)
+  );
+
+  if (catalogService) return catalogService.is_tuning === true;
+  return /tuning|tune|concert|pitch\\s*correction|standard\\s+service\\s+visit/i.test(serviceName);
 }
 
 function ClientDetail() {
@@ -37,7 +56,10 @@ function ClientDetail() {
 
       // Derive each piano's last-tuned date from completed tuning appointments.
       try {
-        const appointments = await getAppointments();
+        const [appointments, serviceTypes] = await Promise.all([
+          getAppointments(),
+          getServiceTypes({ includeInactive: true }),
+        ]);
         const lastTunedByPiano = new Map();
 
         appointments.forEach((appointment) => {
@@ -46,10 +68,11 @@ function ClientDetail() {
           if (Number.isNaN(appointmentDate.getTime())) return;
 
           (appointment.appointment_pianos || []).forEach((item) => {
-            if (!item.piano_id || !/tun/i.test(item.service || "")) return;
-            const previous = lastTunedByPiano.get(String(item.piano_id));
+            const pianoId = item.piano_id ?? item.piano?.id;
+            if (!pianoId || !isTuningService(item, serviceTypes)) return;
+            const previous = lastTunedByPiano.get(String(pianoId));
             if (!previous || appointmentDate > previous) {
-              lastTunedByPiano.set(String(item.piano_id), appointmentDate);
+              lastTunedByPiano.set(String(pianoId), appointmentDate);
             }
           });
         });
