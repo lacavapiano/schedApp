@@ -321,22 +321,13 @@ function Pianos() {
                         navigate(`/pianos/${piano.id}`);
                       }}
                     >
-                      {[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed piano"}
+                      {`${[piano.make, piano.model].filter(Boolean).join(" ") || "Unnamed piano"} - ${piano.serial || "No serial"}`}
                     </button>
-                    {piano.type && <span className="piano-panel-type">{piano.type}</span>}
                   </div>
 
                   <div className="piano-panel-details">
-                    <div className="piano-panel-detail">
-                      <span className="piano-panel-label">Serial</span>
-                      <span className="piano-panel-value">{piano.serial || "—"}</span>
-                    </div>
-                    <div className="piano-panel-detail">
-                      <span className="piano-panel-label">Location</span>
-                      <span className="piano-panel-value">{piano.location || "—"}</span>
-                    </div>
                     <div className="piano-panel-detail piano-panel-client">
-                      <span className="piano-panel-label">Client</span>
+                      <span className="piano-panel-label">Owner</span>
                       {piano.client ? (
                         <button
                           type="button"
@@ -351,22 +342,15 @@ function Pianos() {
                       ) : (
                         <span className="piano-panel-value">Unassigned</span>
                       )}
-                      {piano.clientSummary && piano.client && (
-                        <span className="piano-panel-client-summary">{piano.clientSummary}</span>
-                      )}
                     </div>
                     <div className="piano-panel-detail">
-                      <span className="piano-panel-label">Last tuning</span>
+                      <span className="piano-panel-label">Location</span>
+                      <span className="piano-panel-value">{piano.location || "—"}</span>
+                    </div>
+                    <div className="piano-panel-detail">
+                      <span className="piano-panel-label">Last tuned</span>
                       <span className="piano-panel-value">{formatDate(piano.lastTunedAt)}</span>
                     </div>
-                    {piano.tuning_period ? (
-                      <div className="piano-panel-detail">
-                        <span className="piano-panel-label">Next tuning due</span>
-                        <span className="piano-panel-value">
-                          {piano.nextTuningDue ? formatDate(piano.nextTuningDue) : "No tuning history"}
-                        </span>
-                      </div>
-                    ) : null}
                   </div>
                 </div>
 
