@@ -630,3 +630,39 @@
   width: auto;
   max-width: none;
 }
+
+
+/* Keep the trend chart's horizontal scrolling inside the chart, never the page. */
+.income-report,
+.income-report .income-summary,
+.income-report .income-breakdown,
+.income-report .income-line-chart {
+  min-width: 0;
+  max-width: 100%;
+}
+.income-line-chart-scroll {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  contain: inline-size;
+}
+.income-line-chart-scroll svg {
+  display: block;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+}
+@media (max-width: 650px) {
+  .income-report .income-summary {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .income-line-chart-scroll {
+    margin-right: 0;
+    padding-right: 8px;
+  }
+}
