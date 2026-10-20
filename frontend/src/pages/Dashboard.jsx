@@ -186,7 +186,7 @@ function Dashboard() {
             <div className="income-summary">
               <div className="income-total-card"><span>Total recorded income</span><strong>{currency.format(incomeTotal)}</strong><small>{paidAppointments.length} paid appointment{paidAppointments.length === 1 ? "" : "s"}</small></div>
               <div className="income-breakdown"><h3>Breakdown by {({month:"month",year:"year",type:"client type",city:"town / city",zip:"ZIP code",service:"service type",client:"client",payment:"payment type"})[incomeGroupBy]}</h3>
-                {incomeRows.length ? {["month", "year"].includes(incomeGroupBy) ? (
+                {incomeRows.length ? (["month", "year"].includes(incomeGroupBy) ? (
                   <div className="income-line-chart">
                     <div className="income-line-chart-heading"><strong>Income over time</strong><span>{incomeGroupBy === "month" ? "Monthly totals" : "Yearly totals"}</span></div>
                     <div className="income-line-chart-scroll">
