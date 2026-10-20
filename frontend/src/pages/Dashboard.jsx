@@ -197,7 +197,7 @@ function Dashboard() {
                       <div className="income-line-chart">
                         <div className="income-line-chart-heading"><strong>Income over time</strong><span>{incomeGroupBy === "month" ? "Monthly totals" : "Yearly totals"}</span></div>
                         <div className="income-line-chart-scroll">
-                          <svg viewBox={`0 0 ${lineChartWidth} ${lineChartHeight}`} role="img" aria-label={`Line chart of income by ${incomeGroupBy}`} preserveAspectRatio="xMidYMid meet">
+                          <svg width={lineChartWidth} height={lineChartHeight} viewBox={`0 0 ${lineChartWidth} ${lineChartHeight}`} role="img" aria-label={`Line chart of income by ${incomeGroupBy}`} preserveAspectRatio="xMidYMid meet">
                             {[0, 1, 2, 3].map((tick) => {
                               const y = lineChartPadding.top + lineChartPlotHeight * tick / 3;
                               const value = lineChartMax * (1 - tick / 3);
