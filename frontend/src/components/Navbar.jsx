@@ -41,6 +41,7 @@ function Navbar() {
     { to: "/calendar", label: "Calendar" },
     { to: "/clients", label: "Clients" },
     { to: "/pianos", label: "Pianos" },
+    { to: "/finances", label: "Finances" },
     { to: "/settings", label: "Settings" },
   ];
 

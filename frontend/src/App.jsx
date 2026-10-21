@@ -11,6 +11,7 @@ import { supabase } from "./services/supabase";
 import Navbar from "./components/Navbar";
 
 import Dashboard from "./pages/Dashboard";
+import Finances from "./pages/Finances";
 import Clients from "./pages/Clients";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
@@ -141,6 +142,15 @@ function AppContent() {
           element={
             <ProtectedRoute session={session}>
               <PianoDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/finances"
+          element={
+            <ProtectedRoute session={session}>
+              <Finances />
             </ProtectedRoute>
           }
         />
