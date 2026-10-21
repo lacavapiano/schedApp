@@ -22,7 +22,7 @@ function PianoForm({
     location: piano?.location ?? "",
     quiet_system: piano?.quiet_system ?? "",
     climate_control: piano?.climate_control ?? "",
-    tuning_period: piano?.tuning_period ?? "",
+    tuning_period: piano?.tuning_period ?? 12,
   });
 
   useEffect(() => {
