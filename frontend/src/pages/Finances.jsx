@@ -39,16 +39,22 @@ function Finances() {
   async function loadData() {
     setLoading(true); setError("");
     try {
-      const [appointmentRows, expenseResult] = await Promise.all([
-        getAppointments(),
-        supabase.from("expenses").select("*").order("expense_date", { ascending: false }),
-      ]);
-      if (expenseResult.error) throw expenseResult.error;
+      const appointmentRows = await getAppointments();
       setAppointments(appointmentRows || []);
+    } catch (err) {
+      console.error("Failed to load appointment income:", err);
+      setError(err.message || "Unable to load appointment income.");
+    }
+    try {
+      const expenseResult = await supabase.from("expenses").select("*").order("expense_date", { ascending: false });
+      if (expenseResult.error) throw expenseResult.error;
       setExpenses(expenseResult.data || []);
     } catch (err) {
-      console.error("Failed to load financial data:", err);
-      setError(err.message || "Unable to load financial records.");
+      console.error("Failed to load expenses:", err);
+      setExpenses([]);
+      setError(err.code === "42P01" || err.code === "PGRST205"
+        ? "The expense ledger needs to be initialized. Run supabase/migrations/20261021000000_financial_records.sql in the Supabase SQL Editor."
+        : (err.message || "Unable to load expenses."));
     } finally { setLoading(false); }
   }
 
