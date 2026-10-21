@@ -171,7 +171,6 @@ function Dashboard() {
             />
           )}
         </section>
-        </>)}
       </div>
 
       {showAppointmentModal && (
