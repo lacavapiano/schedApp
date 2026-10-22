@@ -1008,7 +1008,7 @@ main {
   --shadow-color:rgba(20,28,36,.12);
   color-scheme:light;
 }
-:root[data-theme="dark"], :root:not([data-theme="light"]) {
+:root[data-theme="dark"] {
   --app-bg:#14171b; --surface:#1d2228; --surface-raised:#242a31;
   --surface-muted:#2b323a; --surface-hover:#343d47;
   --text-primary:#f3f5f7; --text-secondary:#d0d6dc; --text-muted:#c0c8d0;
