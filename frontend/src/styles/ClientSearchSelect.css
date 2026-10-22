@@ -248,3 +248,96 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+
+/* Dark-mode picker fix: set every layer explicitly because modal button resets
+   and legacy light-mode !important rules otherwise leak into the menu. */
+:root[data-theme="dark"] .client-search-select .client-search-dropdown,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown {
+  background-color: #1d2228 !important;
+  color: #f3f5f7 !important;
+  border: 1px solid #48525d !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45) !important;
+}
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option {
+  background-color: #1d2228 !important;
+  color: #f3f5f7 !important;
+  border-bottom: 1px solid #48525d !important;
+}
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option > span,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > span {
+  color: #f3f5f7 !important;
+}
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option > small,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > small {
+  color: #c0c8d0 !important;
+}
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-create,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-create {
+  background-color: #1d2228 !important;
+  color: #a9d0ff !important;
+  border-top: 1px solid #48525d !important;
+}
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option:hover,
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option.selected,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:hover,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option.selected,
+:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-create:hover,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-create:hover {
+  background-color: #343d47 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="dark"] .client-search-select .client-search-dropdown .client-search-empty,
+:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown .client-search-empty {
+  background-color: #1d2228 !important;
+  color: #d0d6dc !important;
+}
+
+/* Follow the OS theme too when the app has not explicitly selected light mode. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown {
+    background-color: #1d2228 !important;
+    color: #f3f5f7 !important;
+    border-color: #48525d !important;
+  }
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option {
+    background-color: #1d2228 !important;
+    color: #f3f5f7 !important;
+    border-color: #48525d !important;
+  }
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option > span,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > span {
+    color: #f3f5f7 !important;
+  }
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option > small,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > small {
+    color: #c0c8d0 !important;
+  }
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-create,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-create {
+    background-color: #1d2228 !important;
+    color: #a9d0ff !important;
+    border-color: #48525d !important;
+  }
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option:hover,
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option.selected,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:hover,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option.selected,
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-create:hover,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-create:hover {
+    background-color: #343d47 !important;
+    color: #ffffff !important;
+  }
+  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown .client-search-empty,
+  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown .client-search-empty {
+    background-color: #1d2228 !important;
+    color: #d0d6dc !important;
+  }
+}
