@@ -682,8 +682,8 @@ textarea {
     min-height: 42px;
     flex: 1 1 auto;
   }
-/* Keep wide data tables intact and let the table area scroll
-{
+/* Keep wide data tables intact and let the table area scroll. */
+  table {
     display: block;
     width: 100%;
     max-width: 100%;
@@ -995,3 +995,74 @@ main {
     padding: 1rem 12px;
   }
 }
+
+
+/* SchedApp visual-system audit: contrast-first theme tokens and shared surfaces. */
+:root {
+  --app-bg:#f6f7f8; --surface:#fff; --surface-raised:#fff;
+  --surface-muted:#f0f2f4; --surface-hover:#e9edf0;
+  --text-primary:#202428; --text-secondary:#515b65; --text-muted:#59636d;
+  --border-color:#d3d9df; --input-bg:#fff; --input-text:#202428;
+  --focus-ring:#315f91; --link-color:#245b8f;
+  --button-neutral-bg:#e9edf0; --button-neutral-text:#202428;
+  --shadow-color:rgba(20,28,36,.12);
+  color-scheme:light;
+}
+:root[data-theme="dark"], :root:not([data-theme="light"]) {
+  --app-bg:#14171b; --surface:#1d2228; --surface-raised:#242a31;
+  --surface-muted:#2b323a; --surface-hover:#343d47;
+  --text-primary:#f3f5f7; --text-secondary:#d0d6dc; --text-muted:#c0c8d0;
+  --border-color:#48525d; --input-bg:#20262d; --input-text:#f5f7f9;
+  --focus-ring:#9bc5f2; --link-color:#a9d0ff;
+  --button-neutral-bg:#343d47; --button-neutral-text:#f3f5f7;
+  --shadow-color:rgba(0,0,0,.32); color-scheme:dark;
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+    --app-bg:#14171b; --surface:#1d2228; --surface-raised:#242a31;
+    --surface-muted:#2b323a; --surface-hover:#343d47;
+    --text-primary:#f3f5f7; --text-secondary:#d0d6dc; --text-muted:#c0c8d0;
+    --border-color:#48525d; --input-bg:#20262d; --input-text:#f5f7f9;
+    --focus-ring:#9bc5f2; --link-color:#a9d0ff;
+    --button-neutral-bg:#343d47; --button-neutral-text:#f3f5f7;
+    --shadow-color:rgba(0,0,0,.32); color-scheme:dark;
+  }
+}
+html,body,#root { background-color:var(--app-bg); color:var(--text-primary); }
+#root { border-color:var(--border-color); }
+h1,h2,h3,h4,h5,h6,label,legend,th,dt,strong,b { color:var(--text-primary); }
+a { color:var(--link-color); }
+hr,table,th,td { border-color:var(--border-color); }
+::selection { background:#9bc5f2; color:#14171b; }
+:where(input,select,textarea) { color:var(--input-text); background-color:var(--input-bg); border-color:var(--border-color); }
+:where(input,textarea)::placeholder { color:var(--text-muted); opacity:1; }
+:where(select,option) { color:var(--input-text); }
+:where(button,input,select,textarea,a,[tabindex]):focus-visible { outline:2px solid var(--focus-ring); outline-offset:2px; }
+:where(pre,code) { color:var(--text-primary); background-color:var(--surface-muted); }
+:where(.page-layout,.page-content,.clients-page,.pianos-page,.dashboard,.income-page,.expenses-page,.cash-flow-page,.settings-page,.client-detail-page,.piano-detail-page,.dashboard-section,.client-detail-section,.piano-detail-section,.settings-section,.client-modal,.appointment-modal,.piano-modal,.login-card,.client-contact-card,.client-detail-list-item,.client-piano-row,.piano-row,.dashboard-appointment,.repeatable-item,.appointment-piano,.settings-selected-calendar,.settings-empty-state,.client-search-dropdown,.client-search-option,.client-search-create,.modal-content) {
+  border-color:var(--border-color);
+}
+:where(.dashboard-section,.client-detail-section,.piano-detail-section,.settings-section,.client-modal,.appointment-modal,.piano-modal,.login-card,.client-contact-card,.client-detail-list-item,.client-piano-row,.piano-row,.dashboard-appointment,.repeatable-item,.appointment-piano,.settings-selected-calendar,.settings-empty-state,.client-search-dropdown,.client-search-option,.client-search-create,.modal-content) { color:var(--text-primary); }
+:where(.client-detail-label,.client-detail-item-label,.client-contact-relationship,.client-detail-empty,.client-detail-loading,.client-detail-item-meta,.piano-detail-label,.clients-count,.pianos-count,.settings-help-text,.settings-loading,.settings-saving,.settings-calendar-loading,.settings-selected-help,.settings-color-help,.settings-selected-calendar-id,.appointment-help-text,.client-search-option small,.client-search-empty) { color:var(--text-secondary); }
+:where(.client-modal,.appointment-modal,.piano-modal,.modal-content,.login-card) { background:var(--surface); color:var(--text-primary); box-shadow:0 12px 36px var(--shadow-color); }
+:where(.client-modal-header,.appointment-modal-header,.piano-modal-header,.dashboard-section-header,.settings-section-header) { background:var(--surface); color:var(--text-primary); border-color:var(--border-color); }
+:where(.client-modal-header h2,.appointment-modal-header h2,.piano-modal-header h2,.appointment-form-field label,.form-field>label,.repeatable-section-header label,.repeatable-section-header strong,.settings-field>label,.client-detail-section h3,.piano-detail-section h3) { color:var(--text-primary); }
+:where(.client-search,.piano-search,.settings-calendar-select,.appointment-form-field input,.appointment-form-field select,.appointment-form-field textarea,.form-field input,.form-field select,.form-field textarea,.login-field input) { background:var(--input-bg); color:var(--input-text); border-color:var(--border-color); }
+:where(.navbar-link:hover,.navbar-link.active,.piano-row:hover,.client-search-option:hover,.client-search-option.selected,.client-search-create:hover,.client-detail-list-item:hover,.client-piano-row:hover) { background-color:var(--surface-hover); }
+:where(.navbar-logout,.navbar-toggle,.table-action-button,.settings-secondary-button,.appointment-add-button,.client-detail-list-item,.client-contact-card,.client-piano-row,.settings-selected-calendar,.settings-empty-state,.repeatable-item,.appointment-piano) { border-color:var(--border-color); }
+:where(.settings-button,.login-submit) { background:var(--text-primary); color:var(--app-bg); border-color:var(--text-primary); }
+:where(.settings-secondary-button,.navbar-logout,.table-action-button) { background:var(--button-neutral-bg); color:var(--button-neutral-text); border-color:var(--border-color); }
+
+/* FullCalendar's default white canvas is a common source of dark-mode glare. */
+:root[data-theme="dark"] .fc,:root:not([data-theme="light"]) .fc {
+  --fc-page-bg-color:var(--surface); --fc-neutral-bg-color:var(--surface-muted);
+  --fc-neutral-text-color:var(--text-primary); --fc-border-color:var(--border-color);
+  --fc-button-text-color:var(--button-neutral-text); --fc-button-bg-color:var(--button-neutral-bg);
+  --fc-button-border-color:var(--border-color); --fc-button-hover-bg-color:var(--surface-hover);
+  --fc-button-hover-border-color:var(--border-color); --fc-button-active-bg-color:var(--surface-hover);
+  --fc-button-active-border-color:var(--border-color); --fc-today-bg-color:rgba(155,197,242,.12);
+  --fc-list-event-hover-bg-color:var(--surface-hover); color:var(--text-primary); background:var(--surface);
+}
+:root[data-theme="dark"] .fc .fc-col-header-cell-cushion,:root[data-theme="dark"] .fc .fc-daygrid-day-number,:root:not([data-theme="light"]) .fc .fc-col-header-cell-cushion,:root:not([data-theme="light"]) .fc .fc-daygrid-day-number { color:var(--text-primary); }
+:root[data-theme="dark"] :where(.error,.error-message,.form-error,.login-error),:root:not([data-theme="light"]) :where(.error,.error-message,.form-error,.login-error) { color:#ff9b9b; }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
