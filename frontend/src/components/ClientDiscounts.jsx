@@ -9,7 +9,9 @@ import {
 import "../styles/ClientDiscounts.css";
 
 const EMPTY_FORM = {
+  discount_method: "percent",
   discount_percent: "",
+  discount_amount: "",
   discount_type: "ongoing",
   service_type_id: "",
   target: "",
@@ -27,8 +29,10 @@ function formatDate(value) {
       });
 }
 
-function formatPercent(value) {
-  return `${Number(value)}%`;
+function formatDiscount(discount) {
+  return discount.discount_method === "fixed"
+    ? `${Number(discount.discount_amount).toFixed(2)}`
+    : `${Number(discount.discount_percent)}%`;
 }
 
 function appointmentLabel(appointment) {
@@ -96,8 +100,13 @@ export default function ClientDiscounts({ clientId }) {
     setError("");
     setNotice("");
     const percent = Number(form.discount_percent);
-    if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+    const amount = Number(form.discount_amount);
+    if (form.discount_method === "percent" && (!Number.isFinite(percent) || percent <= 0 || percent > 100)) {
       setError("Enter a discount greater than 0% and no more than 100%.");
+      return;
+    }
+    if (form.discount_method === "fixed" && (!Number.isFinite(amount) || amount <= 0)) {
+      setError("Enter a fixed discount amount greater than $0.");
       return;
     }
     if (form.discount_type === "one_time" && !form.target) {
@@ -108,13 +117,16 @@ export default function ClientDiscounts({ clientId }) {
     try {
       setSaving(true);
       if (editingId) {
-        await updateClientDiscount(editingId, { discount_percent: percent });
+        await updateClientDiscount(editingId, form.discount_method === "fixed"
+          ? { discount_method: "fixed", discount_amount: amount }
+          : { discount_method: "percent", discount_percent: percent });
         setNotice("Discount updated.");
       } else {
         const isAppointment = appointments.some((appointment) => appointment.id === form.target);
         await createClientDiscount({
           client_id: clientId,
-          discount_percent: percent,
+          discount_method: form.discount_method,
+          ...(form.discount_method === "fixed" ? { discount_amount: amount } : { discount_percent: percent }),
           discount_type: form.discount_type,
           service_type_id: form.service_type_id || null,
           applies_to_appointment_id: form.discount_type === "one_time" && isAppointment ? form.target : null,
@@ -136,7 +148,9 @@ export default function ClientDiscounts({ clientId }) {
     setShowForm(true);
     setForm({
       ...EMPTY_FORM,
-      discount_percent: String(discount.discount_percent),
+      discount_method: discount.discount_method || "percent",
+      discount_percent: discount.discount_percent == null ? "" : String(discount.discount_percent),
+      discount_amount: discount.discount_amount == null ? "" : String(discount.discount_amount),
     });
     setError("");
     setNotice("");
@@ -224,17 +238,31 @@ export default function ClientDiscounts({ clientId }) {
         </div>
         <div className="client-discount-fields">
           <div className="settings-field">
-            <label htmlFor="client-discount-percent">Discount (%)</label>
+            <label htmlFor="client-discount-method">Discount amount type</label>
+            <select
+              id="client-discount-method"
+              value={form.discount_method}
+              onChange={(event) => setForm({ ...form, discount_method: event.target.value })}
+            >
+              <option value="percent">Percentage</option>
+              <option value="fixed">Fixed amount ($)</option>
+            </select>
+          </div>
+          <div className="settings-field">
+            <label htmlFor="client-discount-value">{form.discount_method === "fixed" ? "Discount ($)" : "Discount (%)"}</label>
             <input
-              id="client-discount-percent"
+              id="client-discount-value"
               type="number"
               min="0.01"
-              max="100"
+              max={form.discount_method === "percent" ? "100" : undefined}
               step="0.01"
               inputMode="decimal"
-              value={form.discount_percent}
-              onChange={(event) => setForm({ ...form, discount_percent: event.target.value })}
-              placeholder="e.g. 10"
+              value={form.discount_method === "fixed" ? form.discount_amount : form.discount_percent}
+              onChange={(event) => setForm({
+                ...form,
+                ...(form.discount_method === "fixed" ? { discount_amount: event.target.value } : { discount_percent: event.target.value }),
+              })}
+              placeholder={form.discount_method === "fixed" ? "e.g. 25.00" : "e.g. 10"}
               required
             />
           </div>
@@ -324,7 +352,7 @@ export default function ClientDiscounts({ clientId }) {
               <div className="client-discount-main">
                 <div className="client-discount-field">
                   <span className="client-discount-field-label">Discount</span>
-                  <strong className="client-discount-field-value client-discount-percent">{formatPercent(discount.discount_percent)}</strong>
+                  <strong className="client-discount-field-value client-discount-percent">{formatDiscount(discount)}</strong>
                 </div>
                 <div className="client-discount-field">
                   <span className="client-discount-field-label">Type / Service</span>
@@ -337,7 +365,7 @@ export default function ClientDiscounts({ clientId }) {
               </div>
               <div className="client-discount-actions">
                 {!discount.is_active && <span className="client-discount-archived">Archived</span>}
-                <button type="button" className="settings-secondary-button" onClick={() => startEdit(discount)}>Edit %</button>
+                <button type="button" className="settings-secondary-button" onClick={() => startEdit(discount)}>Edit</button>
                 <button type="button" className="settings-secondary-button" onClick={() => toggleActive(discount)}>
                   {discount.is_active ? "Archive" : "Reactivate"}
                 </button>
@@ -350,7 +378,7 @@ export default function ClientDiscounts({ clientId }) {
           {visibleDiscounts.map((discount) => (
             <article className={`client-discount-row ${discount.is_active ? "" : "client-discount-row-inactive"}`} key={discount.id}>
               <div className="client-discount-main"><div className="client-discount-field"><span className="client-discount-field-label">Discount</span><strong className="client-discount-field-value client-discount-percent">{formatPercent(discount.discount_percent)}</strong></div><div className="client-discount-field"><span className="client-discount-field-label">Type / Service</span><span className="client-discount-field-value">{discountScope(discount)}</span></div><div className="client-discount-field"><span className="client-discount-field-label">Applies to</span><span className="client-discount-field-value">{discountTarget(discount)}</span></div></div>
-              <div className="client-discount-actions">{!discount.is_active && <span className="client-discount-archived">Archived</span>}<button type="button" className="settings-secondary-button" onClick={() => startEdit(discount)}>Edit %</button><button type="button" className="settings-secondary-button" onClick={() => toggleActive(discount)}>{discount.is_active ? "Archive" : "Reactivate"}</button></div>
+              <div className="client-discount-actions">{!discount.is_active && <span className="client-discount-archived">Archived</span>}<button type="button" className="settings-secondary-button" onClick={() => startEdit(discount)}>Edit</button><button type="button" className="settings-secondary-button" onClick={() => toggleActive(discount)}>{discount.is_active ? "Archive" : "Reactivate"}</button></div>
             </article>
           ))}
         </div>
