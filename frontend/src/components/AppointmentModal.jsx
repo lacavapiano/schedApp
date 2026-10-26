@@ -350,7 +350,11 @@ function AppointmentModal({
     return () => { cancelled = true; };
   }, [appointment?.id]);
 
-  const pricingPreview = useMemo(() => formData.pianos.map((piano, pianoIndex) => {
+  const pricingPreview = useMemo(() => {
+    // A fixed one-time discount is a single amount for its selected appointment
+    // or piano scope. Carry the unused balance forward across eligible lines.
+    const fixedOneTimeRemaining = new Map();
+    return formData.pianos.map((piano, pianoIndex) => {
     const entries = (piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }]);
     return entries.map((entry, serviceIndex) => {
       const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
@@ -380,12 +384,24 @@ function AppointmentModal({
       const discounts = [];
       for (const discount of [...global, ...scoped, ...oneTime]) {
         const before = remaining;
-        remaining = applyDiscountToAmount(remaining, discount);
+        const isFixedOneTime = discount.discount_type === "one_time" && (discount.discount_method || "percent") === "fixed";
+        if (isFixedOneTime) {
+          const key = String(discount.id || discount.draftId);
+          const available = fixedOneTimeRemaining.has(key)
+            ? fixedOneTimeRemaining.get(key)
+            : Number(discount.discount_amount);
+          const applied = Math.round(Math.min(before, Math.max(0, available)) * 100) / 100;
+          remaining = Math.round(Math.max(0, before - applied) * 100) / 100;
+          fixedOneTimeRemaining.set(key, Math.round(Math.max(0, available - applied) * 100) / 100);
+        } else {
+          remaining = applyDiscountToAmount(remaining, discount);
+        }
         discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), method: discount.discount_method || "percent", value: (discount.discount_method || "percent") === "fixed" ? Number(discount.discount_amount) : Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
       }
       return { service, ready: true, baseAmount, finalAmount: remaining, discounts, serviceIndex };
     });
-  }), [formData.pianos, serviceTypes, clientDiscounts, discountDrafts, appointment?.id]);
+    });
+  }, [formData.pianos, serviceTypes, clientDiscounts, discountDrafts, appointment?.id]);
   const estimatedTotal = pricingPreview.flat().reduce((total, item) => total + (item.ready ? item.finalAmount : 0), 0);
   const pricingReady = formData.pianos.some((piano) => piano.piano_id)
     && formData.pianos.filter((piano) => piano.piano_id).every((piano, pianoIndex) => {
