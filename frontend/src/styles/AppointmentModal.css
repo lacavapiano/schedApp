@@ -1203,3 +1203,98 @@
     padding-inline: 8px;
   }
 }
+
+
+/*
+ * Mobile overflow correction (intentional final override).
+ * Earlier rules stack .appointment-form-row at 700px, while the date/time
+ * controls also have native intrinsic sizing on iOS. Keep them in one column
+ * and constrain every flex/grid ancestor and the native controls themselves.
+ */
+.appointment-modal-overlay {
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.appointment-modal {
+  box-sizing: border-box;
+  min-width: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.appointment-modal form {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .appointment-modal-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    align-items: stretch;
+    justify-content: flex-end;
+    padding: 0;
+    touch-action: none;
+  }
+
+  .appointment-modal {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    max-height: 92dvh;
+    margin: auto 0 0;
+    overflow-x: clip;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
+    touch-action: pan-y;
+  }
+
+  .appointment-modal form {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 14px 16px;
+  }
+
+  .appointment-modal .appointment-date-time-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+
+  .appointment-modal .appointment-date-time-row > .appointment-form-field {
+    display: flex;
+    flex: 0 1 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+
+  .appointment-modal .appointment-date-time-row input[type="date"],
+  .appointment-modal .appointment-date-time-row input[type="time"] {
+    appearance: none;
+    -webkit-appearance: none;
+    display: block;
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 9px 8px;
+    font-size: 16px;
+  }
+}
