@@ -1249,7 +1249,9 @@ function AppointmentModal({
                                   <button type="button" className="appointment-add-button appointment-apply-discount-button" disabled={!selectedServiceId} onClick={() => {
                                     setActiveDiscountPianoIndex(activeDiscountPianoIndex === discountEditorKey ? null : discountEditorKey);
                                     setDiscountType("one_time");
+                                    setDiscountMethod("percent");
                                     setDiscountPercent("");
+                                    setDiscountAmount("");
                                     setError("");
                                   }}>{activeDiscountPianoIndex === discountEditorKey ? "Close discount" : "Apply discount"}</button>
                                 </div>
@@ -1280,16 +1282,28 @@ function AppointmentModal({
                                         <option value="ongoing">Ongoing — future appointments too</option>
                                       </select>
                                     </div>
+                                    <div className="appointment-form-field">
+                                      <label htmlFor={`appointment-discount-method-${index}-${serviceIndex}`}>Discount amount type</label>
+                                      <select id={`appointment-discount-method-${index}-${serviceIndex}`} value={discountMethod} onChange={(event) => setDiscountMethod(event.target.value)}>
+                                        <option value="percent">Percentage</option>
+                                        <option value="fixed">Fixed amount ($)</option>
+                                      </select>
+                                    </div>
                                     <div className="appointment-form-field appointment-discount-percent-field">
-                                      <label htmlFor={`appointment-discount-percent-${index}-${serviceIndex}`}>Discount (%)</label>
-                                      <input id={`appointment-discount-percent-${index}-${serviceIndex}`} type="number" min="0.01" max="100" step="0.01" value={discountPercent} onChange={(event) => setDiscountPercent(event.target.value)} placeholder="e.g. 10" />
+                                      <label htmlFor={`appointment-discount-value-${index}-${serviceIndex}`}>{discountMethod === "fixed" ? "Discount ($)" : "Discount (%)"}</label>
+                                      <input id={`appointment-discount-value-${index}-${serviceIndex}`} type="number" min="0.01" max={discountMethod === "percent" ? "100" : undefined} step="0.01" value={discountMethod === "fixed" ? discountAmount : discountPercent} onChange={(event) => discountMethod === "fixed" ? setDiscountAmount(event.target.value) : setDiscountPercent(event.target.value)} placeholder={discountMethod === "fixed" ? "e.g. 25.00" : "e.g. 10"} />
                                     </div>
                                   </div>
                                   <div className="appointment-inline-discount-actions">
                                     <button type="button" className="appointment-add-button" onClick={() => {
                                       const percent = Number(discountPercent);
-                                      if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+                                      const amount = Number(discountAmount);
+                                      if (discountMethod === "percent" && (!Number.isFinite(percent) || percent <= 0 || percent > 100)) {
                                         setError("Enter a discount percentage greater than 0 and no more than 100.");
+                                        return;
+                                      }
+                                      if (discountMethod === "fixed" && (!Number.isFinite(amount) || amount <= 0)) {
+                                        setError("Enter a fixed discount amount greater than $0.");
                                         return;
                                       }
                                       if (!selectedServiceId) {
@@ -1299,7 +1313,8 @@ function AppointmentModal({
                                       setError("");
                                       setDiscountDrafts((previous) => [...previous, {
                                         draftId: `discount-${Date.now()}-${previous.length}`,
-                                        discount_percent: percent,
+                                        discount_method: discountMethod,
+                                        ...(discountMethod === "fixed" ? { discount_amount: amount } : { discount_percent: percent }),
                                         discount_type: discountType,
                                         service_type_id: selectedServiceId,
                                         scope: "piano",
@@ -1307,6 +1322,8 @@ function AppointmentModal({
                                         is_active: true,
                                       }]);
                                       setDiscountPercent("");
+                                      setDiscountAmount("");
+                                      setDiscountMethod("percent");
                                       setActiveDiscountPianoIndex(null);
                                     }}>Add discount</button>
                                     <button type="button" className="appointment-remove-button" onClick={() => setActiveDiscountPianoIndex(null)}>Cancel</button>
@@ -1320,39 +1337,55 @@ function AppointmentModal({
                                       const isEditingDiscount = editingDiscountKey === discountKey;
                                       return (
                                         <div className="appointment-applied-discount-item" key={discountKey}>
-                                          <span>{Number(discount.discount_percent)}% {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>
+                                          <span>{formatDiscountRule(discount)} {discount.discount_type === "one_time" ? "one-time" : "ongoing"} discount</span>
                                           {isEditingDiscount ? (
                                             <div className="appointment-edit-discount-controls">
-                                              <input aria-label="Discount percentage" type="number" min="0.01" max="100" step="0.01" value={editingDiscountPercent} onChange={(event) => setEditingDiscountPercent(event.target.value)} />
+                                              <select aria-label="Discount amount type" value={editingDiscountMethod} onChange={(event) => setEditingDiscountMethod(event.target.value)}>
+                                                <option value="percent">Percent</option>
+                                                <option value="fixed">Fixed ($)</option>
+                                              </select>
+                                              <input aria-label={editingDiscountMethod === "fixed" ? "Discount amount in dollars" : "Discount percentage"} type="number" min="0.01" max={editingDiscountMethod === "percent" ? "100" : undefined} step="0.01" value={editingDiscountMethod === "fixed" ? editingDiscountAmount : editingDiscountPercent} onChange={(event) => editingDiscountMethod === "fixed" ? setEditingDiscountAmount(event.target.value) : setEditingDiscountPercent(event.target.value)} />
                                               <button type="button" className="appointment-add-button" disabled={savingDiscountEdit} onClick={async () => {
                                                 const percent = Number(editingDiscountPercent);
-                                                if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+                                                const amount = Number(editingDiscountAmount);
+                                                if (editingDiscountMethod === "percent" && (!Number.isFinite(percent) || percent <= 0 || percent > 100)) {
                                                   setError("Enter a discount percentage greater than 0 and no more than 100.");
+                                                  return;
+                                                }
+                                                if (editingDiscountMethod === "fixed" && (!Number.isFinite(amount) || amount <= 0)) {
+                                                  setError("Enter a fixed discount amount greater than $0.");
                                                   return;
                                                 }
                                                 setSavingDiscountEdit(true);
                                                 setError("");
                                                 try {
                                                   if (discount.draftId) {
-                                                    setDiscountDrafts((previous) => previous.map((item) => item.draftId === discount.draftId ? { ...item, discount_percent: percent } : item));
+                                                    setDiscountDrafts((previous) => previous.map((item) => item.draftId === discount.draftId ? {
+                                                      ...item,
+                                                      discount_method: editingDiscountMethod,
+                                                      ...(editingDiscountMethod === "fixed" ? { discount_amount: amount, discount_percent: null } : { discount_percent: percent, discount_amount: null }),
+                                                    } : item));
                                                   } else {
-                                                    await updateClientDiscount(discount.id, { discount_percent: percent });
+                                                    await updateClientDiscount(discount.id, editingDiscountMethod === "fixed"
+                                                      ? { discount_method: "fixed", discount_amount: amount }
+                                                      : { discount_method: "percent", discount_percent: percent });
                                                     const refreshed = await getClientDiscounts(formData.client_id);
                                                     setClientDiscounts(refreshed || []);
                                                   }
                                                   setEditingDiscountKey(null);
                                                   setEditingDiscountPercent("");
+                                                  setEditingDiscountAmount("");
                                                 } catch (err) {
                                                   setError(err.message || "Failed to update discount.");
                                                 } finally {
                                                   setSavingDiscountEdit(false);
                                                 }
                                               }}>{savingDiscountEdit ? "Saving…" : "Save"}</button>
-                                              <button type="button" className="appointment-remove-button" disabled={savingDiscountEdit} onClick={() => { setEditingDiscountKey(null); setEditingDiscountPercent(""); }}>Cancel</button>
+                                              <button type="button" className="appointment-remove-button" disabled={savingDiscountEdit} onClick={() => { setEditingDiscountKey(null); setEditingDiscountPercent(""); setEditingDiscountAmount(""); }}>Cancel</button>
                                             </div>
                                           ) : (
                                             <div className="appointment-edit-discount-controls">
-                                              <button type="button" className="appointment-remove-button appointment-edit-discount-button" onClick={() => { setEditingDiscountKey(discountKey); setEditingDiscountPercent(String(discount.discount_percent)); setError(""); }}>Edit</button>
+                                              <button type="button" className="appointment-remove-button appointment-edit-discount-button" onClick={() => { setEditingDiscountKey(discountKey); setEditingDiscountMethod(discount.discount_method || "percent"); setEditingDiscountPercent(discount.discount_percent == null ? "" : String(discount.discount_percent)); setEditingDiscountAmount(discount.discount_amount == null ? "" : String(discount.discount_amount)); setError(""); }}>Edit</button>
                                               <button type="button" className="appointment-remove-button appointment-edit-discount-button" disabled={savingDiscountEdit} onClick={async () => {
                                                 setError("");
                                                 if (discount.draftId) {
