@@ -534,7 +534,7 @@ function AppointmentModal({
           (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase())
         );
         if (!service) continue;
-        if (service.pricing_method === "flat_rate") {
+        if (service.name?.trim().toLowerCase() === "miscellaneous" || service.pricing_method === "flat_rate") {
           totalMinutes += Number(service.default_service_minutes) > 0
             ? Number(service.default_service_minutes)
             : 120;
@@ -695,7 +695,7 @@ function AppointmentModal({
         const entry = entries[serviceIndex];
         const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
         if (!service) { setError(`Choose a configured service for Piano ${index + 1}, service ${serviceIndex + 1}.`); return; }
-        if (service.pricing_method === "hourly" && (!Number.isFinite(Number(entry.billable_hours)) || Number(entry.billable_hours) <= 0)) { setError(`Enter actual billable hours for "${service.name}" on Piano ${index + 1}.`); return; }
+        if (service.name?.trim().toLowerCase() !== "miscellaneous" && service.pricing_method === "hourly" && (!Number.isFinite(Number(entry.billable_hours)) || Number(entry.billable_hours) <= 0)) { setError(`Enter actual billable hours for "${service.name}" on Piano ${index + 1}.`); return; }
       }
     }
 
@@ -1261,7 +1261,7 @@ function AppointmentModal({
                                     <button type="button" className="appointment-remove-button" onClick={() => removeServiceFromPiano(index, serviceIndex)}>Remove service</button>
                                   </div>
                                 )}
-                                {selectedService?.pricing_method === "hourly" && (
+                                {selectedService?.name?.trim().toLowerCase() !== "miscellaneous" && selectedService?.pricing_method === "hourly" && (
                                   <div className="appointment-form-field appointment-hourly-field">
                                     <label htmlFor={`billable-hours-${index}-${serviceIndex}`}>Actual billable hours *</label>
                                     <input id={`billable-hours-${index}-${serviceIndex}`} type="text" inputMode="decimal" autoComplete="off" value={serviceEntry.billable_hours ?? ""} onChange={(event) => handleServiceChange(index, serviceIndex, "billable_hours", event.target.value)} placeholder="e.g. 1.5" required />
@@ -1413,7 +1413,7 @@ function AppointmentModal({
                               {preview?.service && (
                                 <div className="appointment-price-preview">
                                   <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{preview.service.name}</span></div>
-                                  <div className="appointment-price-line"><span>Base price{preview.service.pricing_method === "hourly" ? ` (${serviceEntry.billable_hours || "—"} hr × $${Number(preview.service.price).toFixed(2)})` : ""}</span><span>{preview.ready ? `$${preview.baseAmount.toFixed(2)}` : "Complete service pricing"}</span></div>
+                                  <div className="appointment-price-line"><span>Base price{preview.service.name?.trim().toLowerCase() !== "miscellaneous" && preview.service.pricing_method === "hourly" ? ` (${serviceEntry.billable_hours || "—"} hr × ${Number(preview.service.price).toFixed(2)})` : ""}</span><span>{preview.ready ? `$${preview.baseAmount.toFixed(2)}` : "Complete service pricing"}</span></div>
                                   {preview.discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.method === "fixed" ? "$" + discount.value.toFixed(2) : `${discount.value}%`})</span><span>−${discount.amount.toFixed(2)}</span></div>)}
                                   <div className="appointment-price-line appointment-price-total"><strong>Service total</strong><strong>{preview.ready ? `$${preview.finalAmount.toFixed(2)}` : "—"}</strong></div>
                                 </div>
