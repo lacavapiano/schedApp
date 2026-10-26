@@ -1296,3 +1296,51 @@
     font: inherit;
   }
 }
+
+
+/*
+ * Final iOS date/time sizing fix.
+ * Native date/time inputs have intrinsic minimum widths on mobile Safari;
+ * make each field a true single-column grid item and remove flex sizing from
+ * the input so 100% is calculated against the padded content box.
+ */
+@media (max-width: 700px) {
+  .appointment-modal,
+  .appointment-modal form,
+  .appointment-modal .appointment-date-time-row,
+  .appointment-modal .appointment-date-time-row > .appointment-form-field {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .appointment-modal .appointment-date-time-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    gap: 0 !important;
+  }
+
+  .appointment-modal .appointment-date-time-row > .appointment-form-field {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    flex: none !important;
+    margin: 0 !important;
+  }
+
+  .appointment-modal .appointment-date-time-row input[type="date"],
+  .appointment-modal .appointment-date-time-row input[type="time"] {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-inline-size: 0 !important;
+    max-inline-size: 100% !important;
+    flex: none !important;
+    margin: 0 !important;
+    padding: 9px 4px !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+  }
+}
