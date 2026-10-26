@@ -154,7 +154,7 @@ export async function getClientDiscounts(req, res) {
     const { supabase } = context;
 
     let query = supabase.from("client_discounts")
-      .select("id, owner_id, client_id, service_type_id, discount_percent, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id, created_at, updated_at, service_type:service_types(id, name, pricing_method)")
+      .select("id, owner_id, client_id, service_type_id, discount_method, discount_percent, discount_amount, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id, created_at, updated_at, service_type:service_types(id, name, pricing_method)")
       .order("created_at", { ascending: false });
     if (req.query.client_id) query = query.eq("client_id", req.query.client_id);
     if (req.query.include_inactive !== "true") query = query.eq("is_active", true);
@@ -176,15 +176,24 @@ export async function createClientDiscount(req, res) {
     const {
       client_id,
       service_type_id = null,
-      discount_percent,
+      discount_method = "percent",
+      discount_percent = null,
+      discount_amount = null,
       discount_type = "ongoing",
       applies_to_appointment_id = null,
       applies_to_appointment_piano_id = null,
     } = req.body;
 
-    const percent = Number(discount_percent);
-    if (!client_id || !Number.isFinite(percent) || percent <= 0 || percent > 100) {
-      return res.status(400).json({ error: "client_id and a discount percentage greater than 0 and at most 100 are required" });
+    const percent = discount_percent == null || discount_percent === "" ? null : Number(discount_percent);
+    const amount = discount_amount == null || discount_amount === "" ? null : Number(discount_amount);
+    if (!client_id || !["percent", "fixed"].includes(discount_method)) {
+      return res.status(400).json({ error: "client_id and a valid discount method are required" });
+    }
+    if (discount_method === "percent" && (!Number.isFinite(percent) || percent <= 0 || percent > 100)) {
+      return res.status(400).json({ error: "Enter a percentage greater than 0 and no more than 100" });
+    }
+    if (discount_method === "fixed" && (!Number.isFinite(amount) || amount <= 0)) {
+      return res.status(400).json({ error: "Enter a fixed discount amount greater than $0" });
     }
     if (!["ongoing", "one_time"].includes(discount_type)) {
       return res.status(400).json({ error: "discount_type must be ongoing or one_time" });
@@ -252,12 +261,14 @@ export async function createClientDiscount(req, res) {
       owner_id: user.id,
       client_id,
       service_type_id,
-      discount_percent: percent.toFixed(2),
+      discount_method,
+      discount_percent: discount_method === "percent" ? percent.toFixed(2) : null,
+      discount_amount: discount_method === "fixed" ? amount.toFixed(2) : null,
       discount_type,
       is_active: true,
       applies_to_appointment_id: discount_type === "one_time" ? applies_to_appointment_id : null,
       applies_to_appointment_piano_id: discount_type === "one_time" ? applies_to_appointment_piano_id : null,
-    }).select("id, owner_id, client_id, service_type_id, discount_percent, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id, created_at, updated_at, service_type:service_types(id, name, pricing_method)").single();
+    }).select("id, owner_id, client_id, service_type_id, discount_method, discount_percent, discount_amount, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id, created_at, updated_at, service_type:service_types(id, name, pricing_method)").single();
 
     if (error) return res.status(400).json({ error: error.message });
     return res.status(201).json(data);
@@ -274,12 +285,30 @@ export async function updateClientDiscount(req, res) {
     const { supabase } = context;
     const updates = {};
 
-    if (req.body.discount_percent !== undefined) {
+    if (req.body.discount_method !== undefined) {
+      if (!["percent", "fixed"].includes(req.body.discount_method)) {
+        return res.status(400).json({ error: "discount_method must be percent or fixed" });
+      }
+      updates.discount_method = req.body.discount_method;
+    }
+    const method = req.body.discount_method;
+    if (req.body.discount_percent !== undefined || (method === "percent" && req.body.discount_amount === undefined)) {
       const percent = Number(req.body.discount_percent);
       if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
         return res.status(400).json({ error: "Discount percentage must be greater than 0 and at most 100" });
       }
       updates.discount_percent = percent.toFixed(2);
+      updates.discount_amount = null;
+      updates.discount_method = "percent";
+    }
+    if (req.body.discount_amount !== undefined || (method === "fixed" && req.body.discount_percent === undefined)) {
+      const amount = Number(req.body.discount_amount);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return res.status(400).json({ error: "Fixed discount amount must be greater than $0" });
+      }
+      updates.discount_amount = amount.toFixed(2);
+      updates.discount_percent = null;
+      updates.discount_method = "fixed";
     }
     if (req.body.is_active !== undefined) updates.is_active = Boolean(req.body.is_active);
 
@@ -306,11 +335,25 @@ function roundMoney(value) {
 }
 
 function effectivePercent(discounts) {
-  const remaining = discounts.reduce(
+  const percentageRules = discounts.filter((discount) => (discount.discount_method || "percent") === "percent");
+  const remaining = percentageRules.reduce(
     (product, discount) => product * (1 - Number(discount.discount_percent) / 100),
     1
   );
   return Math.round((1 - remaining) * 10000) / 100;
+}
+
+function applyDiscountRule(remaining, rule) {
+  if ((rule.discount_method || "percent") === "fixed") {
+    return roundMoney(Math.max(0, remaining - Number(rule.discount_amount)));
+  }
+  return roundMoney(remaining * (1 - Number(rule.discount_percent) / 100));
+}
+
+function discountRuleValue(rule) {
+  return (rule.discount_method || "percent") === "fixed"
+    ? { method: "fixed", value: Number(rule.discount_amount) }
+    : { method: "percent", value: Number(rule.discount_percent) };
 }
 
 export async function getAppointmentCharges(req, res) {
@@ -388,7 +431,7 @@ export async function saveAppointmentCharges(req, res) {
     const servicesById = new Map((serviceRows || []).map((service) => [service.id, service]));
     const { data: discounts, error: discountsError } = await supabase
       .from("client_discounts")
-      .select("id, service_type_id, discount_percent, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id")
+      .select("id, service_type_id, discount_method, discount_percent, discount_amount, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id")
       .eq("client_id", appointment.client_id)
       .eq("is_active", true);
     if (discountsError) return res.status(500).json({ error: discountsError.message });
@@ -431,11 +474,11 @@ export async function saveAppointmentCharges(req, res) {
       const breakdown = [];
       for (const rule of orderedRules) {
         const before = runningAmount;
-        runningAmount = roundMoney(runningAmount * (1 - Number(rule.discount_percent) / 100));
+        runningAmount = applyDiscountRule(runningAmount, rule);
         breakdown.push({
           id: rule.id,
           type: rule.discount_type === "one_time" ? "one_time" : (rule.service_type_id ? "service" : "global"),
-          percent: Number(rule.discount_percent),
+          ...discountRuleValue(rule),
           amount: roundMoney(before - runningAmount),
           remaining: runningAmount,
         });
