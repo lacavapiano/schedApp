@@ -1149,3 +1149,57 @@
     font-size: 16px;
   }
 }
+
+
+/* Date/time controls: use a shrinkable grid rather than intrinsic native-input widths. */
+.appointment-modal,
+.appointment-modal form,
+.appointment-modal .appointment-date-time-row,
+.appointment-modal .appointment-date-time-row > .appointment-form-field {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.appointment-modal .appointment-date-time-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.appointment-modal .appointment-date-time-row > .appointment-form-field {
+  width: 100%;
+  max-width: 100%;
+  flex: initial;
+}
+
+.appointment-modal .appointment-date-time-row input[type="date"],
+.appointment-modal .appointment-date-time-row input[type="time"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-inline: 6px;
+  font-size: 16px;
+}
+
+@media (max-width: 700px) {
+  /* Override the earlier generic mobile rule that stacks every form row. */
+  .appointment-modal .appointment-date-time-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .appointment-modal .appointment-date-time-row > .appointment-form-field {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .appointment-modal .appointment-date-time-row input[type="date"],
+  .appointment-modal .appointment-date-time-row input[type="time"] {
+    min-width: 0;
+    max-width: 100%;
+    padding-inline: 8px;
+  }
+}
