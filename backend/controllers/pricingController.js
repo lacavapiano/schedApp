@@ -284,33 +284,54 @@ export async function updateClientDiscount(req, res) {
     if (!context) return;
     const { supabase } = context;
     const updates = {};
+    const hasPercent = req.body.discount_percent !== undefined
+      && req.body.discount_percent !== null
+      && req.body.discount_percent !== "";
+    const hasAmount = req.body.discount_amount !== undefined
+      && req.body.discount_amount !== null
+      && req.body.discount_amount !== "";
 
-    if (req.body.discount_method !== undefined) {
-      if (!["percent", "fixed"].includes(req.body.discount_method)) {
-        return res.status(400).json({ error: "discount_method must be percent or fixed" });
-      }
-      updates.discount_method = req.body.discount_method;
+    let method = req.body.discount_method;
+    if (method !== undefined && !["percent", "fixed"].includes(method)) {
+      return res.status(400).json({ error: "discount_method must be percent or fixed" });
     }
-    const method = req.body.discount_method;
-    if (req.body.discount_percent !== undefined || (method === "percent" && req.body.discount_amount === undefined)) {
-      const percent = Number(req.body.discount_percent);
-      if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
-        return res.status(400).json({ error: "Discount percentage must be greater than 0 and at most 100" });
-      }
-      updates.discount_percent = percent.toFixed(2);
-      updates.discount_amount = null;
-      updates.discount_method = "percent";
+
+    // Accept partial updates from both the client discount form and the
+    // appointment editor. Null/empty values for the inactive field should not
+    // accidentally trigger validation for the other discount type.
+    if (method === undefined) {
+      if (hasAmount && !hasPercent) method = "fixed";
+      else if (hasPercent && !hasAmount) method = "percent";
     }
-    if (req.body.discount_amount !== undefined || (method === "fixed" && req.body.discount_percent === undefined)) {
-      const amount = Number(req.body.discount_amount);
-      if (!Number.isFinite(amount) || amount <= 0) {
-        return res.status(400).json({ error: "Fixed discount amount must be greater than $0" });
+
+    const changingDiscountValue = method !== undefined
+      && (hasPercent || hasAmount || req.body.discount_method !== undefined);
+    if (changingDiscountValue) {
+      if (method === "percent") {
+        const percent = Number(req.body.discount_percent);
+        if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
+          return res.status(400).json({ error: "Discount percentage must be greater than 0 and at most 100" });
+        }
+        updates.discount_percent = percent.toFixed(2);
+        updates.discount_amount = null;
+        updates.discount_method = "percent";
+      } else {
+        const amount = Number(req.body.discount_amount);
+        if (!Number.isFinite(amount) || amount <= 0) {
+          return res.status(400).json({ error: "Fixed discount amount must be greater than $0" });
+        }
+        updates.discount_amount = amount.toFixed(2);
+        updates.discount_percent = null;
+        updates.discount_method = "fixed";
       }
-      updates.discount_amount = amount.toFixed(2);
-      updates.discount_percent = null;
-      updates.discount_method = "fixed";
+    } else if (req.body.discount_method !== undefined) {
+      return res.status(400).json({ error: "Provide a valid value for the selected discount method" });
     }
+
     if (req.body.is_active !== undefined) updates.is_active = Boolean(req.body.is_active);
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: "No valid discount changes were provided" });
+    }
 
     const { data, error } = await supabase.from("client_discounts")
       .update({ ...updates, updated_at: new Date().toISOString() })
