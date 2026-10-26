@@ -462,9 +462,10 @@ export async function saveAppointmentCharges(req, res) {
     const servicesById = new Map((serviceRows || []).map((service) => [service.id, service]));
     const { data: discounts, error: discountsError } = await supabase
       .from("client_discounts")
-      .select("id, service_type_id, discount_method, discount_percent, discount_amount, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id")
+      .select("id, service_type_id, discount_method, discount_percent, discount_amount, discount_type, is_active, applies_to_appointment_id, applies_to_appointment_piano_id, created_at")
       .eq("client_id", appointment.client_id)
-      .eq("is_active", true);
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
     if (discountsError) return res.status(500).json({ error: discountsError.message });
 
     const rowsToInsert = [];
