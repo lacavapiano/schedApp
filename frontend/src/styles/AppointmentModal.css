@@ -216,11 +216,6 @@
   max-width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  display: block;
-  width: 100%;
-  min-width: 0;
-  min-inline-size: 0;
-  max-width: 100%;
   height: 38px;
   min-height: 38px;
   box-sizing: border-box;
