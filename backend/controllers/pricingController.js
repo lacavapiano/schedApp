@@ -92,7 +92,15 @@ export async function updateServiceType(req, res) {
   try {
     const context = await getUserContext(req, res);
     if (!context) return;
-    const { supabase } = context;
+    const { supabase, user } = context;
+    const { data: existingService, error: existingServiceError } = await supabase
+      .from("service_types")
+      .select("id, owner_id, pricing_method, default_service_minutes")
+      .eq("id", req.params.id)
+      .maybeSingle();
+    if (existingServiceError || !existingService || existingService.owner_id !== user.id) {
+      return res.status(404).json({ error: "Service not found" });
+    }
     const updates = {};
 
     if (req.body.name !== undefined) {
@@ -121,7 +129,7 @@ export async function updateServiceType(req, res) {
         if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) {
           return res.status(400).json({ error: "Default service time must be between 1 and 1440 minutes" });
         }
-        updates.default_service_minutes = req.body.pricing_method === "hourly" ? null : minutes;
+        updates.default_service_minutes = (req.body.pricing_method ?? existingService.pricing_method) === "hourly" ? null : minutes;
       }
     }
     if (req.body.pricing_method === "hourly") updates.default_service_minutes = null;
@@ -132,6 +140,7 @@ export async function updateServiceType(req, res) {
     const { data, error } = await supabase.from("service_types")
       .update(updates)
       .eq("id", req.params.id)
+      .eq("owner_id", user.id)
       .select("*")
       .single();
 
@@ -282,7 +291,7 @@ export async function updateClientDiscount(req, res) {
   try {
     const context = await getUserContext(req, res);
     if (!context) return;
-    const { supabase } = context;
+    const { supabase, user } = context;
     const updates = {};
     const hasPercent = req.body.discount_percent !== undefined
       && req.body.discount_percent !== null
@@ -336,6 +345,7 @@ export async function updateClientDiscount(req, res) {
     const { data, error } = await supabase.from("client_discounts")
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq("id", req.params.id)
+      .eq("owner_id", user.id)
       .select("*")
       .single();
 
@@ -479,17 +489,18 @@ export async function saveAppointmentCharges(req, res) {
         return res.status(400).json({ error: isMiscellaneous ? "Enter a valid miscellaneous service amount of $0 or more." : "The configured service price is invalid." });
       }
 
+      const pricingMethod = isMiscellaneous ? "flat_rate" : service.pricing_method;
       const hours = input.billable_hours === "" || input.billable_hours === null || input.billable_hours === undefined
         ? null
         : Number(input.billable_hours);
-      if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) {
+      if (pricingMethod === "hourly" && (!Number.isFinite(hours) || hours <= 0)) {
         return res.status(400).json({ error: `Enter actual billable hours for hourly service "${service.name}".` });
       }
-      if (service.pricing_method === "flat_rate" && hours !== null && (!Number.isFinite(hours) || hours < 0)) {
+      if (pricingMethod === "flat_rate" && hours !== null && (!Number.isFinite(hours) || hours < 0)) {
         return res.status(400).json({ error: "Billable hours must be zero or greater" });
       }
 
-      const baseAmount = roundMoney(unitPrice * (service.pricing_method === "hourly" ? hours : 1));
+      const baseAmount = roundMoney(unitPrice * (pricingMethod === "hourly" ? hours : 1));
       const matchingRules = (discounts || []).filter((rule) => {
         if (rule.service_type_id && rule.service_type_id !== service.id) return false;
         if (rule.discount_type === "ongoing") return true;
@@ -521,9 +532,9 @@ export async function saveAppointmentCharges(req, res) {
         appointment_piano_id: input.appointment_piano_id,
         service_type_id: service.id,
         service_name: serviceName,
-        pricing_method: service.pricing_method,
+        pricing_method: pricingMethod,
         unit_price: unitPrice,
-        billable_hours: service.pricing_method === "hourly" ? hours : null,
+        billable_hours: pricingMethod === "hourly" ? hours : null,
         base_amount: baseAmount,
         global_discount_percent: effectivePercent(globalRules),
         service_discount_percent: effectivePercent(serviceRules),
