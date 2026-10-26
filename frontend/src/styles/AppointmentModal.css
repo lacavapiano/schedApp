@@ -1445,3 +1445,12 @@
     padding-right: 2px !important;
   }
 }
+
+/* The address selector uses a stable id in the appointment form. */
+.appointment-modal #appointment-location {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
