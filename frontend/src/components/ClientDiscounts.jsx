@@ -234,7 +234,7 @@ export default function ClientDiscounts({ clientId }) {
             <form className="client-discount-form" onSubmit={handleSubmit}>
         <div className="client-discount-form-heading">
           <h4>{editingId ? "Edit discount" : "Apply a discount"}</h4>
-          <p>Choose a percentage and how it should apply to this client.</p>
+          <p>Choose a percentage or fixed amount and how it should apply to this client.</p>
         </div>
         <div className="client-discount-fields">
           <div className="settings-field">
