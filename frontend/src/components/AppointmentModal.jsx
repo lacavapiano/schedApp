@@ -75,7 +75,7 @@ function formatTimeForInput(value) {
 
 function formatDiscountRule(discount) {
   return (discount.discount_method || "percent") === "fixed"
-    ? `${Number(discount.discount_amount).toFixed(2)} fixed`
+    ? "$" + Number(discount.discount_amount).toFixed(2) + " fixed"
     : `${Number(discount.discount_percent)}%`;
 }
 
@@ -1229,7 +1229,7 @@ function AppointmentModal({
                                   <label>Service {serviceIndex + 1} *</label>
                                   <select value={serviceEntry.service_type_id || selectedService?.id || ""} onChange={(event) => handleServiceChange(index, serviceIndex, "service_type_id", event.target.value)} required>
                                     <option value="">Select configured service</option>
-                                    {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `${Number(service.price).toFixed(2)}/hr` : `${Number(service.price).toFixed(2)} flat`}</option>)}
+                                    {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? "$" + Number(service.price).toFixed(2) + "/hr" : "$" + Number(service.price).toFixed(2) + " flat"}</option>)}
                                   </select>
                                 </div>
                                 {selectedService?.name?.trim().toLowerCase() === "miscellaneous" && (
@@ -1414,7 +1414,7 @@ function AppointmentModal({
                                 <div className="appointment-price-preview">
                                   <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{preview.service.name}</span></div>
                                   <div className="appointment-price-line"><span>Base price{preview.service.pricing_method === "hourly" ? ` (${serviceEntry.billable_hours || "—"} hr × $${Number(preview.service.price).toFixed(2)})` : ""}</span><span>{preview.ready ? `$${preview.baseAmount.toFixed(2)}` : "Complete service pricing"}</span></div>
-                                  {preview.discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.method === "fixed" ? `${discount.value.toFixed(2)}` : `${discount.value}%`})</span><span>−${discount.amount.toFixed(2)}</span></div>)}
+                                  {preview.discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.method === "fixed" ? "$" + discount.value.toFixed(2) : `${discount.value}%`})</span><span>−${discount.amount.toFixed(2)}</span></div>)}
                                   <div className="appointment-price-line appointment-price-total"><strong>Service total</strong><strong>{preview.ready ? `$${preview.finalAmount.toFixed(2)}` : "—"}</strong></div>
                                 </div>
                               )}
