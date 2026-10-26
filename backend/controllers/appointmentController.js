@@ -869,14 +869,6 @@ export async function completeAppointment(req, res) {
     if (!String(appointment.payment_type || "").trim()) {
       missing.push("payment type");
     }
-    for (const [index, piano] of (appointment.appointment_pianos || []).entries()) {
-      if (piano.temp === null || piano.temp === undefined || !String(piano.temp).trim()) {
-        missing.push(`temperature for piano ${index + 1}`);
-      }
-      if (piano.hum === null || piano.hum === undefined || !String(piano.hum).trim()) {
-        missing.push(`humidity for piano ${index + 1}`);
-      }
-    }
     if (missing.length) {
       return res.status(400).json({
         error: `Fill in the following before completing: ${missing.join(", ")}.`,
