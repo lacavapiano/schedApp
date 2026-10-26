@@ -31,7 +31,7 @@ function formatDate(value) {
 
 function formatDiscount(discount) {
   return discount.discount_method === "fixed"
-    ? `${Number(discount.discount_amount).toFixed(2)}`
+    ? "$" + Number(discount.discount_amount).toFixed(2)
     : `${Number(discount.discount_percent)}%`;
 }
 
