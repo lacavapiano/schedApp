@@ -73,6 +73,19 @@ function formatTimeForInput(value) {
   return `${hours}:${minutes}`;
 }
 
+function formatDiscountRule(discount) {
+  return (discount.discount_method || "percent") === "fixed"
+    ? `${Number(discount.discount_amount).toFixed(2)} fixed`
+    : `${Number(discount.discount_percent)}%`;
+}
+
+function applyDiscountToAmount(amount, discount) {
+  if ((discount.discount_method || "percent") === "fixed") {
+    return Math.round(Math.max(0, amount - Number(discount.discount_amount)) * 100) / 100;
+  }
+  return Math.round(amount * (1 - Number(discount.discount_percent) / 100) * 100) / 100;
+}
+
 function addHours(date, hours) {
   const result = new Date(date);
   result.setHours(result.getHours() + hours);
@@ -163,9 +176,13 @@ function AppointmentModal({
   const [clientDiscounts, setClientDiscounts] = useState([]);
   const [discountDrafts, setDiscountDrafts] = useState([]);
   const [discountPercent, setDiscountPercent] = useState("");
+  const [discountAmount, setDiscountAmount] = useState("");
+  const [discountMethod, setDiscountMethod] = useState("percent");
   const [discountType, setDiscountType] = useState("ongoing");
   const [editingDiscountKey, setEditingDiscountKey] = useState(null);
   const [editingDiscountPercent, setEditingDiscountPercent] = useState("");
+  const [editingDiscountAmount, setEditingDiscountAmount] = useState("");
+  const [editingDiscountMethod, setEditingDiscountMethod] = useState("percent");
   const [savingDiscountEdit, setSavingDiscountEdit] = useState(false);
   const [activeDiscountPianoIndex, setActiveDiscountPianoIndex] = useState(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
@@ -322,7 +339,7 @@ function AppointmentModal({
       const byPianoId = new Map();
       (rows || []).forEach((row) => {
         const list = byPianoId.get(row.appointment_piano_id) || [];
-        list.push({ service_type_id: row.service_type_id || "", billable_hours: row.billable_hours ?? "", service: row.service_name || "" });
+        list.push({ service_type_id: row.service_type_id || "", billable_hours: row.billable_hours ?? "", service: row.service_name || "", custom_description: row.service_name || "", custom_amount: row.unit_price == null ? "" : String(row.unit_price) });
         byPianoId.set(row.appointment_piano_id, list);
       });
       setFormData((previous) => ({ ...previous, pianos: previous.pianos.map((piano) => {
@@ -338,9 +355,12 @@ function AppointmentModal({
     return entries.map((entry, serviceIndex) => {
       const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
       if (!service) return { service: null, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
+      const isMiscellaneous = service.name.trim().toLowerCase() === "miscellaneous";
       const hours = entry.billable_hours === "" ? null : Number(entry.billable_hours);
+      const customAmount = entry.custom_amount === "" || entry.custom_amount == null ? NaN : Number(entry.custom_amount);
+      if (isMiscellaneous && (!String(entry.custom_description || "").trim() || !Number.isFinite(customAmount) || customAmount < 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
       if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
-      const baseAmount = Math.round(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
+      const baseAmount = Math.round((isMiscellaneous ? customAmount : Number(service.price)) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
       const relevant = [
         ...clientDiscounts.filter((discount) => {
           if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
@@ -360,8 +380,8 @@ function AppointmentModal({
       const discounts = [];
       for (const discount of [...global, ...scoped, ...oneTime]) {
         const before = remaining;
-        remaining = Math.round(remaining * (1 - Number(discount.discount_percent) / 100) * 100) / 100;
-        discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), percent: Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
+        remaining = applyDiscountToAmount(remaining, discount);
+        discounts.push({ label: discount.discount_type === "one_time" ? "One-time discount" : (discount.service_type_id ? "Service discount" : "Global discount"), method: discount.discount_method || "percent", value: (discount.discount_method || "percent") === "fixed" ? Number(discount.discount_amount) : Number(discount.discount_percent), amount: Math.round((before - remaining) * 100) / 100 });
       }
       return { service, ready: true, baseAmount, finalAmount: remaining, discounts, serviceIndex };
     });
@@ -434,7 +454,8 @@ function AppointmentModal({
           if (idx !== serviceIndex) return entry;
           if (field === "service_type_id") {
             const service = serviceTypes.find((item) => item.id === value);
-            return { ...entry, service_type_id: value, service: service?.name || "", billable_hours: service?.pricing_method === "hourly" ? (entry.billable_hours === "" || entry.billable_hours == null ? "1" : entry.billable_hours) : "" };
+            const isMiscellaneous = service?.name?.trim().toLowerCase() === "miscellaneous";
+            return { ...entry, service_type_id: value, service: service?.name || "", custom_description: isMiscellaneous ? (entry.custom_description || "") : "", custom_amount: isMiscellaneous ? (entry.custom_amount ?? "") : "", billable_hours: service?.pricing_method === "hourly" ? (entry.billable_hours === "" || entry.billable_hours == null ? "1" : entry.billable_hours) : "" };
           }
           return { ...entry, [field]: value };
         });
@@ -728,8 +749,13 @@ function AppointmentModal({
                 ? { id: piano.id }
                 : {}),
               piano_id: piano.piano_id,
-              service:
-                (piano.services?.[0]?.service || serviceTypes.find((service) => service.id === piano.services?.[0]?.service_type_id)?.name || piano.service || serviceTypes.find((service) => service.id === piano.service_type_id)?.name) || null,
+              service: (() => {
+                const firstService = piano.services?.[0];
+                const configured = serviceTypes.find((item) => item.id === firstService?.service_type_id || item.id === piano.service_type_id);
+                return configured?.name?.trim().toLowerCase() === "miscellaneous"
+                  ? (firstService?.custom_description || "").trim() || "Miscellaneous"
+                  : (firstService?.service || configured?.name || piano.service || serviceTypes.find((item) => item.id === piano.service_type_id)?.name) || null;
+              })(),
               temp:
                 piano.temp || null,
               hum:
@@ -749,7 +775,8 @@ function AppointmentModal({
       for (const discount of discountDrafts) {
         const payload = {
           client_id: formData.client_id,
-          discount_percent: discount.discount_percent,
+          discount_method: discount.discount_method || "percent",
+          ...(discount.discount_method === "fixed" ? { discount_amount: discount.discount_amount } : { discount_percent: discount.discount_percent }),
           discount_type: discount.discount_type,
           service_type_id: discount.service_type_id || null,
         };
@@ -775,7 +802,13 @@ function AppointmentModal({
         const entries = piano.services?.length ? piano.services : [{ service_type_id: piano.service_type_id, billable_hours: piano.billable_hours, service: piano.service }];
         return entries.map((entry) => {
           const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
-          return savedPiano && service ? { appointment_piano_id: savedPiano.id, service_type_id: service.id, billable_hours: service.pricing_method === "hourly" ? Number(entry.billable_hours) : null } : null;
+          const isMiscellaneous = service?.name?.trim().toLowerCase() === "miscellaneous";
+          return savedPiano && service ? {
+            appointment_piano_id: savedPiano.id,
+            service_type_id: service.id,
+            billable_hours: service.pricing_method === "hourly" ? Number(entry.billable_hours) : null,
+            ...(isMiscellaneous ? { custom_description: String(entry.custom_description || "").trim(), custom_amount: Number(entry.custom_amount) } : {}),
+          } : null;
         }).filter(Boolean);
       });
       await saveAppointmentCharges(savedAppointment.id, chargesToSave);
@@ -1196,9 +1229,21 @@ function AppointmentModal({
                                   <label>Service {serviceIndex + 1} *</label>
                                   <select value={serviceEntry.service_type_id || selectedService?.id || ""} onChange={(event) => handleServiceChange(index, serviceIndex, "service_type_id", event.target.value)} required>
                                     <option value="">Select configured service</option>
-                                    {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `$${Number(service.price).toFixed(2)}/hr` : `$${Number(service.price).toFixed(2)} flat`}</option>)}
+                                    {serviceTypes.map((service) => <option key={service.id} value={service.id}>{service.name} — {service.pricing_method === "hourly" ? `${Number(service.price).toFixed(2)}/hr` : `${Number(service.price).toFixed(2)} flat`}</option>)}
                                   </select>
                                 </div>
+                                {selectedService?.name?.trim().toLowerCase() === "miscellaneous" && (
+                                  <>
+                                    <div className="appointment-form-field appointment-service-field">
+                                      <label htmlFor={`misc-service-description-${index}-${serviceIndex}`}>Service description *</label>
+                                      <input id={`misc-service-description-${index}-${serviceIndex}`} value={serviceEntry.custom_description ?? ""} onChange={(event) => handleServiceChange(index, serviceIndex, "custom_description", event.target.value)} maxLength={200} placeholder="Describe the work performed" required />
+                                    </div>
+                                    <div className="appointment-form-field appointment-hourly-field">
+                                      <label htmlFor={`misc-service-amount-${index}-${serviceIndex}`}>Amount ($) *</label>
+                                      <input id={`misc-service-amount-${index}-${serviceIndex}`} type="number" min="0" step="0.01" inputMode="decimal" value={serviceEntry.custom_amount ?? ""} onChange={(event) => handleServiceChange(index, serviceIndex, "custom_amount", event.target.value)} placeholder="0.00" required />
+                                    </div>
+                                  </>
+                                )}
                                 <div className="appointment-form-field appointment-apply-discount-field">
                                   <label>Discount</label>
                                   <button type="button" className="appointment-add-button appointment-apply-discount-button" disabled={!selectedServiceId} onClick={() => {
