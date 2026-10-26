@@ -597,17 +597,30 @@ export async function saveAppointmentCharges(req, res) {
       discount_breakdown: row.discount_breakdown,
     })));
 
-    const { error: deleteError } = await supabase
+    // Insert the replacement snapshot before removing the previous one. This
+    // avoids losing the saved charges if a new insert fails validation or DB checks.
+    let insertedIds = [];
+    if (rowsToInsert.length) {
+      const { data: insertedRows, error: insertError } = await supabase
+        .from("appointment_charges")
+        .insert(rowsToInsert)
+        .select("id");
+      if (insertError) return res.status(500).json({ error: insertError.message });
+      insertedIds = (insertedRows || []).map((row) => row.id);
+    }
+
+    let deleteQuery = supabase
       .from("appointment_charges")
       .delete()
       .eq("appointment_id", appointmentId);
-    if (deleteError) return res.status(500).json({ error: deleteError.message });
-
-    if (rowsToInsert.length) {
-      const { error: insertError } = await supabase
-        .from("appointment_charges")
-        .insert(rowsToInsert);
-      if (insertError) return res.status(500).json({ error: insertError.message });
+    if (insertedIds.length) {
+      deleteQuery = deleteQuery.not("id", "in", `(${insertedIds.join(",")})`);
+    }
+    const { error: deleteError } = await deleteQuery;
+    if (deleteError) {
+      return res.status(500).json({
+        error: "New charges were saved, but the previous charge snapshot could not be replaced: " + deleteError.message,
+      });
     }
 
     return res.json(responseRows);
