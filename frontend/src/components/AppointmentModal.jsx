@@ -134,6 +134,29 @@ function AppointmentModal({
 }) {
   const isEditing = Boolean(appointment);
 
+  // Keep the document behind the modal stationary. Restore the exact prior
+  // inline values when this modal unmounts (including when a nested modal opens).
+  useEffect(() => {
+    const body = document.body;
+    const html = document.documentElement;
+    const previousBodyOverflow = body.style.overflow;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverscroll = body.style.overscrollBehavior;
+    const previousHtmlOverscroll = html.style.overscrollBehavior;
+
+    body.style.overflow = "hidden";
+    html.style.overflow = "hidden";
+    body.style.overscrollBehavior = "none";
+    html.style.overscrollBehavior = "none";
+
+    return () => {
+      body.style.overflow = previousBodyOverflow;
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overscrollBehavior = previousBodyOverscroll;
+      html.style.overscrollBehavior = previousHtmlOverscroll;
+    };
+  }, []);
+
   const [clients, setClients] = useState([]);
   const [allPianos, setAllPianos] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
