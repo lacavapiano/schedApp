@@ -359,8 +359,8 @@ function AppointmentModal({
       const hours = entry.billable_hours === "" ? null : Number(entry.billable_hours);
       const customAmount = entry.custom_amount === "" || entry.custom_amount == null ? NaN : Number(entry.custom_amount);
       if (isMiscellaneous && (!String(entry.custom_description || "").trim() || !Number.isFinite(customAmount) || customAmount < 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
-      if (service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
-      const baseAmount = Math.round((isMiscellaneous ? customAmount : Number(service.price)) * (service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
+      if (!isMiscellaneous && service.pricing_method === "hourly" && (!Number.isFinite(hours) || hours <= 0)) return { service, ready: false, baseAmount: 0, finalAmount: 0, discounts: [], serviceIndex };
+      const baseAmount = Math.round((isMiscellaneous ? customAmount : Number(service.price)) * (!isMiscellaneous && service.pricing_method === "hourly" ? hours : 1) * 100) / 100;
       const relevant = [
         ...clientDiscounts.filter((discount) => {
           if (!discount.is_active || (discount.service_type_id && discount.service_type_id !== service.id)) return false;
@@ -393,7 +393,7 @@ function AppointmentModal({
       const previews = pricingPreview[pianoIndex] || [];
       return entries.length > 0 && entries.every((entry, serviceIndex) => {
         const service = serviceTypes.find((item) => item.id === entry.service_type_id || (!entry.service_type_id && entry.service && item.name.toLowerCase() === entry.service.toLowerCase()));
-        return Boolean(service) && (service.pricing_method !== "hourly" || (Number.isFinite(Number(entry.billable_hours)) && Number(entry.billable_hours) > 0)) && Boolean(previews[serviceIndex]?.ready);
+        return Boolean(service) && (service.name?.trim().toLowerCase() === "miscellaneous" || service.pricing_method !== "hourly" || (Number.isFinite(Number(entry.billable_hours)) && Number(entry.billable_hours) > 0)) && Boolean(previews[serviceIndex]?.ready);
       });
     });
 
@@ -806,7 +806,7 @@ function AppointmentModal({
           return savedPiano && service ? {
             appointment_piano_id: savedPiano.id,
             service_type_id: service.id,
-            billable_hours: service.pricing_method === "hourly" ? Number(entry.billable_hours) : null,
+            billable_hours: service.name?.trim().toLowerCase() !== "miscellaneous" && service.pricing_method === "hourly" ? Number(entry.billable_hours) : null,
             ...(isMiscellaneous ? { custom_description: String(entry.custom_description || "").trim(), custom_amount: Number(entry.custom_amount) } : {}),
           } : null;
         }).filter(Boolean);
