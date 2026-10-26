@@ -501,16 +501,13 @@ export async function saveAppointmentCharges(req, res) {
       }
 
       const baseAmount = roundMoney(unitPrice * (pricingMethod === "hourly" ? hours : 1));
-      const matchingRules = (discounts || []).filter((rule) => {
-        if (rule.service_type_id && rule.service_type_id !== service.id) return false;
-        if (rule.discount_type === "ongoing") return true;
-        return rule.applies_to_appointment_id === appointmentId
-          || rule.applies_to_appointment_piano_id === input.appointment_piano_id;
-      });
-      const globalRules = matchingRules.filter((rule) => rule.discount_type === "ongoing" && !rule.service_type_id);
-      const serviceRules = matchingRules.filter((rule) => rule.discount_type === "ongoing" && rule.service_type_id === service.id);
-      const oneTimeRules = matchingRules.filter((rule) => rule.discount_type === "one_time");
-      const orderedRules = [...globalRules, ...serviceRules, ...oneTimeRules];
+      const matchingRules = (discounts || []).filter((rule) =>
+        rule.discount_type === "ongoing"
+        && (!rule.service_type_id || rule.service_type_id === service.id)
+      );
+      const globalRules = matchingRules.filter((rule) => !rule.service_type_id);
+      const serviceRules = matchingRules.filter((rule) => rule.service_type_id === service.id);
+      const orderedRules = [...globalRules, ...serviceRules];
 
       let runningAmount = baseAmount;
       const breakdown = [];
@@ -519,7 +516,7 @@ export async function saveAppointmentCharges(req, res) {
         runningAmount = applyDiscountRule(runningAmount, rule);
         breakdown.push({
           id: rule.id,
-          type: rule.discount_type === "one_time" ? "one_time" : (rule.service_type_id ? "service" : "global"),
+          type: rule.service_type_id ? "service" : "global",
           ...discountRuleValue(rule),
           amount: roundMoney(before - runningAmount),
           remaining: runningAmount,
@@ -538,7 +535,7 @@ export async function saveAppointmentCharges(req, res) {
         base_amount: baseAmount,
         global_discount_percent: effectivePercent(globalRules),
         service_discount_percent: effectivePercent(serviceRules),
-        one_time_discount_percent: effectivePercent(oneTimeRules),
+        one_time_discount_percent: 0,
         discount_rule_ids: orderedRules.map((rule) => rule.id),
         discount_breakdown: breakdown,
         discount_amount: roundMoney(baseAmount - finalAmount),
@@ -546,8 +543,58 @@ export async function saveAppointmentCharges(req, res) {
         updated_at: new Date().toISOString(),
       };
       rowsToInsert.push(row);
-      responseRows.push({ ...row, discount_breakdown: breakdown });
     }
+
+    // One-time rules apply once to their selected scope, not once per matching
+    // charge. Percentage discounts apply proportionally to every eligible line;
+    // fixed discounts are allocated across eligible lines until the amount is used.
+    const oneTimeRules = (discounts || []).filter((rule) =>
+      rule.is_active && rule.discount_type === "one_time"
+      && (rule.applies_to_appointment_id === appointmentId
+        || appointmentPianoIds.has(rule.applies_to_appointment_piano_id))
+    );
+    for (const rule of oneTimeRules) {
+      const eligibleRows = rowsToInsert.filter((row) =>
+        (!rule.service_type_id || rule.service_type_id === row.service_type_id)
+        && (rule.applies_to_appointment_id === appointmentId
+          || rule.applies_to_appointment_piano_id === row.appointment_piano_id)
+      );
+      if (!eligibleRows.length) continue;
+
+      let fixedRemaining = (rule.discount_method || "percent") === "fixed"
+        ? roundMoney(Number(rule.discount_amount))
+        : 0;
+      for (const row of eligibleRows) {
+        const before = row.final_amount;
+        if ((rule.discount_method || "percent") === "fixed") {
+          const applied = roundMoney(Math.min(before, fixedRemaining));
+          row.final_amount = roundMoney(Math.max(0, before - applied));
+          fixedRemaining = roundMoney(Math.max(0, fixedRemaining - applied));
+        } else {
+          row.final_amount = applyDiscountRule(before, rule);
+        }
+        const appliedAmount = roundMoney(before - row.final_amount);
+        row.discount_breakdown.push({
+          id: rule.id,
+          type: "one_time",
+          ...discountRuleValue(rule),
+          amount: appliedAmount,
+          remaining: row.final_amount,
+        });
+        if (!row.discount_rule_ids.includes(rule.id)) row.discount_rule_ids.push(rule.id);
+        row.discount_amount = roundMoney(row.base_amount - row.final_amount);
+        const rowOneTimeRules = oneTimeRules.filter((candidate) =>
+          (!candidate.service_type_id || candidate.service_type_id === row.service_type_id)
+          && (candidate.applies_to_appointment_id === appointmentId
+            || candidate.applies_to_appointment_piano_id === row.appointment_piano_id)
+        );
+        row.one_time_discount_percent = effectivePercent(rowOneTimeRules);
+      }
+    }
+    responseRows.push(...rowsToInsert.map((row) => ({
+      ...row,
+      discount_breakdown: row.discount_breakdown,
+    })));
 
     const { error: deleteError } = await supabase
       .from("appointment_charges")
