@@ -448,6 +448,16 @@ export async function saveAppointmentCharges(req, res) {
         return res.status(400).json({ error: "The selected service does not belong to this account" });
       }
 
+      const isMiscellaneous = service.name.trim().toLowerCase() === "miscellaneous";
+      const serviceName = isMiscellaneous ? String(input.custom_description || "").trim() : service.name;
+      const unitPrice = isMiscellaneous ? Number(input.custom_amount) : Number(service.price);
+      if (isMiscellaneous && !serviceName) {
+        return res.status(400).json({ error: "Enter a description for the miscellaneous service." });
+      }
+      if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+        return res.status(400).json({ error: isMiscellaneous ? "Enter a valid miscellaneous service amount of $0 or more." : "The configured service price is invalid." });
+      }
+
       const hours = input.billable_hours === "" || input.billable_hours === null || input.billable_hours === undefined
         ? null
         : Number(input.billable_hours);
@@ -458,7 +468,7 @@ export async function saveAppointmentCharges(req, res) {
         return res.status(400).json({ error: "Billable hours must be zero or greater" });
       }
 
-      const baseAmount = roundMoney(Number(service.price) * (service.pricing_method === "hourly" ? hours : 1));
+      const baseAmount = roundMoney(unitPrice * (service.pricing_method === "hourly" ? hours : 1));
       const matchingRules = (discounts || []).filter((rule) => {
         if (rule.service_type_id && rule.service_type_id !== service.id) return false;
         if (rule.discount_type === "ongoing") return true;
@@ -489,9 +499,9 @@ export async function saveAppointmentCharges(req, res) {
         appointment_id: appointmentId,
         appointment_piano_id: input.appointment_piano_id,
         service_type_id: service.id,
-        service_name: service.name,
+        service_name: serviceName,
         pricing_method: service.pricing_method,
-        unit_price: Number(service.price),
+        unit_price: unitPrice,
         billable_hours: service.pricing_method === "hourly" ? hours : null,
         base_amount: baseAmount,
         global_discount_percent: effectivePercent(globalRules),
