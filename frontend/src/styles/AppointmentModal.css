@@ -207,10 +207,24 @@
 
 .appointment-modal .appointment-date-time-row input[type="date"],
 .appointment-modal .appointment-date-time-row input[type="time"] {
+  display: block;
+  width: 100%;
   min-width: 0;
+  min-inline-size: 0;
   max-width: 100%;
-  padding-inline: 8px;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid var(--appointment-border);
+  border-radius: var(--appointment-radius-sm);
+  background: var(--appointment-surface);
+  color: var(--appointment-text);
+  font: inherit;
   font-size: 16px;
+  line-height: 1.35;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .appointment-modal .appointment-form-field select[name="client_address_id"],
@@ -669,16 +683,46 @@
   min-width: 0;
 }
 
-.appointment-edit-discount-controls input {
-  width: 82px;
+.appointment-edit-discount-controls input,
+.appointment-edit-discount-controls select {
+  width: auto;
   min-width: 0;
+  min-height: 42px;
   box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid var(--appointment-border);
+  border-radius: var(--appointment-radius-sm);
+  background: var(--appointment-surface);
+  color: var(--appointment-text);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.appointment-edit-discount-controls input {
+  width: 112px;
+}
+
+.appointment-edit-discount-controls select {
+  flex: 0 1 150px;
+  max-width: 100%;
+}
+
+.appointment-inline-discount-editor .appointment-form-field select,
+.appointment-inline-discount-editor .appointment-form-field input {
+  min-height: 46px;
+  font-size: 16px;
+}
+
+.appointment-inline-discount-actions > button {
+  min-height: 44px;
+  padding: 10px 16px;
 }
 
 .appointment-modal .appointment-edit-discount-button {
-  min-height: 30px;
-  padding: 4px 8px;
-  font-size: 12px;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 13px;
 }
 
 /* Consistent action button treatment, scoped to this modal only */
@@ -911,8 +955,10 @@
     min-width: 0;
     min-inline-size: 0;
     max-width: 100%;
+    height: 46px;
+    min-height: 46px;
     box-sizing: border-box;
-    padding: 9px 8px;
+    padding: 9px 10px;
     font-size: 16px;
   }
 
@@ -1039,13 +1085,48 @@
   }
 
   .appointment-modal .appointment-edit-discount-controls {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(88px, 0.7fr);
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
   }
 
-  .appointment-modal .appointment-edit-discount-controls input {
-    width: 100px;
-    min-height: 40px;
+  .appointment-modal .appointment-edit-discount-controls input,
+  .appointment-modal .appointment-edit-discount-controls select {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    font-size: 16px;
+  }
+
+  .appointment-modal .appointment-edit-discount-controls button {
+    min-height: 44px;
+  }
+
+  .appointment-modal .appointment-inline-discount-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .appointment-modal .appointment-inline-discount-actions > button {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+  }
+
+  .appointment-modal .appointment-discount-input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .appointment-modal .appointment-inline-discount-editor .appointment-form-field select,
+  .appointment-modal .appointment-inline-discount-editor .appointment-form-field input {
+    min-height: 46px;
+    padding: 10px 12px;
+    font-size: 16px;
   }
 }
 
