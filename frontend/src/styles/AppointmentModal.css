@@ -214,16 +214,16 @@
   min-width: 0;
   min-inline-size: 0;
   max-width: 100%;
-  height: 44px;
-  min-height: 44px;
+  height: 38px;
+  min-height: 38px;
   box-sizing: border-box;
-  padding: 9px 10px;
+  padding: 6px 8px;
   border: 1px solid var(--appointment-border);
   border-radius: var(--appointment-radius-sm);
   background: var(--appointment-surface);
   color: var(--appointment-text);
   font: inherit;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.35;
 }
 
@@ -958,11 +958,11 @@
     min-width: 0;
     min-inline-size: 0;
     max-width: 100%;
-    height: 46px;
-    min-height: 46px;
+    height: 38px;
+    min-height: 38px;
     box-sizing: border-box;
-    padding: 9px 10px;
-    font-size: 16px;
+    padding: 6px 8px;
+    font-size: 14px;
   }
 
   .appointment-modal .appointment-form-field {
