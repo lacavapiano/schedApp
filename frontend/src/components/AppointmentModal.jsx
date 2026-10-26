@@ -1413,8 +1413,8 @@ function AppointmentModal({
                               {preview?.service && (
                                 <div className="appointment-price-preview">
                                   <div className="appointment-price-preview-heading"><strong>Price estimate</strong><span>{preview.service.name}</span></div>
-                                  <div className="appointment-price-line"><span>Base price{preview.service.pricing_method === "hourly" ? ` (${serviceEntry.billable_hours || "—"} hr × $${Number(preview.service.price).toFixed(2)})` : ""}</span><span>{preview.ready ? `$${preview.baseAmount.toFixed(2)}` : "Enter actual hours"}</span></div>
-                                  {preview.discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.percent}%)</span><span>−${discount.amount.toFixed(2)}</span></div>)}
+                                  <div className="appointment-price-line"><span>Base price{preview.service.pricing_method === "hourly" ? ` (${serviceEntry.billable_hours || "—"} hr × $${Number(preview.service.price).toFixed(2)})` : ""}</span><span>{preview.ready ? `$${preview.baseAmount.toFixed(2)}` : "Complete service pricing"}</span></div>
+                                  {preview.discounts.map((discount, discountIndex) => <div className="appointment-price-line appointment-price-discount" key={`${discount.label}-${discountIndex}`}><span>{discount.label} ({discount.method === "fixed" ? `${discount.value.toFixed(2)}` : `${discount.value}%`})</span><span>−${discount.amount.toFixed(2)}</span></div>)}
                                   <div className="appointment-price-line appointment-price-total"><strong>Service total</strong><strong>{preview.ready ? `$${preview.finalAmount.toFixed(2)}` : "—"}</strong></div>
                                 </div>
                               )}
