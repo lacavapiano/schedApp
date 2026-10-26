@@ -34,6 +34,10 @@ alter table public.client_discounts
         and discount_percent is null)
     );
 
+-- Keep the actual mix of percentage and fixed-dollar discounts in each charge snapshot.
+alter table public.appointment_charges
+  add column if not exists discount_breakdown jsonb not null default '[]'::jsonb;
+
 -- Every account gets an editable catalog entry that can be used for one-off,
 -- custom-described work with an appointment-specific price.
 insert into public.service_types
