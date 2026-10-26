@@ -618,8 +618,6 @@ function AppointmentModal({
       if (formData.payment.trim() === "") missing.push("payment amount");
       if (!formData.payment_type.trim()) missing.push("payment type");
       formData.pianos.filter((piano) => piano.piano_id).forEach((piano, index) => {
-        if (!String(piano.temp ?? "").trim()) missing.push(`temperature for piano ${index + 1}`);
-        if (!String(piano.hum ?? "").trim()) missing.push(`humidity for piano ${index + 1}`);
       });
       if (missing.length) {
         setCompletionMode(true);
@@ -994,7 +992,7 @@ function AppointmentModal({
               </div>
 
               {/* Date / Time */}
-              <div className="appointment-form-row">
+              <div className="appointment-form-row appointment-date-time-row">
                 <div className="appointment-form-field">
                   <label htmlFor="appointment-date">
                     Date *
@@ -1285,7 +1283,26 @@ function AppointmentModal({
                                               <button type="button" className="appointment-remove-button" disabled={savingDiscountEdit} onClick={() => { setEditingDiscountKey(null); setEditingDiscountPercent(""); }}>Cancel</button>
                                             </div>
                                           ) : (
-                                            <button type="button" className="appointment-remove-button appointment-edit-discount-button" onClick={() => { setEditingDiscountKey(discountKey); setEditingDiscountPercent(String(discount.discount_percent)); setError(""); }}>Edit</button>
+                                            <div className="appointment-edit-discount-controls">
+                                              <button type="button" className="appointment-remove-button appointment-edit-discount-button" onClick={() => { setEditingDiscountKey(discountKey); setEditingDiscountPercent(String(discount.discount_percent)); setError(""); }}>Edit</button>
+                                              <button type="button" className="appointment-remove-button appointment-edit-discount-button" disabled={savingDiscountEdit} onClick={async () => {
+                                                setError("");
+                                                if (discount.draftId) {
+                                                  setDiscountDrafts((previous) => previous.filter((item) => item.draftId !== discount.draftId));
+                                                  return;
+                                                }
+                                                setSavingDiscountEdit(true);
+                                                try {
+                                                  await updateClientDiscount(discount.id, { is_active: false });
+                                                  const refreshed = await getClientDiscounts(formData.client_id);
+                                                  setClientDiscounts(refreshed || []);
+                                                } catch (err) {
+                                                  setError(err.message || "Failed to remove discount.");
+                                                } finally {
+                                                  setSavingDiscountEdit(false);
+                                                }
+                                              }}>Delete</button>
+                                            </div>
                                           )}
                                         </div>
                                       );
@@ -1309,11 +1326,11 @@ function AppointmentModal({
                       <div className="appointment-form-row appointment-piano-environment-row">
                         <div className="appointment-form-field">
                           <label>Temp</label>
-                          <input type="text" className={completionMode && !String(appointmentPiano.temp ?? "").trim() ? "completion-field-missing" : ""} value={appointmentPiano.temp} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
+                          <input type="text" className="" value={appointmentPiano.temp} onChange={(event) => handlePianoChange(index, "temp", event.target.value)} />
                         </div>
                         <div className="appointment-form-field">
                           <label>Humidity</label>
-                          <input type="text" className={completionMode && !String(appointmentPiano.hum ?? "").trim() ? "completion-field-missing" : ""} value={appointmentPiano.hum} onChange={(event) => handlePianoChange(index, "hum", event.target.value)} />
+                          <input type="text" className="" value={appointmentPiano.hum} onChange={(event) => handlePianoChange(index, "hum", event.target.value)} />
                         </div>
                       </div>
 
