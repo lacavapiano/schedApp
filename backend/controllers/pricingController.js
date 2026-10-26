@@ -508,6 +508,7 @@ export async function saveAppointmentCharges(req, res) {
         service_discount_percent: effectivePercent(serviceRules),
         one_time_discount_percent: effectivePercent(oneTimeRules),
         discount_rule_ids: orderedRules.map((rule) => rule.id),
+        discount_breakdown: breakdown,
         discount_amount: roundMoney(baseAmount - finalAmount),
         final_amount: finalAmount,
         updated_at: new Date().toISOString(),
