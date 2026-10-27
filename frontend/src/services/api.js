@@ -574,11 +574,13 @@ export async function getGoogleCalendars() {
 
   if (!response.ok) {
     const error = await response.json();
-
-    throw new Error(
+    const requestError = new Error(
       error.error ||
         "Failed to fetch Google calendars"
     );
+
+    requestError.code = error.code;
+    throw requestError;
   }
 
   return response.json();
