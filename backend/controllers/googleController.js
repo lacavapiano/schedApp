@@ -450,6 +450,26 @@ export async function getGoogleStatus(req, res) {
   }
 }
 
+export async function disconnectGoogle(req, res) {
+  try {
+    const accessToken = getAccessToken(req);
+    if (!accessToken) return res.status(401).json({ error: "Authentication required" });
+    const userSupabase = getSupabaseForUser(accessToken);
+    const { data: { user }, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !user) return res.status(401).json({ error: "Invalid authentication token" });
+    const { error: connectionError } = await supabase.from("google_connections").delete().eq("user_id", user.id);
+    if (connectionError) return res.status(500).json({ error: "Failed to disconnect Google Calendar" });
+    const { error: settingsError } = await userSupabase.from("user_settings").update({
+      google_calendar_id: null, google_calendar_name: null, updated_at: new Date().toISOString(),
+    }).eq("user_id", user.id);
+    if (settingsError) return res.status(500).json({ error: "Google was disconnected, but the saved calendar selection could not be cleared. Reload Settings and try again." });
+    return res.json({ disconnected: true });
+  } catch (error) {
+    console.error("Google disconnect error:", error);
+    return res.status(500).json({ error: "Server error while disconnecting Google Calendar" });
+  }
+}
+
 export async function getGoogleCalendars(req, res) {
   let userId = null;
 
