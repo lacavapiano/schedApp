@@ -451,6 +451,8 @@ export async function getGoogleStatus(req, res) {
 }
 
 export async function getGoogleCalendars(req, res) {
+  let userId = null;
+
   try {
     const accessToken = getAccessToken(req);
 
@@ -473,6 +475,8 @@ export async function getGoogleCalendars(req, res) {
         error: "Invalid authentication token",
       });
     }
+
+    userId = user.id;
 
     const {
       data: connection,
@@ -564,16 +568,18 @@ export async function getGoogleCalendars(req, res) {
        * stale connection so the settings page can offer a clean
        * reauthorization flow instead of reporting an empty calendar list.
        */
-      const { error: deleteError } = await supabase
-        .from("google_connections")
-        .delete()
-        .eq("user_id", user.id);
+      if (userId) {
+        const { error: deleteError } = await supabase
+          .from("google_connections")
+          .delete()
+          .eq("user_id", userId);
 
-      if (deleteError) {
-        console.error(
-          "Failed to clear invalid Google connection:",
-          deleteError
-        );
+        if (deleteError) {
+          console.error(
+            "Failed to clear invalid Google connection:",
+            deleteError
+          );
+        }
       }
 
       return res.status(401).json({
