@@ -554,6 +554,22 @@ export async function connectGoogle() {
   );
 }
 
+export async function disconnectGoogle() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("You must be logged in");
+  const response = await fetch(`${API_URL}/api/google/disconnect`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    let payload = null;
+    try { payload = text ? JSON.parse(text) : null; } catch {}
+    throw new Error(payload?.error || `Failed to disconnect Google Calendar (HTTP ${response.status})`);
+  }
+  return response.json();
+}
+
 export async function getGoogleCalendars() {
   const {
     data: { session },
