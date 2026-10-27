@@ -8,6 +8,7 @@ import {
   getGoogleCalendars,
   updateSettings,
   connectGoogle,
+  disconnectGoogle,
 } from "../services/api";
 
 import "../styles/Settings.css";
@@ -24,6 +25,7 @@ function Settings() {
     useState(false);
   const [savingCalendar, setSavingCalendar] =
     useState(false);
+  const [disconnectingGoogle, setDisconnectingGoogle] = useState(false);
 
 	const [savingColor, setSavingColor] = useState(false);
 
@@ -173,6 +175,23 @@ function Settings() {
 	  }
 	}
 
+  async function handleDisconnectGoogle() {
+    if (!window.confirm("Disconnect Google Calendar? Calendar synchronization will stop until you reconnect.")) return;
+    try {
+      setDisconnectingGoogle(true);
+      setError("");
+      await disconnectGoogle();
+      setGoogleConnected(false);
+      setCalendars([]);
+      setSettings((current) => current ? { ...current, google_calendar_id: null, google_calendar_name: null } : current);
+    } catch (error) {
+      console.error("Failed to disconnect Google Calendar:", error);
+      setError(error.message);
+    } finally {
+      setDisconnectingGoogle(false);
+    }
+  }
+
   async function handleConnectGoogle() {
     let popup = null;
 
@@ -312,6 +331,13 @@ function Settings() {
             </div>
           ) : (
             <div className="settings-section-body">
+              <div className="settings-google-actions">
+                <p className="settings-help-text">If synchronization stops working, refresh authorization to sign in and grant access again.</p>
+                <div className="settings-google-action-buttons">
+                  <button type="button" className="settings-button" onClick={handleConnectGoogle} disabled={connectingGoogle || disconnectingGoogle}>{connectingGoogle ? "Refreshing..." : "Refresh authorization"}</button>
+                  <button type="button" className="settings-secondary-button" onClick={handleDisconnectGoogle} disabled={connectingGoogle || disconnectingGoogle}>{disconnectingGoogle ? "Disconnecting..." : "Disconnect Google"}</button>
+                </div>
+              </div>
               <div className="settings-field">
                 <label htmlFor="google-calendar">
                   Calendar to synchronize
