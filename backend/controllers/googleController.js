@@ -544,10 +544,44 @@ export async function getGoogleCalendars(req, res) {
 
     return res.json(calendars);
   } catch (error) {
+    const googleErrorCode =
+      error?.response?.data?.error ||
+      error?.response?.data?.error_description;
+
+    const invalidGrant =
+      googleErrorCode === "invalid_grant" ||
+      String(error?.message || "").includes("invalid_grant") ||
+      String(error?.response?.data?.error_description || "").includes("invalid_grant");
+
     console.error(
       "Google calendars error:",
       error?.response?.data || error?.message || error
     );
+
+    if (invalidGrant) {
+      /*
+       * The saved refresh token can no longer be used. Clear the
+       * stale connection so the settings page can offer a clean
+       * reauthorization flow instead of reporting an empty calendar list.
+       */
+      const { error: deleteError } = await supabase
+        .from("google_connections")
+        .delete()
+        .eq("user_id", user.id);
+
+      if (deleteError) {
+        console.error(
+          "Failed to clear invalid Google connection:",
+          deleteError
+        );
+      }
+
+      return res.status(401).json({
+        code: "GOOGLE_REAUTH_REQUIRED",
+        error:
+          "Google authorization has expired or been revoked. Reconnect your Google account to restore calendar synchronization.",
+      });
+    }
 
     return res.status(error?.code === 401 || error?.code === 403 ? 502 : 500).json({
       error:
