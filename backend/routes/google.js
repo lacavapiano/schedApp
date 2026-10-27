@@ -4,7 +4,7 @@ import {
   connectGoogle,
   googleCallback,
   getGoogleStatus,
-  getGoogleCalendars,
+  getGoogleCalendars,\n  disconnectGoogle,
 } from "../controllers/googleController.js";
 
 const router = express.Router();
@@ -12,6 +12,6 @@ const router = express.Router();
 router.get("/connect", connectGoogle);
 router.get("/callback", googleCallback);
 router.get("/status", getGoogleStatus);
-router.get("/calendars", getGoogleCalendars);
+router.get("/calendars", getGoogleCalendars);\nrouter.post("/disconnect", disconnectGoogle);
 
 export default router;
