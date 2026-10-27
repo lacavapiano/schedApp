@@ -511,35 +511,49 @@ export async function getGoogleCalendars(req, res) {
       auth: oauth2Client,
     });
 
-    const response =
-      await calendar.calendarList.list({
+    /*
+     * Do not apply minAccessRole here. A user may have calendars
+     * shared with limited permissions, and filtering by "reader"
+     * can make a valid Google account appear to have no calendars.
+     * Include hidden calendars as well, then paginate so accounts
+     * with many calendars are handled correctly.
+     */
+    const calendars = [];
+    let pageToken;
+
+    do {
+      const response = await calendar.calendarList.list({
         showDeleted: false,
-        minAccessRole: "reader",
+        showHidden: true,
+        maxResults: 250,
+        ...(pageToken ? { pageToken } : {}),
       });
 
-    const calendars =
-      response.data.items?.map((calendar) => ({
-        id: calendar.id,
-        name:
-          calendar.summary ||
-          calendar.id,
-        description:
-          calendar.description || null,
-        access_role:
-          calendar.accessRole || null,
-        primary:
-          calendar.primary === true,
-      })) || [];
+      calendars.push(
+        ...(response.data.items || []).map((calendar) => ({
+          id: calendar.id,
+          name: calendar.summary || calendar.id,
+          description: calendar.description || null,
+          access_role: calendar.accessRole || null,
+          primary: calendar.primary === true,
+        }))
+      );
+
+      pageToken = response.data.nextPageToken;
+    } while (pageToken);
 
     return res.json(calendars);
   } catch (error) {
     console.error(
       "Google calendars error:",
-      error
+      error?.response?.data || error?.message || error
     );
 
-    return res.status(500).json({
-      error: "Failed to retrieve Google calendars",
+    return res.status(error?.code === 401 || error?.code === 403 ? 502 : 500).json({
+      error:
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Failed to retrieve Google calendars",
     });
   }
 }
