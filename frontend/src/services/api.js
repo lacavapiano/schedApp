@@ -572,18 +572,41 @@ export async function getGoogleCalendars() {
     }
   );
 
-  if (!response.ok) {
-    const error = await response.json();
-    const requestError = new Error(
-      error.error ||
-        "Failed to fetch Google calendars"
-    );
+  // Read the response as text first. Safari can throw the vague
+  // "The string did not match the expected pattern" error when
+  // response.json() receives an HTML/plain-text server error page.
+  const responseText = await response.text();
+  let payload = null;
 
-    requestError.code = error.code;
+  if (responseText) {
+    try {
+      payload = JSON.parse(responseText);
+    } catch {
+      payload = null;
+    }
+  }
+
+  if (!response.ok) {
+    const message =
+      payload?.error ||
+      (responseText && responseText.length < 300
+        ? responseText
+        : null) ||
+      `Failed to fetch Google calendars (HTTP ${response.status})`;
+
+    const requestError = new Error(message);
+    requestError.code = payload?.code;
+    requestError.status = response.status;
     throw requestError;
   }
 
-  return response.json();
+  if (!payload || !Array.isArray(payload)) {
+    throw new Error(
+      "The server returned an unexpected response while loading Google calendars. Please reload the page; if it continues, check the Render backend logs."
+    );
+  }
+
+  return payload;
 }
 
 export async function getServiceTypes({ includeInactive = false } = {}) {
