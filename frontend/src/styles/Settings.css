@@ -302,3 +302,12 @@
   .settings-selected-calendar-id { overflow-wrap: anywhere; }
   .settings-status { white-space: normal; }
 }
+
+.settings-google-actions { width: 100%; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid #e5e5e5; }
+.settings-google-action-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+.settings-google-actions .settings-help-text { margin-bottom: 12px; }
+@media (max-width: 480px) {
+  .settings-google-action-buttons { flex-direction: column; }
+  .settings-google-action-buttons button { width: 100%; }
+}
+@media (prefers-color-scheme: dark) { .settings-google-actions { border-bottom-color: #3a3a3a; } }
