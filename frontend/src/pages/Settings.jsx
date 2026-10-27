@@ -88,6 +88,21 @@ function Settings() {
         error
       );
 
+      setCalendars([]);
+
+      if (error.code === "GOOGLE_REAUTH_REQUIRED") {
+        setGoogleConnected(false);
+        setSettings((current) =>
+          current
+            ? {
+                ...current,
+                google_calendar_id: null,
+                google_calendar_name: null,
+              }
+            : current
+        );
+      }
+
       setError(error.message);
     } finally {
       setLoadingCalendars(false);
