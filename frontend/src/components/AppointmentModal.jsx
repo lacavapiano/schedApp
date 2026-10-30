@@ -19,7 +19,7 @@ import AddClientModal from "./AddClientModal";
 import PianoForm from "./PianoForm";
 import "../styles/AppointmentModal.css";
 import "../styles/ActionButtons.css";
-import { buildInvoiceDocument, getInvoiceNumber } from "../utils/invoice";
+import { downloadInvoicePdf, getInvoiceNumber } from "../utils/invoice";
 
 const EMPTY_PIANO = {
   piano_id: "", service: "", service_type_id: "", billable_hours: "", services: [{ service_type_id: "", billable_hours: "" }], temp: "", hum: "", notes: "",
@@ -198,13 +198,7 @@ function AppointmentModal({
 
   async function handleGenerateInvoice() {
     if (!appointment?.id) return;
-    let invoiceWindow;
     try {
-      invoiceWindow = window.open("", "_blank");
-      if (!invoiceWindow) {
-        throw new Error("Your browser blocked the invoice window. Allow pop-ups for schedApp and try again.");
-      }
-      invoiceWindow.document.write("<!doctype html><title>Preparing invoice…</title><p style='font:16px sans-serif;padding:24px'>Preparing invoice…</p>");
       const [charges, invoiceSettings] = await Promise.all([getAppointmentCharges(appointment.id), getSettings()]);
       if (!charges?.length) {
         throw new Error("This appointment has no saved service pricing. Save its service details and pricing before generating an invoice.");
@@ -220,19 +214,15 @@ function AppointmentModal({
         ...appointment,
         invoice: getInvoiceNumber(appointment),
       };
-      const invoiceHtml = buildInvoiceDocument({
+      await downloadInvoicePdf({
         appointment: invoiceAppointment,
         client: selectedClient,
         address: selectedAddress,
         charges,
         settings: invoiceSettings,
       });
-      invoiceWindow.document.open();
-      invoiceWindow.document.write(invoiceHtml);
-      invoiceWindow.document.close();
     } catch (invoiceError) {
-      if (invoiceWindow && !invoiceWindow.closed) invoiceWindow.close();
-      setError(invoiceError.message || "Unable to generate invoice.");
+      setError(invoiceError.message || "Unable to generate invoice PDF.");
     }
   }
 
