@@ -28,6 +28,7 @@ function Settings() {
   const [disconnectingGoogle, setDisconnectingGoogle] = useState(false);
 
 	const [savingColor, setSavingColor] = useState(false);
+  const [savingBusiness, setSavingBusiness] = useState(false);
 
   	const [error, setError] = useState("");
 
@@ -175,6 +176,30 @@ function Settings() {
 	  }
 	}
 
+  async function handleSaveBusinessSettings(event) {
+    event.preventDefault();
+    try {
+      setSavingBusiness(true);
+      setError("");
+      const updatedSettings = await updateSettings({
+        business_address: settings?.business_address || "",
+        business_email: settings?.business_email || "",
+        business_phone: settings?.business_phone || "",
+        invoice_due_days: Number(settings?.invoice_due_days ?? 30),
+      });
+      setSettings(updatedSettings);
+    } catch (error) {
+      console.error("Failed to save business and invoice settings:", error);
+      setError(error.message || "Failed to save business settings.");
+    } finally {
+      setSavingBusiness(false);
+    }
+  }
+
+  function updateBusinessField(field, value) {
+    setSettings((current) => ({ ...(current || {}), [field]: value }));
+  }
+
   async function handleDisconnectGoogle() {
     if (!window.confirm("Disconnect Google Calendar? Calendar synchronization will stop until you reconnect.")) return;
     try {
@@ -289,6 +314,45 @@ function Settings() {
             {error}
           </div>
         )}
+
+        <section className="settings-section">
+          <div className="settings-section-header">
+            <div>
+              <h2>Business &amp; Invoicing</h2>
+              <p>These details appear on invoices. Set the standard payment period used to calculate invoice due dates.</p>
+            </div>
+          </div>
+          <form className="settings-section-body settings-business-form" onSubmit={handleSaveBusinessSettings}>
+            <div className="settings-business-grid">
+              <div className="settings-field">
+                <label htmlFor="business-address">Business address</label>
+                <input id="business-address" type="text" value={settings?.business_address || ""} onChange={(event) => updateBusinessField("business_address", event.target.value)} placeholder="Street, city, state, ZIP" />
+              </div>
+              <div className="settings-field">
+                <label htmlFor="business-email">Business email</label>
+                <input id="business-email" type="email" value={settings?.business_email || ""} onChange={(event) => updateBusinessField("business_email", event.target.value)} placeholder="you@example.com" />
+              </div>
+              <div className="settings-field">
+                <label htmlFor="business-phone">Business phone</label>
+                <input id="business-phone" type="tel" value={settings?.business_phone || ""} onChange={(event) => updateBusinessField("business_phone", event.target.value)} placeholder="(555) 555-5555" />
+              </div>
+              <div className="settings-field">
+                <label htmlFor="invoice-due-days">Default invoice due period</label>
+                <select id="invoice-due-days" className="settings-calendar-select" value={settings?.invoice_due_days ?? 30} onChange={(event) => updateBusinessField("invoice_due_days", event.target.value)}>
+                  <option value="0">Due upon receipt</option>
+                  <option value="7">7 days</option>
+                  <option value="14">14 days</option>
+                  <option value="30">30 days</option>
+                  <option value="45">45 days</option>
+                  <option value="60">60 days</option>
+                </select>
+              </div>
+            </div>
+            <div className="settings-business-actions">
+              <button type="submit" className="settings-button" disabled={savingBusiness}>{savingBusiness ? "Saving..." : "Save Business Settings"}</button>
+            </div>
+          </form>
+        </section>
 
         <ServiceCatalog />
 
