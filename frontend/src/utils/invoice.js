@@ -120,7 +120,6 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
   .balance .total-row { padding: 0; }
   .notes { margin-top: 34px; padding-top: 15px; border-top: 1px solid #e2e2e2; color: #666; font-size: 11px; }
   .notes strong { display: block; margin-bottom: 4px; color: #333; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
-  .actions { max-width: 850px; margin: 16px auto; text-align: right; }
   button { padding: 10px 18px; border: 0; border-radius: 4px; background: #202020; color: #fff; font: inherit; cursor: pointer; }
   @media (max-width: 650px) {
     body { padding: 0; background: #fff; }
@@ -146,7 +145,6 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
     @page { size: letter; margin: 0.55in; }
     body { padding: 0; background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     .sheet { max-width: none; min-height: 0; padding: 0; box-shadow: none; }
-    .actions { display: none; }
     thead { display: table-header-group; }
     tr { break-inside: avoid; }
   }
@@ -179,7 +177,7 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
   </section>
   ${appointment.notes ? `<section class="notes"><strong>Appointment notes</strong>${escapeHtml(appointment.notes)}</section>` : ""}
 </div>
-<div class="actions"><button type="button" onclick="window.print()">Print / Save as PDF</button></div>
+
 </body>
 </html>`;
 }
