@@ -25,8 +25,8 @@ function formatDate(value) {
 
 function formatAddress(address) {
   if (!address) return "";
-  const street = [address.address, address.apt ? `Apt ${address.apt}` : null].filter(Boolean).join(", ");
-  const locality = [address.city, address.state, address.zip].filter(Boolean).join(", ");
+  const street = [escapeHtml(address.address), address.apt ? `Apt ${escapeHtml(address.apt)}` : null].filter(Boolean).join(", ");
+  const locality = [address.city, address.state, address.zip].map(escapeHtml).filter(Boolean).join(", ");
   return [street, locality].filter(Boolean).join("<br>");
 }
 
