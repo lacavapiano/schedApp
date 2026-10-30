@@ -1,16 +1,5 @@
 import html2pdf from "html2pdf.js";
 
-const INVOICE_COLORS = {
-  text: "#1f2933",
-  heading: "#111827",
-  secondary: "#374151",
-  muted: "#4b5563",
-  border: "#cbd2d9",
-  borderStrong: "#374151",
-  surface: "#f3f5f7",
-  white: "#ffffff",
-};
-
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
     "&": "&amp;",
@@ -22,6 +11,7 @@ function escapeHtml(value) {
 }
 
 function toNumber(value, fallback = 0) {
+  if (value === null || value === undefined || value === "") return fallback;
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
 }
