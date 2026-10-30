@@ -86,67 +86,76 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Invoice ${escapeHtml(invoiceNumber)}</title>
 <style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 36px; color: #202020; background: #f1f1f1; font: 13px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  .sheet { width: 100%; max-width: 850px; min-height: 900px; margin: 0 auto; padding: 52px 56px; background: #fff; box-shadow: 0 5px 28px #00000012; }
-  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px; padding-bottom: 26px; border-bottom: 2px solid #222; }
-  .brand { font-size: 23px; font-weight: 750; letter-spacing: -.7px; }
-  .business-contact { margin-top: 7px; line-height: 1.65; }
-  .invoice-heading { flex: 0 0 auto; min-width: 190px; text-align: right; }
-  h1 { margin: -5px 0 7px; font-size: 31px; line-height: 1.15; font-weight: 750; letter-spacing: 1.4px; }
-  .invoice-meta { color: #666; font-size: 12px; line-height: 1.8; }
-  .invoice-meta strong { color: #202020; font-size: 14px; }
-  .addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; padding: 30px 0 32px; }
-  .label { margin-bottom: 10px; color: #777; font-size: 10px; font-weight: 750; letter-spacing: 1.3px; text-transform: uppercase; }
-  .address-name { margin-bottom: 3px; font-size: 15px; font-weight: 700; }
-  .muted { color: #707070; font-size: 11px; }
-  .service-panel { padding: 14px 16px; border: 1px solid #e2e2e2; border-radius: 4px; background: #fafafa; }
-  .service-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
-  .service-row + .service-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid #e8e8e8; }
-  .service-label { color: #707070; font-size: 11px; }
-  .service-value { font-size: 12px; font-weight: 650; text-align: right; }
-  .payment-status { display: inline-block; padding: 3px 8px; border: 1px solid #c9c9c9; border-radius: 3px; background: #fff; color: #333; font-size: 9px; font-weight: 750; letter-spacing: .65px; text-transform: uppercase; white-space: nowrap; }
-  .items { margin-top: 2px; }
-  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  th { padding: 10px 7px; border-bottom: 1px solid #222; background: #f5f5f5; color: #555; font-size: 9px; font-weight: 750; letter-spacing: .65px; text-align: left; text-transform: uppercase; }
-  td { padding: 13px 7px; border-bottom: 1px solid #e8e8e8; vertical-align: top; font-size: 11px; }
-  th:first-child, td:first-child { width: 34%; padding-left: 10px; }
-  th:not(:first-child), td:not(:first-child) { width: 13.2%; }
-  .number { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .totals { width: 310px; max-width: 100%; margin: 24px 0 0 auto; font-variant-numeric: tabular-nums; }
-  .total-row { display: flex; justify-content: space-between; gap: 20px; padding: 5px 0; }
-  .grand { margin-top: 7px; padding: 11px 0 8px; border-top: 1.5px solid #222; font-size: 16px; font-weight: 750; }
-  .balance { margin-top: 10px; padding: 12px 14px; border: 1px solid #e2e2e2; border-radius: 4px; background: #f6f6f6; font-size: 15px; font-weight: 750; }
-  .balance .total-row { padding: 0; }
-  .notes { margin-top: 34px; padding-top: 15px; border-top: 1px solid #e2e2e2; color: #666; font-size: 11px; }
-  .notes strong { display: block; margin-bottom: 4px; color: #333; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
-  button { padding: 10px 18px; border: 0; border-radius: 4px; background: #202020; color: #fff; font: inherit; cursor: pointer; }
+  /* Invoice-only styles: keep PDF generation isolated from the application UI. */
+  .sheet, .sheet * { box-sizing: border-box; }
+  .sheet {
+    width: 100%;
+    max-width: 850px;
+    min-height: 900px;
+    margin: 0 auto;
+    padding: 52px 56px;
+    color: #1f2933;
+    background: #fff;
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    box-shadow: 0 5px 28px #00000012;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  .sheet .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px; padding-bottom: 26px; border-bottom: 2px solid #202833; }
+  .sheet .brand { color: #111827; font-size: 24px; font-weight: 750; letter-spacing: -.7px; }
+  .sheet .business-contact { margin-top: 7px; line-height: 1.65; }
+  .sheet .invoice-heading { flex: 0 0 auto; min-width: 190px; text-align: right; }
+  .sheet h1 { margin: -5px 0 7px; color: #111827; font-size: 32px; line-height: 1.15; font-weight: 750; letter-spacing: 1.4px; }
+  .sheet .invoice-meta { color: #4b5563; font-size: 12px; line-height: 1.8; }
+  .sheet .invoice-meta strong { color: #111827; font-size: 14px; }
+  .sheet .addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; padding: 30px 0 32px; }
+  .sheet .label { margin-bottom: 10px; color: #374151; font-size: 11px; font-weight: 750; letter-spacing: 1.1px; text-transform: uppercase; }
+  .sheet .address-name { margin-bottom: 3px; color: #111827; font-size: 16px; font-weight: 700; }
+  .sheet .muted { color: #4b5563; font-size: 12px; }
+  .sheet .service-panel { padding: 14px 16px; border: 1px solid #cbd2d9; border-radius: 4px; background: #f8fafc; }
+  .sheet .service-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+  .sheet .service-row + .service-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid #d8dee5; }
+  .sheet .service-label { color: #4b5563; font-size: 12px; }
+  .sheet .service-value { color: #1f2933; font-size: 13px; font-weight: 650; text-align: right; }
+  .sheet .payment-status { display: inline-block; padding: 3px 8px; border: 1px solid #9ca3af; border-radius: 3px; background: #fff; color: #1f2933; font-size: 10px; font-weight: 750; letter-spacing: .55px; text-transform: uppercase; white-space: nowrap; }
+  .sheet .items { margin-top: 2px; }
+  .sheet table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .sheet th { padding: 10px 7px; border-bottom: 1px solid #374151; background: #f1f3f5; color: #303b46; font-size: 10px; font-weight: 750; letter-spacing: .45px; text-align: left; text-transform: uppercase; }
+  .sheet td { padding: 13px 7px; border-bottom: 1px solid #d8dee5; color: #1f2933; vertical-align: top; font-size: 12px; }
+  .sheet th:first-child, .sheet td:first-child { width: 34%; padding-left: 10px; }
+  .sheet th:not(:first-child), .sheet td:not(:first-child) { width: 13.2%; }
+  .sheet .number { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .sheet .totals { width: 310px; max-width: 100%; margin: 24px 0 0 auto; color: #1f2933; font-variant-numeric: tabular-nums; }
+  .sheet .total-row { display: flex; justify-content: space-between; gap: 20px; padding: 5px 0; }
+  .sheet .grand { margin-top: 7px; padding: 11px 0 8px; border-top: 1.5px solid #202833; color: #111827; font-size: 17px; font-weight: 750; }
+  .sheet .balance { margin-top: 10px; padding: 12px 14px; border: 1px solid #cbd2d9; border-radius: 4px; background: #f1f3f5; color: #111827; font-size: 16px; font-weight: 750; }
+  .sheet .balance .total-row { padding: 0; }
+  .sheet .notes { margin-top: 34px; padding-top: 15px; border-top: 1px solid #cbd2d9; color: #374151; font-size: 12px; }
+  .sheet .notes strong { display: block; margin-bottom: 4px; color: #1f2933; font-size: 11px; letter-spacing: .8px; text-transform: uppercase; }
   @media (max-width: 650px) {
-    body { padding: 0; background: #fff; }
     .sheet { min-height: 0; padding: 28px 18px; box-shadow: none; }
-    .top { gap: 14px; padding-bottom: 20px; }
-    .brand { font-size: 18px; }
-    .invoice-heading { min-width: 0; }
-    h1 { font-size: 24px; }
-    .invoice-meta { font-size: 10px; }
-    .invoice-meta strong { font-size: 11px; }
-    .addresses { gap: 16px; padding: 22px 0; }
-    .address-name { font-size: 13px; }
-    .service-panel { padding: 11px; }
-    .service-row { align-items: flex-start; gap: 8px; }
-    .service-value { font-size: 10px; }
-    th { font-size: 8px; letter-spacing: 0; }
-    th, td { padding: 8px 3px; font-size: 9px; overflow-wrap: anywhere; }
-    th:first-child, td:first-child { width: 31%; padding-left: 5px; }
-    th:not(:first-child), td:not(:first-child) { width: 13.8%; }
-    .totals { width: 100%; max-width: 310px; }
+    .sheet .top { gap: 14px; padding-bottom: 20px; }
+    .sheet .brand { font-size: 19px; }
+    .sheet .invoice-heading { min-width: 0; }
+    .sheet h1 { font-size: 25px; }
+    .sheet .invoice-meta { font-size: 11px; }
+    .sheet .invoice-meta strong { font-size: 12px; }
+    .sheet .addresses { gap: 16px; padding: 22px 0; }
+    .sheet .address-name { font-size: 14px; }
+    .sheet .service-panel { padding: 11px; }
+    .sheet .service-row { align-items: flex-start; gap: 8px; }
+    .sheet .service-value { font-size: 11px; }
+    .sheet th { font-size: 9px; letter-spacing: 0; }
+    .sheet th, .sheet td { padding: 8px 3px; font-size: 10px; overflow-wrap: anywhere; }
+    .sheet th:first-child, .sheet td:first-child { width: 31%; padding-left: 5px; }
+    .sheet th:not(:first-child), .sheet td:not(:first-child) { width: 13.8%; }
+    .sheet .totals { width: 100%; max-width: 310px; }
   }
   @media print {
     @page { size: letter; margin: 0.55in; }
-    body { padding: 0; background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     .sheet { max-width: none; min-height: 0; padding: 0; box-shadow: none; }
-    thead { display: table-header-group; }
-    tr { break-inside: avoid; }
+    .sheet thead { display: table-header-group; }
+    .sheet tr { break-inside: avoid; }
   }
 </style>
 </head>
