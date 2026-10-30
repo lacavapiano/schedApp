@@ -19,7 +19,7 @@ import AddClientModal from "./AddClientModal";
 import PianoForm from "./PianoForm";
 import "../styles/AppointmentModal.css";
 import "../styles/ActionButtons.css";
-import { buildInvoiceDocument } from "../utils/invoice";
+import { buildInvoiceDocument, getInvoiceNumber } from "../utils/invoice";
 
 const EMPTY_PIANO = {
   piano_id: "", service: "", service_type_id: "", billable_hours: "", services: [{ service_type_id: "", billable_hours: "" }], temp: "", hum: "", notes: "",
@@ -36,7 +36,6 @@ const EMPTY_FORM = {
   payment: "",
   payment_type: "",
   miles: "",
-  invoice: "",
   pianos: [],
 };
 
@@ -219,7 +218,7 @@ function AppointmentModal({
         || null;
       const invoiceAppointment = {
         ...appointment,
-        invoice: formData.invoice || appointment.invoice,
+        invoice: getInvoiceNumber(appointment),
       };
       const invoiceHtml = buildInvoiceDocument({
         appointment: invoiceAppointment,
@@ -316,7 +315,6 @@ function AppointmentModal({
           ? String(appointment.miles)
           : "",
 
-      invoice: appointment.invoice || "",
 
       pianos:
         appointment.appointment_pianos?.map(
@@ -793,10 +791,7 @@ function AppointmentModal({
             ? null
             : Number(formData.miles),
 
-        invoice:
-          formData.invoice.trim() === ""
-            ? null
-            : formData.invoice.trim(),
+        invoice: appointment?.invoice || null,
 
         pianos:
           formData.pianos
@@ -1015,11 +1010,15 @@ function AppointmentModal({
           }
         >
           <div className="appointment-modal-header">
-            <h2>
-              {isEditing
-                ? "Edit Appointment"
-                : "New Appointment"}
-            </h2>
+            <div className="appointment-modal-heading">
+              <h2>{isEditing ? "Edit Appointment" : "New Appointment"}</h2>
+              {isEditing && (
+                <div className="appointment-invoice-reference">
+                  <span>Invoice #</span>
+                  <strong>{getInvoiceNumber(appointment)}</strong>
+                </div>
+              )}
+            </div>
 
             <button
               type="button"
@@ -1617,41 +1616,19 @@ function AppointmentModal({
                 </div>
               </div>
 
-              {/* Miles / Invoice */}
-              <div className="appointment-form-row">
-                <div className="appointment-form-field">
-                  <label htmlFor="appointment-miles">
-                    Miles
-                  </label>
-
-                  <input
-                    id="appointment-miles"
-                    className={completionMode && formData.miles.trim() === "" ? "completion-field-missing" : ""}
-                    type="number"
-                   
-                    min="0"
-                    step="0.1"
-                    name="miles"
-                    value={formData.miles}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="appointment-form-field">
-                  <label htmlFor="appointment-invoice">
-                    Invoice
-                  </label>
-
-                  <input
-                    id="appointment-invoice"
-                    type="text"
-                    name="invoice"
-                    value={
-                      formData.invoice
-                    }
-                    onChange={handleChange}
-                  />
-                </div>
+              {/* Mileage */}
+              <div className="appointment-form-field">
+                <label htmlFor="appointment-miles">Miles</label>
+                <input
+                  id="appointment-miles"
+                  className={completionMode && formData.miles.trim() === "" ? "completion-field-missing" : ""}
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  name="miles"
+                  value={formData.miles}
+                  onChange={handleChange}
+                />
               </div>
 
               {/* Appointment Notes */}
