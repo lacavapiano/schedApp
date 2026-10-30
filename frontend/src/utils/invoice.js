@@ -103,7 +103,7 @@ export function buildInvoiceDocument({ appointment, client, address, charges }) 
 <body>
 <div class="sheet">
   <header class="top">
-    <div><div class="brand">LaCava Piano</div><div class="eyebrow">Piano service</div></div>
+    <div><div class="brand">LaCava Piano Service</div>
     <div><h1>INVOICE</h1><div class="invoice-meta"><strong>${escapeHtml(invoiceNumber)}</strong><br>Issued ${formatDate(new Date())}</div></div>
   </header>
   <section class="addresses">
