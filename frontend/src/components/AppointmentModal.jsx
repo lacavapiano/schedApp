@@ -206,6 +206,9 @@ function AppointmentModal({
       }
       invoiceWindow.document.write("<!doctype html><title>Preparing invoice…</title><p style='font:16px sans-serif;padding:24px'>Preparing invoice…</p>");
       const charges = await getAppointmentCharges(appointment.id);
+      if (!charges?.length) {
+        throw new Error("This appointment has no saved service pricing. Save its service details and pricing before generating an invoice.");
+      }
       const selectedClient = clients.find((client) => client.id === formData.client_id)
         || clients.find((client) => client.id === appointment.client_id)
         || appointment.client;
