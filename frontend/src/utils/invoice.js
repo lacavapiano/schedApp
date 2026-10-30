@@ -99,7 +99,12 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
   .label { margin-bottom: 9px; color: #777; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
   .address-name { font-size: 16px; font-weight: 700; }
   .muted { color: #777; font-size: 12px; }
-  .service-date { margin-top: 18px; }
+  .service-panel { padding: 16px 18px; border: 1px solid #e5e5e5; border-radius: 6px; background: #fafafa; }
+  .service-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .service-row + .service-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e7e7e7; }
+  .service-label { color: #666; font-size: 12px; }
+  .service-value { font-weight: 650; text-align: right; }
+  .payment-status { display: inline-block; padding: 4px 9px; border: 1px solid #c8c8c8; border-radius: 999px; background: #fff; color: #333; font-size: 10px; font-weight: 750; letter-spacing: .7px; text-transform: uppercase; white-space: nowrap; }
   table { width: 100%; border-collapse: collapse; }
   th { padding: 11px 8px; background: #f4f4f4; color: #555; font-size: 10px; letter-spacing: .8px; text-align: left; text-transform: uppercase; }
   td { padding: 14px 8px; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
@@ -108,11 +113,10 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
   .total-row { display: flex; justify-content: space-between; gap: 24px; padding: 6px 0; }
   .grand { margin-top: 8px; padding-top: 13px; border-top: 2px solid #171717; font-size: 18px; font-weight: 750; }
   .balance { margin-top: 12px; padding: 14px 16px; background: #f3f3f3; font-size: 17px; font-weight: 750; }
-  .payment-status { display: inline-block; margin-top: 10px; padding: 4px 9px; border: 1px solid #bbb; border-radius: 3px; color: #444; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; }
   .notes { margin-top: 42px; padding-top: 18px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
   .actions { max-width: 900px; margin: 16px auto; text-align: right; }
   button { padding: 10px 18px; border: 0; border-radius: 5px; background: #171717; color: #fff; font: inherit; cursor: pointer; }
-  @media (max-width: 650px) { body { padding: 0; background: #fff; } .sheet { padding: 28px 20px; box-shadow: none; } .addresses { gap: 20px; } th, td { padding: 9px 4px; font-size: 11px; } h1 { font-size: 27px; } }
+  @media (max-width: 650px) { body { padding: 0; background: #fff; } .sheet { padding: 28px 20px; box-shadow: none; } .addresses { gap: 20px; } th, td { padding: 9px 4px; font-size: 11px; } h1 { font-size: 27px; } .service-panel { padding: 13px; } }
   @media print { @page { size: letter; margin: 0.55in; } body { padding: 0; background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; } .sheet { max-width: none; min-height: 0; padding: 0; box-shadow: none; } .actions { display: none; } }
 </style>
 </head>
@@ -125,7 +129,10 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
   </header>
   <section class="addresses">
     <div><div class="label">Bill to</div><div class="address-name">${escapeHtml(customerName)}</div>${addressHtml ? `<div>${addressHtml}</div>` : ""}</div>
-    <div><div class="label">Service details</div><div><strong>Service date:</strong> ${formatDate(appointment.start_time)}</div><div><strong>Appointment status:</strong> ${escapeHtml(appointment.status || "scheduled")}</div><div class="service-date"><span class="muted">Invoice status</span><br><span class="payment-status">${status}</span></div></div>
+    <div><div class="label">Service details</div><div class="service-panel">
+      <div class="service-row"><span class="service-label">Service date</span><span class="service-value">${formatDate(appointment.start_time)}</span></div>
+      <div class="service-row"><span class="service-label">Payment status</span><span class="payment-status">${status}</span></div>
+    </div></div>
   </section>
   <table>
     <thead><tr><th>Description</th><th class="number">Qty</th><th class="number">Rate</th><th class="number">Subtotal</th><th class="number">Discount</th><th class="number">Amount</th></tr></thead>
