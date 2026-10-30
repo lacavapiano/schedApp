@@ -30,7 +30,7 @@ function formatAddress(address) {
   return [street, locality].filter(Boolean).join("<br>");
 }
 
-export function buildInvoiceDocument({ appointment, client, address, charges }) {
+export function buildInvoiceDocument({ appointment, client, address, charges, settings = {} }) {
   const invoiceNumber = appointment.invoice?.trim()
     || `INV-${new Date(appointment.start_time).toISOString().slice(0, 10).replaceAll("-", "")}-${String(appointment.id).slice(0, 6).toUpperCase()}`;
   const pianoById = new Map((appointment.appointment_pianos || []).map((item) => [item.id, item]));
@@ -39,8 +39,9 @@ export function buildInvoiceDocument({ appointment, client, address, charges }) 
     const instrument = piano?.piano
       ? [piano.piano.make, piano.piano.model].filter(Boolean).join(" ")
       : "Piano service";
-    const serial = piano?.piano?.serial ? ` · S/N ${piano.piano.serial}` : "";
-    const description = [charge.service_name || "Service", instrument + serial].filter(Boolean).join(" — ");
+    const serial = piano?.piano?.serial || "";
+    const pianoIdentity = [piano?.piano?.make, piano?.piano?.model, serial].filter(Boolean).join(" ");
+    const description = [charge.service_name || "Service", pianoIdentity || instrument].filter(Boolean).join(" — ");
     const quantity = charge.pricing_method === "hourly" ? Number(charge.billable_hours || 0) : 1;
     const unit = Number(charge.unit_price || 0);
     const base = Number(charge.base_amount ?? (unit * quantity));
@@ -60,7 +61,15 @@ export function buildInvoiceDocument({ appointment, client, address, charges }) 
   const total = (charges || []).reduce((sum, item) => sum + Number(item.final_amount || 0), 0);
   const paid = Math.max(0, Number(appointment.payment || 0));
   const balance = Math.max(0, total - paid);
-  const status = balance <= 0 ? "Paid" : paid > 0 ? "Partially paid" : "Unpaid";
+  const status = paid >= total ? "Complete" : "Incomplete";
+  const issueDate = new Date();
+  const dueDays = Math.max(0, Number(settings.invoice_due_days ?? 30));
+  const dueDate = new Date(issueDate);
+  dueDate.setDate(dueDate.getDate() + dueDays);
+  const businessAddress = settings.business_address || "";
+  const businessEmail = settings.business_email || "";
+  const businessPhone = settings.business_phone || "";
+  const businessContact = [businessAddress, businessEmail, businessPhone].filter(Boolean);
   const customerName = client?.name || appointment.client?.name || "Client";
   const addressHtml = formatAddress(address);
 
@@ -104,11 +113,12 @@ export function buildInvoiceDocument({ appointment, client, address, charges }) 
 <div class="sheet">
   <header class="top">
     <div><div class="brand">LaCava Piano Service</div>
-    <div><h1>INVOICE</h1><div class="invoice-meta"><strong>${escapeHtml(invoiceNumber)}</strong><br>Issued ${formatDate(new Date())}</div></div>
+    ${businessContact.length ? `<div class="muted business-contact">${businessContact.map(escapeHtml).join("<br>")}</div>` : ""}
+    <div><h1>INVOICE</h1><div class="invoice-meta"><strong>${escapeHtml(invoiceNumber)}</strong><br>Issued ${formatDate(issueDate)}<br>Due ${formatDate(dueDate)}</div></div>
   </header>
   <section class="addresses">
     <div><div class="label">Bill to</div><div class="address-name">${escapeHtml(customerName)}</div>${addressHtml ? `<div>${addressHtml}</div>` : ""}</div>
-    <div><div class="label">Service details</div><div><strong>Service date:</strong> ${formatDate(appointment.start_time)}</div><div><strong>Appointment status:</strong> ${escapeHtml(appointment.status || "scheduled")}</div><div class="service-date"><span class="muted">Payment status</span><br><span class="payment-status">${status}</span></div></div>
+    <div><div class="label">Service details</div><div><strong>Service date:</strong> ${formatDate(appointment.start_time)}</div><div><strong>Appointment status:</strong> ${escapeHtml(appointment.status || "scheduled")}</div><div class="service-date"><span class="muted">Invoice status</span><br><span class="payment-status">${status}</span></div></div>
   </section>
   <table>
     <thead><tr><th>Description</th><th class="number">Qty</th><th class="number">Rate</th><th class="number">Subtotal</th><th class="number">Discount</th><th class="number">Amount</th></tr></thead>
