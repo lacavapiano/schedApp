@@ -201,8 +201,10 @@ export async function downloadInvoicePdf({ appointment, client, address, charges
 
   const exportContainer = document.createElement("div");
   exportContainer.style.position = "fixed";
-  exportContainer.style.left = "-10000px";
+  exportContainer.style.left = "0";
   exportContainer.style.top = "0";
+  exportContainer.style.zIndex = "-1";
+  exportContainer.style.pointerEvents = "none";
   exportContainer.style.width = "850px";
   exportContainer.style.background = "#fff";
   exportContainer.appendChild(sheet);
