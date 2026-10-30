@@ -1,3 +1,5 @@
+import html2pdf from "html2pdf.js";
+
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
     "&": "&amp;",
@@ -182,11 +184,44 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
 </html>`;
 }
 
-export function openInvoiceWindow(appointment, client, address, charges) {
-  const popup = window.open("", "_blank");
-  if (!popup) throw new Error("Your browser blocked the invoice window. Allow pop-ups for schedApp and try again.");
-  popup.document.open();
-  popup.document.write(buildInvoiceDocument({ appointment, client, address, charges }));
-  popup.document.close();
-  return popup;
+export async function downloadInvoicePdf({ appointment, client, address, charges, settings = {} }) {
+  const invoiceNumber = getInvoiceNumber(appointment);
+  const invoiceHtml = buildInvoiceDocument({ appointment, client, address, charges, settings });
+  const parsed = new DOMParser().parseFromString(invoiceHtml, "text/html");
+  const sheet = parsed.querySelector(".sheet");
+  const style = parsed.querySelector("style");
+
+  if (!sheet || !style) {
+    throw new Error("Unable to prepare the invoice for PDF export.");
+  }
+
+  const exportStyle = document.createElement("style");
+  exportStyle.textContent = style.textContent;
+  document.head.appendChild(exportStyle);
+
+  const exportContainer = document.createElement("div");
+  exportContainer.style.position = "fixed";
+  exportContainer.style.left = "-10000px";
+  exportContainer.style.top = "0";
+  exportContainer.style.width = "850px";
+  exportContainer.style.background = "#fff";
+  exportContainer.appendChild(sheet);
+  document.body.appendChild(exportContainer);
+
+  try {
+    await html2pdf()
+      .set({
+        filename: `Invoice-${invoiceNumber}.pdf`,
+        margin: [12, 12, 12, 12],
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"], avoid: ["tr", " .service-panel", ".totals"] },
+      })
+      .from(sheet)
+      .save();
+  } finally {
+    exportContainer.remove();
+    exportStyle.remove();
+  }
 }
