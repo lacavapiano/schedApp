@@ -18,6 +18,7 @@ import AddClientModal from "./AddClientModal";
 import PianoForm from "./PianoForm";
 import "../styles/AppointmentModal.css";
 import "../styles/ActionButtons.css";
+import { buildInvoiceDocument } from "../utils/invoice";
 
 const EMPTY_PIANO = {
   piano_id: "", service: "", service_type_id: "", billable_hours: "", services: [{ service_type_id: "", billable_hours: "" }], temp: "", hum: "", notes: "",
@@ -194,6 +195,43 @@ function AppointmentModal({
   const [error, setError] = useState("");
   const [showClientModal, setShowClientModal] = useState(false);
   const [showPianoModal, setShowPianoModal] = useState(false);
+
+  async function handleGenerateInvoice() {
+    if (!appointment?.id) return;
+    let invoiceWindow;
+    try {
+      invoiceWindow = window.open("", "_blank");
+      if (!invoiceWindow) {
+        throw new Error("Your browser blocked the invoice window. Allow pop-ups for schedApp and try again.");
+      }
+      invoiceWindow.document.write("<!doctype html><title>Preparing invoice…</title><p style='font:16px sans-serif;padding:24px'>Preparing invoice…</p>");
+      const charges = await getAppointmentCharges(appointment.id);
+      const selectedClient = clients.find((client) => client.id === formData.client_id)
+        || clients.find((client) => client.id === appointment.client_id)
+        || appointment.client;
+      const selectedAddress = selectedClient?.client_addresses?.find((address) => address.id === formData.client_address_id)
+        || selectedClient?.client_addresses?.find((address) => address.is_primary)
+        || appointment.client_address
+        || null;
+      const invoiceAppointment = {
+        ...appointment,
+        invoice: formData.invoice || appointment.invoice,
+      };
+      const invoiceHtml = buildInvoiceDocument({
+        appointment: invoiceAppointment,
+        client: selectedClient,
+        address: selectedAddress,
+        charges,
+      });
+      invoiceWindow.document.open();
+      invoiceWindow.document.write(invoiceHtml);
+      invoiceWindow.document.close();
+    } catch (invoiceError) {
+      if (invoiceWindow && !invoiceWindow.closed) invoiceWindow.close();
+      setError(invoiceError.message || "Unable to generate invoice.");
+    }
+  }
+
 
   /*
    * Load clients and pianos when the modal opens.
@@ -1628,6 +1666,17 @@ function AppointmentModal({
 
               {/* Actions */}
               <div className="appointment-modal-actions">
+                {isEditing && (
+                  <button
+                    type="button"
+                    className="appointment-cancel-button action-button action-button--secondary"
+                    onClick={handleGenerateInvoice}
+                    disabled={saving || deleting}
+                  >
+                    Generate Invoice PDF
+                  </button>
+                )}
+
                 {isEditing && (appointment.status || "scheduled") === "scheduled" && (
                   <button
                     type="button"
