@@ -85,6 +85,9 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
   .sheet { position: relative; max-width: 900px; min-height: 900px; margin: 0 auto; padding: 54px 58px; background: #fff; box-shadow: 0 4px 28px #00000012; }
   .top { display: flex; justify-content: space-between; gap: 32px; align-items: flex-start; padding-bottom: 32px; border-bottom: 2px solid #171717; }
   .brand { font-size: 24px; font-weight: 750; letter-spacing: -.6px; }
+  .top > div:first-child { flex: 1 1 auto; min-width: 0; }
+  .invoice-heading { flex: 0 0 auto; min-width: max-content; text-align: right; }
+  .invoice-meta { white-space: nowrap; }
   .eyebrow { margin-top: 5px; color: #666; font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase; }
   h1 { margin: 0; font-size: 34px; letter-spacing: 1px; text-align: right; }
   .invoice-meta { margin-top: 8px; color: #555; text-align: right; }
@@ -113,8 +116,8 @@ export function buildInvoiceDocument({ appointment, client, address, charges, se
 <div class="sheet">
   <header class="top">
     <div><div class="brand">LaCava Piano Service</div>
-    ${businessContact.length ? `<div class="muted business-contact">${businessContact.map(escapeHtml).join("<br>")}</div>` : ""}
-    <div><h1>INVOICE</h1><div class="invoice-meta"><strong>${escapeHtml(invoiceNumber)}</strong><br>Issued ${formatDate(issueDate)}<br>Due ${formatDate(dueDate)}</div></div>
+    ${businessContact.length ? `<div class="muted business-contact">${businessContact.map(escapeHtml).join("<br>")}</div>` : ""}</div>
+    <div class="invoice-heading"><h1>INVOICE</h1><div class="invoice-meta"><strong>${escapeHtml(invoiceNumber)}</strong><br>Issued ${formatDate(issueDate)}<br>Due ${formatDate(dueDate)}</div></div>
   </header>
   <section class="addresses">
     <div><div class="label">Bill to</div><div class="address-name">${escapeHtml(customerName)}</div>${addressHtml ? `<div>${addressHtml}</div>` : ""}</div>
