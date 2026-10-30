@@ -11,6 +11,7 @@ import {
   createClientDiscount,
   updateClientDiscount,
   getAppointmentCharges,
+  getSettings,
   saveAppointmentCharges,
 } from "../services/api";
 import ClientSearchSelect from "./ClientSearchSelect";
@@ -205,7 +206,7 @@ function AppointmentModal({
         throw new Error("Your browser blocked the invoice window. Allow pop-ups for schedApp and try again.");
       }
       invoiceWindow.document.write("<!doctype html><title>Preparing invoice…</title><p style='font:16px sans-serif;padding:24px'>Preparing invoice…</p>");
-      const charges = await getAppointmentCharges(appointment.id);
+      const [charges, invoiceSettings] = await Promise.all([getAppointmentCharges(appointment.id), getSettings()]);
       if (!charges?.length) {
         throw new Error("This appointment has no saved service pricing. Save its service details and pricing before generating an invoice.");
       }
@@ -225,6 +226,7 @@ function AppointmentModal({
         client: selectedClient,
         address: selectedAddress,
         charges,
+        settings: invoiceSettings,
       });
       invoiceWindow.document.open();
       invoiceWindow.document.write(invoiceHtml);
