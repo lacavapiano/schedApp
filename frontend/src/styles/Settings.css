@@ -311,3 +311,36 @@
   .settings-google-action-buttons button { width: 100%; }
 }
 @media (prefers-color-scheme: dark) { .settings-google-actions { border-bottom-color: #3a3a3a; } }
+
+
+.settings-business-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.settings-business-grid .settings-field {
+  align-items: stretch;
+  min-width: 0;
+}
+.settings-business-grid input,
+.settings-business-grid select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: var(--input-bg, #fff);
+  color: var(--input-color, #222);
+  font: inherit;
+  box-sizing: border-box;
+}
+.settings-business-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+@media (max-width: 600px) {
+  .settings-business-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .settings-business-actions button { width: 100%; }
+}
