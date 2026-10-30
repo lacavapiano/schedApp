@@ -30,9 +30,13 @@ function formatAddress(address) {
   return [street, locality].filter(Boolean).join("<br>");
 }
 
-export function buildInvoiceDocument({ appointment, client, address, charges, settings = {} }) {
-  const invoiceNumber = appointment.invoice?.trim()
+export function getInvoiceNumber(appointment) {
+  return appointment?.invoice?.trim()
     || `INV-${new Date(appointment.start_time).toISOString().slice(0, 10).replaceAll("-", "")}-${String(appointment.id).slice(0, 6).toUpperCase()}`;
+}
+
+export function buildInvoiceDocument({ appointment, client, address, charges, settings = {} }) {
+  const invoiceNumber = getInvoiceNumber(appointment);
   const pianoById = new Map((appointment.appointment_pianos || []).map((item) => [item.id, item]));
   const lineItems = (charges || []).map((charge) => {
     const piano = pianoById.get(charge.appointment_piano_id);
