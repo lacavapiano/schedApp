@@ -231,152 +231,27 @@
   }
 }
 
-/* Desktop layout: give the heading and contact details their own clear rows.
-   Keep the compact stacked layout on tablet and mobile unchanged. */
+/* Desktop client rows: one compact, aligned grid. */
 @media (min-width: 901px) {
-  .client-panel {
-    padding: 12px 14px;
-  }
-
+  .client-panel { display: block; padding: 10px 14px; border-radius: 8px; }
   .client-panel-main {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .client-panel-heading {
-    gap: 8px;
-  }
-
-  .client-panel-contact {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .client-panel-contact-item {
-    padding-left: 12px;
-  }
-
-  .client-panel-contact-item:first-child {
-    padding-left: 0;
-    border-left: 0;
-  }
-
-  .client-panel-hint {
-    margin-top: 8px;
-  }
-}
-
-
-/* Cleaner desktop client rows: remove divider-heavy styling and use spacing
-   and typography to separate each contact field instead. */
-@media (min-width: 901px) {
-  .client-panel {
-    padding: 13px 16px;
-    border-radius: 8px;
-  }
-
-  .client-panel-main {
-    gap: 12px;
-  }
-
-  .client-panel-contact {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-  }
-
-  .client-panel-contact-item,
-  .client-panel-contact-item:first-child {
-    padding: 0;
-    border: 0;
-  }
-
-  .client-panel-contact-label {
-    margin-bottom: 2px;
-    font-size: 10px;
-  }
-
-  .client-panel-contact-value {
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  .client-panel-hint {
-    margin-top: 6px;
-    font-size: 10px;
-  }
-}
-
-
-/* Desktop density pass: treat each record as a single grid row. */
-@media (min-width: 901px) {
-  .client-panel {
-    padding: 8px 12px;
-  }
-
-  .client-panel-main {
+    display: grid;
     grid-template-columns: minmax(150px, 0.85fr) minmax(0, 3.2fr);
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
-
-  .client-panel-heading {
-    gap: 5px;
-  }
-
-  .client-panel-name {
-    font-size: 14px;
-    line-height: 1.2;
-  }
-
-  .client-type-tag {
-    padding: 1px 5px;
-    font-size: 9px;
-  }
-
+  .client-panel-heading { gap: 5px; }
+  .client-panel-name { font-size: 14px; line-height: 1.2; }
+  .client-type-tag { padding: 1px 5px; font-size: 9px; }
   .client-panel-contact {
     grid-template-columns: minmax(100px, 1fr) minmax(140px, 1.4fr) minmax(90px, 0.9fr) 48px;
     align-items: center;
-    gap: 12px;
-  }
-
-  .client-panel-contact-item,
-  .client-panel-contact-item:first-child {
-    padding: 0;
-    border: 0;
-  }
-
-  .client-panel-contact-label {
-    margin: 0;
-    font-size: 9px;
-    line-height: 1.1;
-  }
-
-  .client-panel-contact-value {
-    font-size: 12px;
-    line-height: 1.2;
-  }
-
-  .client-panel-piano-count .client-panel-contact-value {
-    font-size: 13px;
-  }
-
-  .client-panel-hint {
-    display: none;
-  }
-}
-
-
-/* Final desktop spacing: retain the compact grid, with slightly more breathing room. */
-@media (min-width: 901px) {
-  .client-panel {
-    padding: 10px 14px;
-  }
-
-  .client-panel-main {
-    gap: 16px;
-  }
-
-  .client-panel-contact {
     gap: 14px;
   }
+  .client-panel-contact-item,
+  .client-panel-contact-item:first-child { padding: 0; border: 0; }
+  .client-panel-contact-label { margin: 0; font-size: 9px; line-height: 1.1; }
+  .client-panel-contact-value { font-size: 12px; line-height: 1.2; }
+  .client-panel-piano-count .client-panel-contact-value { font-size: 13px; }
+  .client-panel-hint { display: none; }
 }

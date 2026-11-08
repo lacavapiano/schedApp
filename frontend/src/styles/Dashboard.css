@@ -152,32 +152,27 @@
 
 /* Keep status badges readable against dark surfaces. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .appointment-status-completed,
-  :root[data-theme="dark"] .appointment-status-completed {
+  :root:not([data-theme="light"]) .appointment-status-completed .appointment-status-completed {
     color: #a7f3c0;
     background: #173d2a;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-confirmed,
-  :root[data-theme="dark"] .appointment-status-confirmed {
+  :root:not([data-theme="light"]) .appointment-status-confirmed .appointment-status-confirmed {
     color: #b9d9ff;
     background: #1b3552;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-scheduled,
-  :root[data-theme="dark"] .appointment-status-scheduled {
+  :root:not([data-theme="light"]) .appointment-status-scheduled .appointment-status-scheduled {
     color: #e0e3e8;
     background: #3a3f49;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-cancelled,
-  :root[data-theme="dark"] .appointment-status-cancelled {
+  :root:not([data-theme="light"]) .appointment-status-cancelled .appointment-status-cancelled {
     color: #ffc1c1;
     background: #512b30;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-no-show,
-  :root[data-theme="dark"] .appointment-status-no-show {
+  :root:not([data-theme="light"]) .appointment-status-no-show .appointment-status-no-show {
     color: #ffdda0;
     background: #4a3820;
   }
