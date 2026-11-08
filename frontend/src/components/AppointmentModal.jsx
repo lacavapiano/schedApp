@@ -1212,20 +1212,21 @@ function AppointmentModal({
                         <button
                           type="button"
                           className="appointment-piano-toggle"
-                          aria-expanded={!collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`]}
+                          aria-expanded={collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] === false}
                           onClick={() => {
                             const key = appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`;
-                            setCollapsedPianos((previous) => ({ ...previous, [key]: !previous[key] }));
+                            setCollapsedPianos((previous) => ({ ...previous, [key]: previous[key] === false }));
                           }}
                         >
                           <span className="appointment-piano-toggle-icon" aria-hidden="true">
-                            {collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] ? "▸" : "▾"}
+                            {collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] === false ? "▾" : "▸"}
                           </span>
-                          <strong>Piano {index + 1}</strong>
                           <span className="appointment-piano-summary">
                             {(() => {
                               const selected = clientPianos.find((piano) => piano.id === appointmentPiano.piano_id);
-                              return selected ? [selected.make, selected.model].filter(Boolean).join(" ") || "Selected piano" : "Select a piano";
+                              if (!selected) return "Select a piano";
+                              const details = [selected.make, selected.model, selected.serial].filter(Boolean).join(" ");
+                              return [selected.location, details].filter(Boolean).join(" - ") || "Selected piano";
                             })()}
                           </span>
                         </button>
@@ -1239,7 +1240,7 @@ function AppointmentModal({
                         </button>
                       </div>
 
-                      {!collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] && (
+                      {collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] === false && (
                       <div className="appointment-piano-content">
                       <div className="appointment-form-field">
                         <label>Piano</label>
