@@ -162,7 +162,7 @@ function Finances() {
       if (isInventory) {
         const purchased = Number(form.quantity_purchased);
         const remaining = Number(form.quantity_remaining);
-        if (!(purchased > 0) || !Number.isFinite(remaining) || remaining < 0 || remaining > purchased) {
+        if (!(purchased > 0) || form.quantity_remaining === "" || !Number.isFinite(remaining) || remaining < 0 || remaining > purchased) {
           throw new Error("Enter a valid quantity purchased and a remaining quantity between zero and the amount purchased.");
         }
         if (Number(form.inventory_sale_amount || 0) > 0 && !form.inventory_sale_date) {
