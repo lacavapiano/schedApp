@@ -271,8 +271,8 @@ export function buildInvoiceDocument({
       white-space: nowrap;
     }
     .sheet .items {
-      width: calc(100% + (2 * var(--invoice-horizontal-padding)));
-      margin: 2px 0 0 calc(-1 * var(--invoice-horizontal-padding));
+      width: calc(100% + 112px);
+      margin: 2px 0 0 -56px;
     }
     .sheet table {
       width: 100%;
@@ -438,7 +438,10 @@ export function buildInvoiceDocument({
       }
       .sheet .address-name { font-size: 14px; }
       .sheet .service-panel { padding: 11px; }
-      .sheet { --invoice-horizontal-padding: 18px; }
+      .sheet .items {
+        width: 100%;
+        margin: 2px 0 0;
+      }
       .sheet .service-row {
         align-items: flex-start;
         gap: 8px;
