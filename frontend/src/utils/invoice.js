@@ -95,9 +95,11 @@ export function buildInvoiceDocument({
       piano?.piano?.model,
       piano?.piano?.serial,
     ].filter(Boolean).join(" ");
+    const location = piano?.location || piano?.piano?.location || "";
     const description = [
-      charge.service_name || "Service",
+      location,
       pianoIdentity || (piano?.piano ? "Piano service" : ""),
+      charge.service_name || "Service",
     ].filter(Boolean).join(" — ");
     const isHourly = charge.pricing_method === "hourly";
 
