@@ -52,8 +52,10 @@
 
 .appointment-modal-header {
   position: sticky;
+  position: -webkit-sticky;
   top: 0;
-  z-index: 5;
+  z-index: 1000;
+  isolation: isolate;
   display: flex;
   flex: 0 0 auto;
   align-items: center;
@@ -61,7 +63,8 @@
   gap: var(--appointment-space-3);
   padding: 16px 22px;
   border-bottom: 1px solid var(--appointment-border);
-  background: var(--appointment-surface);
+  background-color: var(--appointment-surface, #fff);
+  background-image: none;
   color: var(--appointment-text);
   box-shadow: 0 2px 5px rgb(0 0 0 / 4%);
 }
