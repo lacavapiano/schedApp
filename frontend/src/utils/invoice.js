@@ -154,7 +154,8 @@ export function buildInvoiceDocument({
       max-width: 850px;
       min-height: 900px;
       margin: 0 auto;
-      padding: 52px 56px;
+      --invoice-horizontal-padding: 56px;
+      padding: 52px var(--invoice-horizontal-padding);
       background: #fff !important;
       color: #1f2933 !important;
       font-family: Arial, Helvetica, sans-serif;
@@ -270,7 +271,8 @@ export function buildInvoiceDocument({
       white-space: nowrap;
     }
     .sheet .items {
-      margin: 2px -32px 0;
+      width: calc(100% + (2 * var(--invoice-horizontal-padding)));
+      margin: 2px 0 0 calc(-1 * var(--invoice-horizontal-padding));
     }
     .sheet table {
       width: 100%;
@@ -311,7 +313,6 @@ export function buildInvoiceDocument({
       font-weight: 700 !important;
     }
     .sheet .description-cell {
-      width: 38%;
       padding: 13px 12px 13px 10px;
       text-align: left;
       overflow-wrap: anywhere;
@@ -351,11 +352,12 @@ export function buildInvoiceDocument({
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
-    .sheet th:nth-child(2), .sheet td:nth-child(2) { width: 7%; }
-    .sheet th:nth-child(3), .sheet td:nth-child(3) { width: 12%; }
-    .sheet th:nth-child(4), .sheet td:nth-child(4) { width: 13%; }
-    .sheet th:nth-child(5), .sheet td:nth-child(5) { width: 12%; }
-    .sheet th:nth-child(6), .sheet td:nth-child(6) { width: 18%; }
+    .sheet .col-description { width: 38%; }
+    .sheet .col-quantity { width: 7%; }
+    .sheet .col-rate { width: 12%; }
+    .sheet .col-subtotal { width: 13%; }
+    .sheet .col-discount { width: 12%; }
+    .sheet .col-amount { width: 18%; }
     .sheet .amount-cell,
     .sheet .line-total {
       color: #111827 !important;
@@ -436,7 +438,7 @@ export function buildInvoiceDocument({
       }
       .sheet .address-name { font-size: 14px; }
       .sheet .service-panel { padding: 11px; }
-      .sheet .items { margin-left: 0; margin-right: 0; }
+      .sheet { --invoice-horizontal-padding: 18px; }
       .sheet .service-row {
         align-items: flex-start;
         gap: 8px;
@@ -451,15 +453,13 @@ export function buildInvoiceDocument({
         padding: 9px 3px;
         font-size: 10px;
       }
-      .sheet .description-cell {
-        width: 36%;
-        padding: 9px 5px;
-      }
-      .sheet th:nth-child(2), .sheet td:nth-child(2) { width: 7%; }
-      .sheet th:nth-child(3), .sheet td:nth-child(3) { width: 12%; }
-      .sheet th:nth-child(4), .sheet td:nth-child(4) { width: 13%; }
-      .sheet th:nth-child(5), .sheet td:nth-child(5) { width: 12%; }
-      .sheet th:nth-child(6), .sheet td:nth-child(6) { width: 20%; }
+      .sheet .description-cell { padding: 9px 5px; }
+      .sheet .col-description { width: 36%; }
+      .sheet .col-quantity { width: 7%; }
+      .sheet .col-rate { width: 12%; }
+      .sheet .col-subtotal { width: 13%; }
+      .sheet .col-discount { width: 12%; }
+      .sheet .col-amount { width: 20%; }
       .sheet .item-description { gap: 2px; font-size: 10px; }
       .sheet .description-location { font-size: 9px; }
       .sheet .description-piano { font-size: 10px; }
@@ -523,6 +523,14 @@ export function buildInvoiceDocument({
 
     <section class="items" aria-label="Invoice line items">
       <table>
+        <colgroup>
+          <col class="col-description">
+          <col class="col-quantity">
+          <col class="col-rate">
+          <col class="col-subtotal">
+          <col class="col-discount">
+          <col class="col-amount">
+        </colgroup>
         <thead>
           <tr>
             <th scope="col" class="description-cell">Description</th>
