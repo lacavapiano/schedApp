@@ -327,6 +327,20 @@
 
 /* Mobile calendar: readable appointment details and compact month cells. */
 @media (max-width: 700px) {
+  /*
+   * index.css makes generic data tables scrollable on phones by changing
+   * every table to display:block. FullCalendar relies on native table layout
+   * for its synchronized header and time-grid columns, so restore that layout
+   * inside the calendar or the event grid collapses to a one-pixel strip.
+   */
+  .calendar-container .fc table {
+    display: table;
+    width: 100%;
+    max-width: none;
+    overflow: visible;
+    -webkit-overflow-scrolling: auto;
+  }
+
   .calendar-toolbar {
     align-items: stretch;
     flex-wrap: wrap;
