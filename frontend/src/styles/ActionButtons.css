@@ -26,7 +26,7 @@
 }
 
 .action-button:focus-visible {
-  outline: 2px solid #93c5fd;
+  outline: 2px solid var(--focus-ring, #93c5fd);
   outline-offset: 2px;
 }
 
@@ -38,19 +38,19 @@
 }
 
 .action-button--primary {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #fff;
+  background: var(--button-primary-bg, #2563eb);
+  border-color: var(--button-primary-border, #2563eb);
+  color: var(--button-primary-text, #fff);
 }
 
 .action-button--primary:hover:not(:disabled) {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  background: var(--button-primary-hover-bg, #1d4ed8);
+  border-color: var(--button-primary-hover-bg, #1d4ed8);
 }
 
 .action-button--primary:active:not(:disabled) {
-  background: #1e40af;
-  border-color: #1e40af;
+  background: var(--button-primary-active-bg, #1e40af);
+  border-color: var(--button-primary-active-bg, #1e40af);
 }
 
 .action-button--secondary {
@@ -65,12 +65,12 @@
 
 .action-button--danger {
   background: transparent;
-  border-color: #b91c1c;
-  color: #b91c1c;
+  border-color: var(--button-danger-border, #b91c1c);
+  color: var(--button-danger-text, #b91c1c);
 }
 
 .action-button--danger:hover:not(:disabled) {
-  background: #fef2f2;
+  background: var(--button-danger-hover-bg, #fef2f2);
 }
 
 .action-button--quiet {
@@ -87,7 +87,7 @@
 
 .action-button-error {
   margin: 0 0 16px;
-  color: #b91c1c;
+  color: var(--error-text, #b91c1c);
   font-size: 14px;
 }
 
@@ -101,43 +101,4 @@
     padding: 9px 12px;
     white-space: normal;
   }
-}
-
-:root[data-theme="dark"] .action-button--primary {
-  background: #f3f4f6;
-  border-color: #f3f4f6;
-  color: #17191e;
-}
-
-:root[data-theme="dark"] .action-button--primary:hover:not(:disabled) {
-  background: #dbe0e7;
-  border-color: #dbe0e7;
-}
-
-:root[data-theme="dark"] .action-button--secondary {
-  background: var(--surface-muted, #292d36);
-  border-color: var(--border-color, #545c69);
-  color: var(--text-primary, #f3f4f6);
-}
-
-:root[data-theme="dark"] .action-button--secondary:hover:not(:disabled) {
-  background: var(--hover-bg, #343a46);
-}
-
-:root[data-theme="dark"] .action-button--danger {
-  border-color: #ff8a8a;
-  color: #ffb4b4;
-}
-
-:root[data-theme="dark"] .action-button--danger:hover:not(:disabled) {
-  background: #3a2024;
-}
-
-:root[data-theme="dark"] .action-button--quiet,
-:root:not([data-theme="light"]) .action-button--quiet {
-  color: var(--text-primary, #f3f4f6);
-}
-
-:root[data-theme="dark"] .action-button-error {
-  color: #ffb4b4;
 }

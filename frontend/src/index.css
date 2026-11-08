@@ -9,6 +9,7 @@
   --accent-bg: rgba(49, 95, 145, 0.12);
   --accent-border: var(--focus-ring);
   --social-bg: var(--surface-muted);
+  --hover-bg: var(--surface-hover);
   --shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -519,6 +520,10 @@ main {
   --border-color:#d3d9df; --input-bg:#fff; --input-text:#202428;
   --focus-ring:#315f91; --link-color:#245b8f;
   --button-neutral-bg:#e9edf0; --button-neutral-text:#202428;
+  --button-primary-bg:#2563eb; --button-primary-text:#fff; --button-primary-border:#2563eb;
+  --button-primary-hover-bg:#1d4ed8; --button-primary-active-bg:#1e40af;
+  --button-danger-text:#b91c1c; --button-danger-border:#b91c1c; --button-danger-hover-bg:#fef2f2;
+  --error-text:#b42318; --error-bg:#fff0f0; --error-border:#d99a9a;
   --shadow-color:rgba(20,28,36,.12);
   color-scheme:light;
 }
@@ -529,6 +534,10 @@ main {
   --border-color:#48525d; --input-bg:#20262d; --input-text:#f5f7f9;
   --focus-ring:#9bc5f2; --link-color:#a9d0ff;
   --button-neutral-bg:#343d47; --button-neutral-text:#f3f5f7;
+  --button-primary-bg:#f3f4f6; --button-primary-text:#17191e; --button-primary-border:#f3f4f6;
+  --button-primary-hover-bg:#dbe0e7; --button-primary-active-bg:#cbd5e1;
+  --button-danger-text:#ffb4b4; --button-danger-border:#ff8a8a; --button-danger-hover-bg:#3a2024;
+  --error-text:#ffd4d4; --error-bg:#3a2426; --error-border:#874b4b;
   --shadow-color:rgba(0,0,0,.32); color-scheme:dark;
 }
 @media (prefers-color-scheme:dark) {
@@ -539,6 +548,10 @@ main {
     --border-color:#48525d; --input-bg:#20262d; --input-text:#f5f7f9;
     --focus-ring:#9bc5f2; --link-color:#a9d0ff;
     --button-neutral-bg:#343d47; --button-neutral-text:#f3f5f7;
+  --button-primary-bg:#f3f4f6; --button-primary-text:#17191e; --button-primary-border:#f3f4f6;
+  --button-primary-hover-bg:#dbe0e7; --button-primary-active-bg:#cbd5e1;
+  --button-danger-text:#ffb4b4; --button-danger-border:#ff8a8a; --button-danger-hover-bg:#3a2024;
+  --error-text:#ffd4d4; --error-bg:#3a2426; --error-border:#874b4b;
     --shadow-color:rgba(0,0,0,.32); color-scheme:dark;
   }
 }
@@ -567,18 +580,7 @@ hr,table,th,td { border-color:var(--border-color); }
 :where(.settings-button,.login-submit) { background:var(--text-primary); color:var(--app-bg); border-color:var(--text-primary); }
 :where(.settings-secondary-button,.navbar-logout,.table-action-button) { background:var(--button-neutral-bg); color:var(--button-neutral-text); border-color:var(--border-color); }
 
-/* FullCalendar's default white canvas is a common source of dark-mode glare. */
-:root[data-theme="dark"] .fc,:root:not([data-theme="light"]) .fc {
-  --fc-page-bg-color:var(--surface); --fc-neutral-bg-color:var(--surface-muted);
-  --fc-neutral-text-color:var(--text-primary); --fc-border-color:var(--border-color);
-  --fc-button-text-color:var(--button-neutral-text); --fc-button-bg-color:var(--button-neutral-bg);
-  --fc-button-border-color:var(--border-color); --fc-button-hover-bg-color:var(--surface-hover);
-  --fc-button-hover-border-color:var(--border-color); --fc-button-active-bg-color:var(--surface-hover);
-  --fc-button-active-border-color:var(--border-color); --fc-today-bg-color:rgba(155,197,242,.12);
-  --fc-list-event-hover-bg-color:var(--surface-hover); color:var(--text-primary); background:var(--surface);
-}
-:root[data-theme="dark"] .fc .fc-col-header-cell-cushion,:root[data-theme="dark"] .fc .fc-daygrid-day-number,:root:not([data-theme="light"]) .fc .fc-col-header-cell-cushion,:root:not([data-theme="light"]) .fc .fc-daygrid-day-number { color:var(--text-primary); }
-:root[data-theme="dark"] :where(.error,.error-message,.form-error,.login-error),:root:not([data-theme="light"]) :where(.error,.error-message,.form-error,.login-error) { color:#ff9b9b; }
+:where(.error,.error-message,.form-error,.login-error) { color:var(--error-text); }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
 
 

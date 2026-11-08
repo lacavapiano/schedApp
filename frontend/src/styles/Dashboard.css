@@ -50,11 +50,11 @@
 }
 
 .dashboard-appointment:hover {
-  background: var(--hover-bg);
+  background: var(--surface-hover);
 }
 
 .dashboard-appointment:focus-visible {
-  outline: 2px solid var(--text-secondary);
+  outline: 2px solid var(--focus-ring, var(--text-secondary));
   outline-offset: -2px;
 }
 
@@ -152,27 +152,27 @@
 
 /* Keep status badges readable against dark surfaces. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .appointment-status-completed .appointment-status-completed {
+  :root:not([data-theme="light"]) .appointment-status-completed {
     color: #a7f3c0;
     background: #173d2a;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-confirmed .appointment-status-confirmed {
+  :root:not([data-theme="light"]) .appointment-status-confirmed {
     color: #b9d9ff;
     background: #1b3552;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-scheduled .appointment-status-scheduled {
+  :root:not([data-theme="light"]) .appointment-status-scheduled {
     color: #e0e3e8;
     background: #3a3f49;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-cancelled .appointment-status-cancelled {
+  :root:not([data-theme="light"]) .appointment-status-cancelled {
     color: #ffc1c1;
     background: #512b30;
   }
 
-  :root:not([data-theme="light"]) .appointment-status-no-show .appointment-status-no-show {
+  :root:not([data-theme="light"]) .appointment-status-no-show {
     color: #ffdda0;
     background: #4a3820;
   }
@@ -320,9 +320,9 @@
   font-weight: 600;
   cursor: pointer;
 }
-.dashboard-show-more:hover { background: var(--hover-bg); }
+.dashboard-show-more:hover { background: var(--surface-hover); }
 .dashboard-show-more:focus-visible {
-  outline: 2px solid var(--text-secondary);
+  outline: 2px solid var(--focus-ring, var(--text-secondary));
   outline-offset: 2px;
 }
 
@@ -429,11 +429,11 @@
 }
 
 .dashboard-new-appointment-button:hover {
-  background: var(--hover-bg);
+  background: var(--surface-hover);
 }
 
 .dashboard-new-appointment-button:focus-visible {
-  outline: 2px solid var(--text-secondary);
+  outline: 2px solid var(--focus-ring, var(--text-secondary));
   outline-offset: 2px;
 }
 
@@ -459,7 +459,7 @@
   border-radius: 6px 6px 0 0; background: transparent; color: var(--text-secondary);
   font: inherit; font-size: 14px; font-weight: 600; padding: 11px 16px; cursor: pointer;
 }
-.dashboard-tabs button:hover { background: var(--hover-bg); color: var(--text-primary); }
+.dashboard-tabs button:hover { background: var(--surface-hover); color: var(--text-primary); }
 .dashboard-tabs button.is-active {
   color: var(--text-primary); border-color: var(--border-color);
   border-bottom-color: var(--text-primary); background: var(--surface);
@@ -473,7 +473,7 @@
   border-radius: 6px; background: var(--surface); color: var(--text-primary); font: inherit; font-size: 13px;
 }
 .income-summary { padding: 18px; display: grid; grid-template-columns: minmax(200px, .75fr) minmax(0, 2fr); gap: 18px; }
-.income-total-card { align-self: start; display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--hover-bg); }
+.income-total-card { align-self: start; display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--surface-hover); }
 .income-total-card span { color: var(--text-secondary); font-size: 13px; font-weight: 600; }
 .income-total-card strong { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; overflow-wrap: anywhere; }
 .income-total-card small { color: var(--text-secondary); font-size: 12px; }
@@ -486,7 +486,7 @@
 .income-breakdown-label span { color: var(--text-primary); font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
 .income-breakdown-label small { color: var(--text-secondary); font-size: 11px; }
 .income-breakdown-row > strong { color: var(--text-primary); font-size: 14px; font-variant-numeric: tabular-nums; }
-.income-bar-track { grid-column: 1 / -1; height: 5px; background: var(--hover-bg); border-radius: 99px; overflow: hidden; }
+.income-bar-track { grid-column: 1 / -1; height: 5px; background: var(--surface-hover); border-radius: 99px; overflow: hidden; }
 .income-bar-track span { display: block; height: 100%; background: var(--text-secondary); border-radius: inherit; }
 @media (max-width: 650px) {
   .income-header { flex-direction: column; }
