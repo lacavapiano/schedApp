@@ -152,7 +152,7 @@ export function buildInvoiceDocument({
     .sheet {
       width: 725px;
       max-width: 725px;
-      min-height: 900px;
+      min-height: 0;
       margin: 0 auto;
       padding: 52px 0;
       background: #fff !important;
@@ -573,10 +573,6 @@ export async function downloadInvoicePdf({
           scrollY: 0,
         },
         jsPDF: { unit: "mm", format: "letter", orientation: "portrait" },
-        pagebreak: {
-          mode: ["css", "legacy"],
-          avoid: ["tr", ".service-panel", ".totals"],
-        },
       })
       .from(sheet)
       .save();
