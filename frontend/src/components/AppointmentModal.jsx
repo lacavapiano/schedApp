@@ -1233,7 +1233,7 @@ function AppointmentModal({
 
                         <button
                           type="button"
-                          className="appointment-remove-button"
+                          className="appointment-remove-button appointment-piano-remove-button"
                           onClick={() => removePiano(index)}
                         >
                           Remove
