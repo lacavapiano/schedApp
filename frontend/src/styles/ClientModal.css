@@ -784,3 +784,28 @@
     color-scheme: dark;
   }
 }
+
+
+/* Save feedback and disabled modal actions. */
+.client-save-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: client-save-spin 0.7s linear infinite;
+}
+
+@keyframes client-save-spin {
+  to { transform: rotate(360deg); }
+}
+
+.modal-save:disabled,
+.modal-cancel:disabled,
+.client-modal-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
