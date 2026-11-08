@@ -92,11 +92,7 @@
 }
 
 @media (max-width: 700px) {
-  .action-button-group {
-    gap: 8px;
-  }
-
-  .action-button {
+.action-button {
     min-height: 40px;
     padding: 9px 12px;
     white-space: normal;
