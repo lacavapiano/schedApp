@@ -196,7 +196,6 @@ function AppointmentModal({
   const [showClientModal, setShowClientModal] = useState(false);
   const [showPianoModal, setShowPianoModal] = useState(false);
   const [collapsedPianos, setCollapsedPianos] = useState({});
-  const [showAppointmentActions, setShowAppointmentActions] = useState(false);
 
   async function handleGenerateInvoice() {
     if (!appointment?.id) return;
@@ -1016,15 +1015,15 @@ function AppointmentModal({
               <details className="appointment-actions-menu">
                 <summary aria-label="Appointment actions">Actions <span aria-hidden="true">▾</span></summary>
                 <div className="appointment-actions-menu-panel">
-                  <button type="button" onClick={() => { setShowAppointmentActions(false); handleGenerateInvoice(); }} disabled={saving || deleting}>
+                  <button type="button" onClick={(event) => { event.currentTarget.closest("details")?.removeAttribute("open"); handleGenerateInvoice(); }} disabled={saving || deleting}>
                     Generate Invoice PDF
                   </button>
                   {(appointment.status || "scheduled") === "scheduled" && (
                     <>
-                      <button type="button" onClick={() => { setShowAppointmentActions(false); handleDelete(); }} disabled={saving || deleting}>
+                      <button type="button" onClick={(event) => { event.currentTarget.closest("details")?.removeAttribute("open"); handleDelete(); }} disabled={saving || deleting}>
                         {deleting ? "Cancelling..." : "Cancel Appointment"}
                       </button>
-                      <button type="button" onClick={() => { setShowAppointmentActions(false); handleSubmit(null, true); }} disabled={saving || deleting}>
+                      <button type="button" onClick={(event) => { event.currentTarget.closest("details")?.removeAttribute("open"); handleSubmit(null, true); }} disabled={saving || deleting}>
                         {saving && completionMode ? "Completing..." : "Complete Appointment"}
                       </button>
                     </>
