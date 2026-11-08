@@ -321,7 +321,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
   margin: 0;
   padding-bottom: 12px;
@@ -935,7 +935,7 @@
   }
 
   .appointment-modal-header {
-    gap: 10px;
+    gap: 8px;
     padding: 10px 16px;
   }
 
@@ -991,6 +991,8 @@
   }
 
   .appointment-modal .appointment-piano-header {
+    align-items: center;
+    flex-wrap: nowrap;
     padding-bottom: 9px;
   }
 
@@ -1045,9 +1047,9 @@
   }
 
   .appointment-modal .appointment-modal-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
     align-items: stretch;
+    flex-wrap: nowrap;
     gap: 8px;
     margin-top: 18px;
     padding-top: 14px;
@@ -1055,23 +1057,18 @@
   }
 
   .appointment-modal .appointment-modal-actions-right {
-    display: contents;
-  }
-
-  .appointment-modal .appointment-modal-actions > .appointment-delete-button {
-    grid-column: 1 / -1;
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .appointment-modal .appointment-modal-actions > button,
   .appointment-modal .appointment-modal-actions-right > button {
+    flex: 1 1 0;
     width: 100%;
     min-width: 0;
     min-height: 44px;
     margin: 0;
-  }
-
-  .appointment-modal .appointment-modal-actions-right > .appointment-complete-button {
-    grid-column: 1 / -1;
   }
 
   .appointment-modal button:not(.appointment-modal-close):not(.client-search-option):not(.client-search-create):not(.client-search-toggle) {
@@ -1145,9 +1142,6 @@
     padding: 10px;
   }
 
-  .appointment-modal .appointment-modal-actions {
-    gap: 7px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1179,15 +1173,6 @@
   overflow-wrap: anywhere;
 }
 
-
-/* Compact, independently collapsible piano cards */
-.appointment-piano-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 0;
-}
 
 .appointment-piano-toggle {
   display: flex;
@@ -1243,11 +1228,7 @@
   min-width: 0;
 }
 
-/* Header actions menu replaces the separate invoice/cancel/complete footer actions */
-.appointment-modal-header {
-  gap: 12px;
-}
-
+/* Header actions menu replaces the separate invoice/cancel/complete footer actions. */
 .appointment-actions-menu {
   position: relative;
   flex: 0 0 auto;
@@ -1321,15 +1302,8 @@
 @media (max-width: 700px) {
   .appointment-modal input,
   .appointment-modal select,
-  .appointment-modal textarea,
-  .appointment-modal .client-search-select input,
-  .appointment-modal [role="combobox"] {
+  .appointment-modal textarea {
     font-size: 16px !important;
-  }
-
-  .appointment-modal .appointment-piano-header {
-    align-items: center;
-    flex-wrap: nowrap;
   }
 
   .appointment-modal .appointment-piano-toggle {
@@ -1340,25 +1314,5 @@
   .appointment-modal .appointment-actions-menu > summary {
     min-height: 42px;
     padding: 9px 10px;
-  }
-
-  .appointment-modal-header {
-    gap: 8px;
-  }
-
-  .appointment-modal .appointment-modal-actions {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-  }
-
-  .appointment-modal .appointment-modal-actions-right {
-    display: flex;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .appointment-modal .appointment-modal-actions-right > button {
-    flex: 1 1 0;
   }
 }
