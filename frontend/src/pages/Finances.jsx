@@ -125,7 +125,7 @@ function Finances() {
   const incomeTotal = useMemo(() => appointments.filter((a) =>
     a.status?.toLowerCase() !== "cancelled" && amountOf(a.payment) > 0 &&
     (!range.start || String(a.start_time).slice(0, 10) >= range.start) && String(a.start_time).slice(0, 10) <= range.end
-  ).reduce((sum, a) => sum + amountOf(a.payment), 0), [appointments, range]);
+  ).reduce((sum, a) => sum + amountOf(a.payment), 0) + expenses.filter((e) => e.expense_type === "inventory" && amountOf(e.inventory_sale_amount) > 0 && e.inventory_sale_date && (!range.start || e.inventory_sale_date >= range.start) && e.inventory_sale_date <= range.end).reduce((sum, e) => sum + amountOf(e.inventory_sale_amount), 0), [appointments, expenses, range]);
   const expenseTotal = visibleExpenses.reduce((sum, e) => sum + amountOf(e.amount), 0);
   const inventoryRows = visibleExpenses.filter((e) => e.expense_type === "inventory");
   const inventoryPurchaseTotal = inventoryRows.reduce((sum, e) => sum + amountOf(e.amount), 0);
