@@ -96,16 +96,17 @@ export function buildInvoiceDocument({
       piano?.piano?.serial,
     ].filter(Boolean).join(" ");
     const location = piano?.location || piano?.piano?.location || "";
-    const description = [
-      location,
-      pianoIdentity || (piano?.piano ? "Piano service" : ""),
-      charge.service_name || "Service",
-    ].filter(Boolean).join(" — ");
+    const pianoDescription = pianoIdentity || (piano?.piano ? "Piano service" : "");
+    const serviceName = charge.service_name || "Service";
     const isHourly = charge.pricing_method === "hourly";
 
     return `<tr class="invoice-line-item">
       <td class="description-cell">
-        <strong class="item-description">${escapeHtml(description)}</strong>
+        <div class="item-description">
+          ${location ? `<span class="description-location">${escapeHtml(location)}</span>` : ""}
+          ${pianoDescription ? `<span class="description-piano">${escapeHtml(pianoDescription)}</span>` : ""}
+          <strong class="description-service">${escapeHtml(serviceName)}</strong>
+        </div>
         ${isHourly ? `<span class="item-detail">${amounts.quantity.toFixed(2)} hours</span>` : ""}
       </td>
       <td class="number-cell">${amounts.quantity.toFixed(isHourly ? 2 : 0)}</td>
@@ -310,28 +311,51 @@ export function buildInvoiceDocument({
       font-weight: 700 !important;
     }
     .sheet .description-cell {
-      width: 34%;
-      padding-left: 10px;
+      width: 38%;
+      padding: 13px 12px 13px 10px;
       text-align: left;
       overflow-wrap: anywhere;
     }
     .sheet .item-description {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .sheet .description-location {
+      color: #5b6570 !important;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .25px;
+    }
+    .sheet .description-piano {
+      color: #374151 !important;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .sheet .description-service {
+      color: #111827 !important;
       font-size: 13px;
-      line-height: 1.45;
+      font-weight: 700;
     }
     .sheet .item-detail {
       display: block;
-      margin-top: 3px;
-      color: #374151 !important;
-      font-size: 11px;
+      margin-top: 5px;
+      color: #5b6570 !important;
+      font-size: 10px;
     }
     .sheet .number-cell {
-      width: 13.2%;
       text-align: right;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
+    .sheet th:nth-child(2), .sheet td:nth-child(2) { width: 7%; }
+    .sheet th:nth-child(3), .sheet td:nth-child(3) { width: 12%; }
+    .sheet th:nth-child(4), .sheet td:nth-child(4) { width: 13%; }
+    .sheet th:nth-child(5), .sheet td:nth-child(5) { width: 12%; }
+    .sheet th:nth-child(6), .sheet td:nth-child(6) { width: 18%; }
     .sheet .amount-cell,
     .sheet .line-total {
       color: #111827 !important;
@@ -427,12 +451,19 @@ export function buildInvoiceDocument({
         font-size: 10px;
       }
       .sheet .description-cell {
-        width: 31%;
-        padding-left: 5px;
+        width: 36%;
+        padding: 9px 5px;
       }
-      .sheet .number-cell { width: 13.8%; }
-      .sheet .item-description { font-size: 11px; }
-      .sheet .item-detail { font-size: 10px; }
+      .sheet th:nth-child(2), .sheet td:nth-child(2) { width: 7%; }
+      .sheet th:nth-child(3), .sheet td:nth-child(3) { width: 12%; }
+      .sheet th:nth-child(4), .sheet td:nth-child(4) { width: 13%; }
+      .sheet th:nth-child(5), .sheet td:nth-child(5) { width: 12%; }
+      .sheet th:nth-child(6), .sheet td:nth-child(6) { width: 20%; }
+      .sheet .item-description { gap: 2px; font-size: 10px; }
+      .sheet .description-location { font-size: 9px; }
+      .sheet .description-piano { font-size: 10px; }
+      .sheet .description-service { font-size: 11px; }
+      .sheet .item-detail { font-size: 9px; }
       .sheet .totals {
         width: 100%;
         max-width: 310px;
