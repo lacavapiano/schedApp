@@ -1066,3 +1066,13 @@ hr,table,th,td { border-color:var(--border-color); }
 :root[data-theme="dark"] .fc .fc-col-header-cell-cushion,:root[data-theme="dark"] .fc .fc-daygrid-day-number,:root:not([data-theme="light"]) .fc .fc-col-header-cell-cushion,:root:not([data-theme="light"]) .fc .fc-daygrid-day-number { color:var(--text-primary); }
 :root[data-theme="dark"] :where(.error,.error-message,.form-error,.login-error),:root:not([data-theme="light"]) :where(.error,.error-message,.form-error,.login-error) { color:#ff9b9b; }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
+
+
+/* Prevent iOS Safari from zooming when any app form control receives focus. */
+@media (max-width: 767px) {
+  :root input,
+  :root select,
+  :root textarea {
+    font-size: 16px !important;
+  }
+}
