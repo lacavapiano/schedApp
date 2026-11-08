@@ -1,4 +1,16 @@
 :root {
+  /* Compatibility aliases for legacy component styles; values resolve from the active theme. */
+  --text: var(--text-primary);
+  --text-h: var(--text-primary);
+  --bg: var(--app-bg);
+  --border: var(--border-color);
+  --code-bg: var(--surface-muted);
+  --accent: var(--link-color);
+  --accent-bg: rgba(49, 95, 145, 0.12);
+  --accent-border: var(--focus-ring);
+  --social-bg: var(--surface-muted);
+  --shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
+
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
