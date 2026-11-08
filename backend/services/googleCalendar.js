@@ -100,7 +100,7 @@ function buildEvent(appointment, eventColorId) {
     services[0] || "Tuning";
 
   const summary =
-    `${clientName} Piano ${primaryService
+    `${clientName} ${primaryService
       ? primaryService.charAt(0).toUpperCase() + primaryService.slice(1)
       : ""}`;
 
