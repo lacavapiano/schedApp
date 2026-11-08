@@ -1,55 +1,52 @@
+/* Client record details. Shared page, toolbar, grid, and section framing live
+   in RecordDetailLayout.css. */
 .client-detail-page {
   width: 100%;
   max-width: 1100px;
+  min-width: 0;
+  color: var(--text-primary, #202428);
 }
 
 .client-detail-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
-
-
-
-
 .client-detail-header {
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .client-detail-header h2 {
+  min-width: 0;
   margin: 0 0 8px;
   font-size: 26px;
+  overflow-wrap: anywhere;
 }
 
 .client-type-badge {
   display: inline-block;
   padding: 4px 9px;
+  border: 1px solid var(--border-color, #d3d9df);
   border-radius: 5px;
-  background: #f0f0f0;
-  color: #555;
+  background: var(--surface-muted, #f0f2f4);
+  color: var(--text-secondary, #515b65);
   font-size: 13px;
 }
 
 .client-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .client-detail-section {
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: white;
+  min-width: 0;
 }
 
 .client-detail-section h3 {
-  margin: 0 0 16px;
-  font-size: 18px;
+  margin: 0 0 12px;
+  font-size: 16px;
 }
 
 .client-detail-fields {
@@ -62,80 +59,94 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .client-detail-label {
-  color: #666;
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--text-secondary, #515b65);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.035em;
   text-transform: uppercase;
 }
 
 .client-detail-address {
+  color: var(--text-primary, #202428);
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
-.client-detail-empty {
+.client-detail-empty,
+.empty-section {
   margin: 0;
-  color: #777;
+  color: var(--text-secondary, #515b65);
 }
 
 .client-detail-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .client-detail-list-item {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   padding: 12px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color, #d3d9df);
   border-radius: 6px;
+  background: var(--surface-muted, #f0f2f4);
+  color: var(--text-primary, #202428);
 }
 
 .client-detail-item-label {
-  color: #666;
+  color: var(--text-secondary, #515b65);
   font-size: 13px;
 }
 
 .client-detail-primary {
   padding: 3px 7px;
   border-radius: 4px;
-  background: #f0f0f0;
-  color: #555;
+  background: var(--surface-hover, #e9edf0);
+  color: var(--text-primary, #202428);
   font-size: 12px;
 }
 
 .client-detail-address-item {
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
   line-height: 1.5;
 }
 
 .client-detail-item-meta {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .client-detail-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .client-contacts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .client-contact-card {
+  min-width: 0;
   padding: 16px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color, #d3d9df);
   border-radius: 7px;
+  background: var(--surface-muted, #f0f2f4);
+  color: var(--text-primary, #202428);
 }
 
 .client-contact-header {
@@ -148,7 +159,7 @@
 }
 
 .client-contact-relationship {
-  color: #666;
+  color: var(--text-secondary, #515b65);
   font-size: 13px;
 }
 
@@ -162,24 +173,29 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .client-contact-notes {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color, #d3d9df);
 }
 
 .client-contact-notes p {
   margin: 5px 0 0;
-  white-space: pre-wrap;
+  color: var(--text-primary, #202428);
   line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .client-detail-notes {
   margin: 0;
-  white-space: pre-wrap;
+  color: var(--text-primary, #202428);
   line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .client-detail-loading,
@@ -195,17 +211,21 @@
 
 .client-piano-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
-  padding: 14px 16px;
-  border: 1px solid #ddd;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color, #d3d9df);
   border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #202428);
   cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
 }
 
 .client-piano-row:hover {
-  background: #f7f7f7;
+  background: var(--surface-hover, #e9edf0);
 }
 
 .client-piano-main {
@@ -216,175 +236,123 @@
   text-align: left;
 }
 
-.client-piano-serial {
+.client-piano-serial,
+.client-piano-details {
+  color: var(--text-secondary, #515b65);
   font-size: 0.9rem;
-  color: #666;
 }
 
 .client-piano-details {
   display: flex;
   gap: 20px;
-  color: #666;
-  font-size: 0.9rem;
+  min-width: 0;
   text-align: right;
 }
 
-.empty-section {
-  color: #777;
+.client-detail-collapsible {
+  min-width: 0;
 }
 
-
-
-
-
-.section-header {
+.client-detail-collapsible > summary {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  gap: 8px;
+  color: var(--text-primary, #202428);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
 }
 
-.section-header h2 {
+.client-detail-collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+.client-detail-collapsible > summary::before {
+  flex: 0 0 auto;
+  color: var(--text-secondary, #515b65);
+  content: "▸";
+  transition: transform 150ms ease;
+}
+
+.client-detail-collapsible[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.client-detail-collapsible > summary h3 {
   margin: 0;
 }
 
+.client-detail-collapsible[open] > summary {
+  margin-bottom: 14px;
+}
 
+.client-detail-count {
+  color: var(--text-secondary, #515b65);
+  font-size: 12px;
+  font-weight: 500;
+}
 
-@media (max-width: 600px) {
-  .client-detail-grid,
-  .client-contacts {
-    grid-template-columns: 1fr;
-  }
+.client-detail-collapsible-content {
+  margin-top: 14px;
+}
 
+.client-pianos-disclosure,
+.client-discounts-disclosure {
+  margin-top: 4px;
+}
+
+@media (max-width: 700px) {
   .client-detail-toolbar {
     align-items: flex-start;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .client-detail-grid,
+  .client-contacts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .client-detail-section {
+    padding: 14px;
+  }
+
+  .client-detail-section-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .client-detail-list-item,
+  .client-piano-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 12px;
   }
 
   .client-detail-list-item {
-    align-items: flex-start;
     flex-direction: column;
   }
 
-  .client-detail-item-meta {
+  .client-detail-item-meta,
+  .client-piano-details {
+    max-width: 100%;
     flex-wrap: wrap;
+    text-align: left;
+    overflow-wrap: anywhere;
   }
 
-    .client-piano-row {
-    align-items: flex-start;
+  .client-piano-main {
+    width: 100%;
+  }
+
+  .client-piano-row {
     flex-direction: column;
   }
 
   .client-piano-details {
     flex-direction: column;
     gap: 4px;
-    text-align: left;
   }
 }
-
-@media (max-width: 700px) {
-  .client-detail-toolbar { gap: 10px; flex-wrap: wrap; }
-  .client-detail-grid,
-  .client-contacts { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .client-detail-section { min-width: 0; padding: 14px; }
-  .client-detail-section-header { align-items: flex-start; flex-wrap: wrap; gap: 10px; }
-  .client-detail-list-item,
-  .client-piano-row { min-width: 0; flex-wrap: wrap; gap: 8px 12px; }
-  .client-detail-item-meta,
-  .client-piano-details { max-width: 100%; flex-wrap: wrap; text-align: left; overflow-wrap: anywhere; }
-  .client-piano-main { width: 100%; }
-}
-
-
-
-
-
-
-
-
-
-
-/* Dark-mode contrast for the client record. */:root[data-theme="dark"] .client-detail-page,
-:root[data-theme="dark"] .client-detail-page p,
-:root[data-theme="dark"] .client-detail-page span,
-:root[data-theme="dark"] .client-detail-page strong,
-:root[data-theme="dark"] .client-detail-page h2,
-:root[data-theme="dark"] .client-detail-page h3,
-:root[data-theme="dark"] .client-detail-page h4,
-:root:not([data-theme="light"]) .client-detail-page,
-:root:not([data-theme="light"]) .client-detail-page p,
-:root:not([data-theme="light"]) .client-detail-page span,
-:root:not([data-theme="light"]) .client-detail-page strong,
-:root:not([data-theme="light"]) .client-detail-page h2,
-:root:not([data-theme="light"]) .client-detail-page h3,
-:root:not([data-theme="light"]) .client-detail-page h4 {
-  color: var(--text-primary, #f3f4f6);
-}
-
-:root[data-theme="dark"] .client-detail-page .client-detail-label,
-:root[data-theme="dark"] .client-detail-page .client-detail-item-label,
-:root[data-theme="dark"] .client-detail-page .client-contact-relationship,
-:root[data-theme="dark"] .client-detail-page .client-detail-empty,
-:root[data-theme="dark"] .client-detail-page .client-piano-serial,
-:root[data-theme="dark"] .client-detail-page .client-piano-details,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-label,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-item-label,
-:root:not([data-theme="light"]) .client-detail-page .client-contact-relationship,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-empty,
-:root:not([data-theme="light"]) .client-detail-page .client-piano-serial,
-:root:not([data-theme="light"]) .client-detail-page .client-piano-details {
-  color: var(--text-secondary, #c0c6d0) !important;
-}
-
-:root[data-theme="dark"] .client-detail-page .client-detail-section,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-section {
-  background: var(--surface, #20232a) !important;
-  color: var(--text-primary, #f3f4f6) !important;
-  border-color: var(--border-color, #454b56) !important;
-}
-
-:root[data-theme="dark"] .client-detail-page .client-detail-list-item,
-:root[data-theme="dark"] .client-detail-page .client-contact-card,
-:root[data-theme="dark"] .client-detail-page .client-piano-row,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-list-item,
-:root:not([data-theme="light"]) .client-detail-page .client-contact-card,
-:root:not([data-theme="light"]) .client-detail-page .client-piano-row {
-  background: var(--surface-muted, #2b2f38) !important;
-  color: var(--text-primary, #f3f4f6) !important;
-  border-color: var(--border-color, #454b56) !important;
-}
-
-:root[data-theme="dark"] .client-detail-page .client-piano-row:hover,
-:root[data-theme="dark"] .client-detail-page .client-detail-list-item:hover,
-:root:not([data-theme="light"]) .client-detail-page .client-piano-row:hover,
-:root:not([data-theme="light"]) .client-detail-page .client-detail-list-item:hover {
-  background: var(--hover-bg, #343a46) !important;
-}
-
-
-
-
-
-
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) .client-detail-page .client-detail-section {
-    background: var(--surface, #20232a) !important;
-    color: var(--text-primary, #f3f4f6) !important;
-    border-color: var(--border-color, #454b56) !important;
-  }
-}
-
-
-/* Disclosure controls for long lists on client detail pages. */
-.client-detail-collapsible { min-width: 0; }
-.client-detail-collapsible > summary { display:flex; align-items:center; gap:8px; cursor:pointer; list-style:none; color:var(--text-primary,#222); font-weight:600; }
-.client-detail-collapsible > summary::-webkit-details-marker { display:none; }
-.client-detail-collapsible > summary::before { content:"▸"; flex:0 0 auto; color:var(--text-secondary,#666); transition:transform .15s ease; }
-.client-detail-collapsible[open] > summary::before { transform:rotate(90deg); }
-.client-detail-collapsible > summary h3 { margin:0; }
-.client-detail-collapsible[open] > summary { margin-bottom:14px; }
-.client-detail-count { color:var(--text-secondary,#777); font-size:12px; font-weight:500; }
-.client-detail-collapsible-content { margin-top:14px; }
-.client-pianos-disclosure, .client-discounts-disclosure { margin-top:4px; }
-:root[data-theme="dark"] .client-detail-collapsible > summary, :root:not([data-theme="light"]) .client-detail-collapsible > summary { color:var(--text-primary,#f3f4f6); }

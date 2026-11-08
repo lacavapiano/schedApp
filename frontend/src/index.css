@@ -1,5 +1,26 @@
 :root {
-  /* Compatibility aliases for legacy component styles; values resolve from the active theme. */
+  /* Application palette. Components should consume these tokens instead of
+     defining their own light/dark surface colors. */
+  --app-bg: #f6f7f8;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-muted: #f0f2f4;
+  --surface-hover: #e9edf0;
+  --hover-bg: var(--surface-hover);
+  --text-primary: #202428;
+  --text-secondary: #515b65;
+  --text-muted: #59636d;
+  --border-color: #d3d9df;
+  --input-bg: #ffffff;
+  --input-text: #202428;
+  --input-color: var(--input-text);
+  --focus-ring: #315f91;
+  --link-color: #245b8f;
+  --button-neutral-bg: #e9edf0;
+  --button-neutral-text: #202428;
+  --shadow-color: rgba(20, 28, 36, 0.12);
+
+  /* Compatibility aliases retained for existing component styles. */
   --text: var(--text-primary);
   --text-h: var(--text-primary);
   --bg: var(--app-bg);
@@ -15,79 +36,57 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  color-scheme: light;
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+:root[data-theme="dark"] {
+  --app-bg: #14171b;
+  --surface: #1d2228;
+  --surface-raised: #242a31;
+  --surface-muted: #2b323a;
+  --surface-hover: #343d47;
+  --text-primary: #f3f5f7;
+  --text-secondary: #d0d6dc;
+  --text-muted: #c0c8d0;
+  --border-color: #48525d;
+  --input-bg: #20262d;
+  --input-text: #f5f7f9;
+  --focus-ring: #9bc5f2;
+  --link-color: #a9d0ff;
+  --button-neutral-bg: #343d47;
+  --button-neutral-text: #f3f5f7;
+  --shadow-color: rgba(0, 0, 0, 0.32);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --app-bg: #14171b;
+    --surface: #1d2228;
+    --surface-raised: #242a31;
+    --surface-muted: #2b323a;
+    --surface-hover: #343d47;
+    --text-primary: #f3f5f7;
+    --text-secondary: #d0d6dc;
+    --text-muted: #c0c8d0;
+    --border-color: #48525d;
+    --input-bg: #20262d;
+    --input-text: #f5f7f9;
+    --focus-ring: #9bc5f2;
+    --link-color: #a9d0ff;
+    --button-neutral-bg: #343d47;
+    --button-neutral-text: #f3f5f7;
+    --shadow-color: rgba(0, 0, 0, 0.32);
+    color-scheme: dark;
   }
 }
 
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-/* Responsive layout: keep controls and content usable on phones. */
 *,
 *::before,
 *::after {
@@ -99,14 +98,31 @@ body,
 #root {
   width: 100%;
   min-width: 0;
+  background-color: var(--app-bg);
+  color: var(--text-primary);
 }
 
 body {
+  margin: 0;
   overflow-x: hidden;
 }
 
 #root {
+  width: 1126px;
   max-width: 100%;
+  min-height: 100svh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  border-inline: 1px solid var(--border-color);
+  text-align: center;
+}
+
+main {
+  width: 100%;
+  max-width: 1126px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 img,
@@ -123,6 +139,125 @@ textarea {
   max-width: 100%;
 }
 
+h1,
+h2 {
+  color: var(--text-primary);
+  font-family: var(--heading);
+  font-weight: 500;
+}
+
+h1 {
+  margin: 32px 0;
+  font-size: 56px;
+  letter-spacing: -1.68px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.18;
+  letter-spacing: -0.24px;
+}
+
+h3,
+h4,
+h5,
+h6,
+label,
+legend,
+th,
+dt,
+strong,
+b {
+  color: var(--text-primary);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--link-color);
+}
+
+hr,
+table,
+th,
+td {
+  border-color: var(--border-color);
+}
+
+::selection {
+  background: #9bc5f2;
+  color: #14171b;
+}
+
+code,
+.counter {
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--mono);
+}
+
+code {
+  padding: 4px 8px;
+  background: var(--surface-muted);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+:where(input, select, textarea) {
+  border-color: var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+:where(input, textarea)::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+:where(select, option) {
+  color: var(--input-text);
+}
+
+:where(button, input, select, textarea, a, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+:where(pre, code) {
+  border-color: var(--border-color);
+  background-color: var(--surface-muted);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] :where(.error, .error-message, .form-error, .login-error) {
+  color: #ff9b9b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) :where(.error, .error-message, .form-error, .login-error) {
+    color: #ff9b9b;
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    font-size: 16px;
+  }
+
+  h1 {
+    margin: 20px 0;
+    font-size: 36px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
 @media (max-width: 700px) {
   #root {
     border-inline: 0;
@@ -131,73 +266,29 @@ textarea {
 
   main,
   .page-layout,
-  .page-content,
-  .clients-page,
-  .pianos-page,
-  .dashboard,
-  .client-detail-page,
-  .piano-detail-page,
-  .settings-page {
+  .page-content {
     width: 100%;
-    min-width: 0;
     max-width: 100%;
+    min-width: 0;
   }
 
-  .page-layout,
-  .page-content,
   main {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 1rem 12px;
   }
 
   h1 {
+    margin: 18px 0;
     font-size: clamp(25px, 7vw, 34px);
     line-height: 1.15;
     letter-spacing: -0.5px;
     overflow-wrap: anywhere;
-    margin: 18px 0;
   }
 
   h2 {
     overflow-wrap: anywhere;
   }
 
-  .clients-header,
-  .client-detail-toolbar,
-  .piano-detail-toolbar,
-  .dashboard-section-header,
-  .settings-section-header {
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .clients-header {
-    align-items: flex-start;
-  }
-
-  .clients-toolbar,
-  .pianos-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .client-search,
-  .piano-search {
-    flex: 1 1 100%;
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-  }
-
-  .add-client-button,
-  .add-piano-button {
-    margin-left: 0;
-    min-height: 42px;
-    flex: 1 1 auto;
-  }
-/* Keep wide data tables intact and let the table area scroll. */
+  /* Keep wide data tables intact and scroll them within the page. */
   table {
     display: block;
     width: 100%;
@@ -206,381 +297,18 @@ textarea {
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
   }
-
-
-.table-action-button,
-.settings-button,
-.settings-secondary-button,
-.appointment-add-button
-{
-    min-height: 40px;
-    white-space: normal;
-    flex-shrink: 0;
-  }
-
-  .dashboard-appointment {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 6px 12px;
-    align-items: start;
-    padding: 14px 12px;
-  }
-
-  .dashboard-appointment-date,
-  .dashboard-appointment-time,
-  .dashboard-appointment-client,
-  .dashboard-appointment-service,
-  .dashboard-appointment-address,
-  .dashboard-appointment-status {
-    min-width: 0;
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-
-  .dashboard-appointment-date {
-    grid-column: 1;
-  }
-
-  .dashboard-appointment-time {
-    grid-column: 2;
-    grid-row: 1;
-    text-align: right;
-  }
-
-  .dashboard-appointment-client,
-  .dashboard-appointment-service,
-  .dashboard-appointment-address {
-    grid-column: 1 / -1;
-    overflow: visible;
-    text-overflow: clip;
-  }
-
-  .dashboard-appointment-status {
-    grid-column: 1 / -1;
-    justify-self: start;
-  }
-
-  .dashboard-section-header {
-    padding: 14px 12px;
-  }
-
-  .client-detail-grid,
-  .piano-detail-grid,
-  .client-contacts {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-  }
-
-  .client-detail-section,
-  .piano-detail-section {
-    padding: 14px;
-    min-width: 0;
-  }
-
-  .client-detail-section-header {
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  .client-detail-list-item,
-  .client-piano-row {
-    min-width: 0;
-    flex-wrap: wrap;
-    gap: 8px 12px;
-  }
-
-  .client-detail-item-meta,
-  .client-piano-details {
-    max-width: 100%;
-    flex-wrap: wrap;
-    text-align: left;
-    overflow-wrap: anywhere;
-  }
-
-  .client-piano-main {
-    width: 100%;
-  }
-
-  .settings-section-header {
-    align-items: flex-start;
-    justify-content: flex-start;
-    text-align: left;
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .settings-section-body {
-    padding: 14px;
-  }
-
-  .settings-field {
-    align-items: stretch;
-    min-width: 0;
-  }
-
-  .settings-calendar-select,
-  .settings-selected-calendar {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-  }
-
-  .settings-selected-calendar-id {
-    overflow-wrap: anywhere;
-  }
-
-  .settings-color-options {
-    gap: 8px;
-  }
-
-  .settings-color-option {
-    width: 42px;
-    height: 42px;
-  }
-
-  /* Form grids collapse to one column; all controls stay inside the modal. */
-  .piano-form-grid,
-  .appointment-form-grid,
-  .client-form-grid,
-  .form-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .piano-form-grid > *,
-  .appointment-form-grid > *,
-  .client-form-grid > *,
-  .form-grid > * {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .piano-modal-backdrop,
-  .client-modal-backdrop,
-  .appointment-modal-backdrop,
-  .modal-backdrop {
-    align-items: flex-end;
-    padding: 0;
-  }
-
-  .piano-modal,
-  .client-modal,
-  .appointment-modal,
-  .modal-content {
-    width: 100%;
-    max-width: 100%;
-    max-height: 92dvh;
-    margin: 0;
-    padding: 16px;
-    border-radius: 16px 16px 0 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  .piano-modal-header,
-  .client-modal-header,
-  .appointment-modal-header {
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .appointment-modal-actions,
-  .client-modal-actions,
-  .piano-modal-actions,
-  .modal-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .appointment-modal-actions > *,
-  .client-modal-actions > *,
-  .piano-modal-actions > *,
-  .modal-actions > * {
-    flex: 1 1 120px;
-    min-width: 0;
-  }
-
-  .appointment-section,
-  .repeatable-item,
-  .appointment-piano {
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  .repeatable-section-header {
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .fc .fc-toolbar {
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
-  .fc .fc-toolbar-chunk {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    max-width: 100%;
-  }
-
-  .fc .fc-toolbar-title {
-    font-size: 1.1rem;
-    white-space: normal;
-  }
-
-  .fc .fc-button {
-    min-height: 36px;
-    padding: 6px 8px;
-    font-size: 0.8rem;
-  }
-
-  .fc .fc-timegrid-event,
-  .fc .fc-daygrid-event {
-    overflow-wrap: anywhere;
-  }
-
-  .login-card {
-    width: calc(100% - 24px);
-    max-width: 440px;
-    margin: 12px auto;
-    padding: 22px 18px;
-  }
 }
 
-@media (max-width: 380px) {
-  .navbar-inner {
-    padding-left: 12px;
-    padding-right: 12px;
-    gap: 8px;
-  }
-
-  .navbar-brand {
-    gap: 7px;
-    font-size: 16px;
-  }
-
-  .navbar-brand-icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  .navbar-toggle {
-    width: 40px;
-    height: 40px;
-  }
-
-.settings-button,
-.settings-secondary-button
-{
-    padding: 9px 10px;
-    font-size: 13px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
-
-
-/* Restore consistent outer margins and page gutters for the main app. */
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-main {
-  width: 100%;
-  max-width: 1126px;
-  margin: 0 auto;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-@media (max-width: 700px) {
-  #root {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-  }
-
-  main {
-    width: 100%;
-    max-width: 100%;
-    padding: 1rem 12px;
-  }
-}
-
-
-/* SchedApp visual-system audit: contrast-first theme tokens and shared surfaces. */
-:root {
-  --app-bg:#f6f7f8; --surface:#fff; --surface-raised:#fff;
-  --surface-muted:#f0f2f4; --surface-hover:#e9edf0;
-  --text-primary:#202428; --text-secondary:#515b65; --text-muted:#59636d;
-  --border-color:#d3d9df; --input-bg:#fff; --input-text:#202428;
-  --focus-ring:#315f91; --link-color:#245b8f;
-  --button-neutral-bg:#e9edf0; --button-neutral-text:#202428;
-  --shadow-color:rgba(20,28,36,.12);
-  color-scheme:light;
-}
-:root[data-theme="dark"] {
-  --app-bg:#14171b; --surface:#1d2228; --surface-raised:#242a31;
-  --surface-muted:#2b323a; --surface-hover:#343d47;
-  --text-primary:#f3f5f7; --text-secondary:#d0d6dc; --text-muted:#c0c8d0;
-  --border-color:#48525d; --input-bg:#20262d; --input-text:#f5f7f9;
-  --focus-ring:#9bc5f2; --link-color:#a9d0ff;
-  --button-neutral-bg:#343d47; --button-neutral-text:#f3f5f7;
-  --shadow-color:rgba(0,0,0,.32); color-scheme:dark;
-}
-@media (prefers-color-scheme:dark) {
-  :root:not([data-theme="light"]) {
-    --app-bg:#14171b; --surface:#1d2228; --surface-raised:#242a31;
-    --surface-muted:#2b323a; --surface-hover:#343d47;
-    --text-primary:#f3f5f7; --text-secondary:#d0d6dc; --text-muted:#c0c8d0;
-    --border-color:#48525d; --input-bg:#20262d; --input-text:#f5f7f9;
-    --focus-ring:#9bc5f2; --link-color:#a9d0ff;
-    --button-neutral-bg:#343d47; --button-neutral-text:#f3f5f7;
-    --shadow-color:rgba(0,0,0,.32); color-scheme:dark;
-  }
-}
-html,body,#root { background-color:var(--app-bg); color:var(--text-primary); }
-#root { border-color:var(--border-color); }
-h1,h2,h3,h4,h5,h6,label,legend,th,dt,strong,b { color:var(--text-primary); }
-a { color:var(--link-color); }
-hr,table,th,td { border-color:var(--border-color); }
-::selection { background:#9bc5f2; color:#14171b; }
-:where(input,select,textarea) { color:var(--input-text); background-color:var(--input-bg); border-color:var(--border-color); }
-:where(input,textarea)::placeholder { color:var(--text-muted); opacity:1; }
-:where(select,option) { color:var(--input-text); }
-:where(button,input,select,textarea,a,[tabindex]):focus-visible { outline:2px solid var(--focus-ring); outline-offset:2px; }
-:where(pre,code) { color:var(--text-primary); background-color:var(--surface-muted); }
-:where(.page-layout,.page-content,.clients-page,.pianos-page,.dashboard,.income-page,.expenses-page,.cash-flow-page,.settings-page,.client-detail-page,.piano-detail-page,.dashboard-section,.client-detail-section,.piano-detail-section,.settings-section,.client-modal,.appointment-modal,.piano-modal,.login-card,.client-contact-card,.client-detail-list-item,.client-piano-row,.piano-row,.dashboard-appointment,.repeatable-item,.appointment-piano,.settings-selected-calendar,.settings-empty-state,.client-search-dropdown,.client-search-option,.client-search-create,.modal-content) {
-  border-color:var(--border-color);
-}
-:where(.dashboard-section,.client-detail-section,.piano-detail-section,.settings-section,.client-modal,.appointment-modal,.piano-modal,.login-card,.client-contact-card,.client-detail-list-item,.client-piano-row,.piano-row,.dashboard-appointment,.repeatable-item,.appointment-piano,.settings-selected-calendar,.settings-empty-state,.client-search-dropdown,.client-search-option,.client-search-create,.modal-content) { color:var(--text-primary); }
-:where(.client-detail-label,.client-detail-item-label,.client-contact-relationship,.client-detail-empty,.client-detail-loading,.client-detail-item-meta,.piano-detail-label,.clients-count,.pianos-count,.settings-help-text,.settings-loading,.settings-saving,.settings-calendar-loading,.settings-selected-help,.settings-color-help,.settings-selected-calendar-id,.appointment-help-text,.client-search-option small,.client-search-empty) { color:var(--text-secondary); }
-:where(.client-modal,.appointment-modal,.piano-modal,.modal-content,.login-card) { background:var(--surface); color:var(--text-primary); box-shadow:0 12px 36px var(--shadow-color); }
-:where(.client-modal-header,.appointment-modal-header,.piano-modal-header,.dashboard-section-header,.settings-section-header) { background:var(--surface); color:var(--text-primary); border-color:var(--border-color); }
-:where(.client-modal-header h2,.appointment-modal-header h2,.piano-modal-header h2,.appointment-form-field label,.form-field>label,.repeatable-section-header label,.repeatable-section-header strong,.settings-field>label,.client-detail-section h3,.piano-detail-section h3) { color:var(--text-primary); }
-:where(.client-search,.piano-search,.settings-calendar-select,.appointment-form-field input,.appointment-form-field select,.appointment-form-field textarea,.form-field input,.form-field select,.form-field textarea,.login-field input) { background:var(--input-bg); color:var(--input-text); border-color:var(--border-color); }
-:where(.navbar-link:hover,.navbar-link.active,.piano-row:hover,.client-search-option:hover,.client-search-option.selected,.client-search-create:hover,.client-detail-list-item:hover,.client-piano-row:hover) { background-color:var(--surface-hover); }
-:where(.navbar-logout,.navbar-toggle,.table-action-button,.settings-secondary-button,.appointment-add-button,.client-detail-list-item,.client-contact-card,.client-piano-row,.settings-selected-calendar,.settings-empty-state,.repeatable-item,.appointment-piano) { border-color:var(--border-color); }
-:where(.settings-button,.login-submit) { background:var(--text-primary); color:var(--app-bg); border-color:var(--text-primary); }
-:where(.settings-secondary-button,.navbar-logout,.table-action-button) { background:var(--button-neutral-bg); color:var(--button-neutral-text); border-color:var(--border-color); }
-
-/* FullCalendar's default white canvas is a common source of dark-mode glare. */
-:root[data-theme="dark"] .fc,:root:not([data-theme="light"]) .fc {
-  --fc-page-bg-color:var(--surface); --fc-neutral-bg-color:var(--surface-muted);
-  --fc-neutral-text-color:var(--text-primary); --fc-border-color:var(--border-color);
-  --fc-button-text-color:var(--button-neutral-text); --fc-button-bg-color:var(--button-neutral-bg);
-  --fc-button-border-color:var(--border-color); --fc-button-hover-bg-color:var(--surface-hover);
-  --fc-button-hover-border-color:var(--border-color); --fc-button-active-bg-color:var(--surface-hover);
-  --fc-button-active-border-color:var(--border-color); --fc-today-bg-color:rgba(155,197,242,.12);
-  --fc-list-event-hover-bg-color:var(--surface-hover); color:var(--text-primary); background:var(--surface);
-}
-:root[data-theme="dark"] .fc .fc-col-header-cell-cushion,:root[data-theme="dark"] .fc .fc-daygrid-day-number,:root:not([data-theme="light"]) .fc .fc-col-header-cell-cushion,:root:not([data-theme="light"]) .fc .fc-daygrid-day-number { color:var(--text-primary); }
-:root[data-theme="dark"] :where(.error,.error-message,.form-error,.login-error),:root:not([data-theme="light"]) :where(.error,.error-message,.form-error,.login-error) { color:#ff9b9b; }
-@media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
-
 
 /* Prevent iOS Safari from zooming when any app form control receives focus. */
 @media (max-width: 767px) {

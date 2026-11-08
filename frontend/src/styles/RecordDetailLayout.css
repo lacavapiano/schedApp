@@ -1,7 +1,8 @@
-/* Shared spacing and information hierarchy for client and piano detail records. */
+/* Shared layout for client and piano record detail pages. */
 .record-detail-page {
   width: 100%;
   max-width: 1100px;
+  min-width: 0;
 }
 
 .record-detail-toolbar {
@@ -31,12 +32,12 @@
 
 .record-detail-section {
   min-width: 0;
-  padding: 16px;
   margin: 0 0 12px;
-  border: 1px solid var(--border-color, #ddd);
+  padding: 16px;
+  border: 1px solid var(--border-color, #d3d9df);
   border-radius: 8px;
   background: var(--surface, #fff);
-  color: var(--text-primary, #212529);
+  color: var(--text-primary, #202428);
 }
 
 .record-detail-section > h3,
@@ -73,13 +74,7 @@
   }
 
   .record-detail-section {
-    padding: 14px;
     margin-bottom: 10px;
+    padding: 14px;
   }
-}
-
-:root[data-theme="dark"] .record-detail-section {
-  background: var(--surface, #20232a);
-  color: var(--text-primary, #f3f4f6);
-  border-color: var(--border-color, #454b56);
 }
