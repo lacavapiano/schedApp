@@ -28,7 +28,7 @@ function Finances() {
   const [error, setError] = useState("");
   const [period, setPeriod] = useState("year");
   const [groupBy, setGroupBy] = useState("month");
-  const [sortOrder, setSortOrder] = useState("amount-desc");
+  const [sortOrder, setSortOrder] = useState("date-desc");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -75,18 +75,19 @@ function Finances() {
         let labels;
         switch (groupBy) {
           case "year": labels = [String(date.getFullYear())]; break;
-          case "client": labels = [a.client?.name || "Unknown client"]; break;
           case "type": labels = [a.client?.type || "Unknown client type"]; break;
           case "city": labels = [a.client_address?.city || a.client?.city || "No town recorded"]; break;
-          case "zip": labels = [a.client_address?.zip || a.client?.zip || "No ZIP code"]; break;
           case "payment": labels = [a.payment_type || "Unspecified payment type"]; break;
           case "service": labels = [[...new Set((a.appointment_pianos || []).map((p) => p.service?.trim()).filter(Boolean))].join(", ") || "No service recorded"]; break;
           default: labels = [date.toLocaleDateString("en-US", { month: "long", year: "numeric" })];
         }
         labels.forEach((label) => {
           const key = groupBy === "month" ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : label;
-          const row = groups.get(key) || { label, amount: 0, count: 0, sortKey: key };
-          row.amount += amountOf(a.payment) / labels.length; row.count += 1 / labels.length; groups.set(key, row);
+          const row = groups.get(key) || { label, amount: 0, count: 0, sortKey: key, latestDate: "" };
+          row.amount += amountOf(a.payment) / labels.length; row.count += 1 / labels.length;
+          const appointmentDate = String(a.start_time).slice(0, 10);
+          if (appointmentDate > row.latestDate) row.latestDate = appointmentDate;
+          groups.set(key, row);
         });
       });
     return [...groups.values()].sort((a, b) => {
@@ -94,6 +95,7 @@ function Finances() {
       if (sortOrder === "amount-asc") return a.amount - b.amount;
       if (sortOrder === "label-desc") return b.label.localeCompare(a.label);
       if (sortOrder === "label-asc") return a.label.localeCompare(b.label);
+      if (sortOrder === "date-desc") return b.latestDate.localeCompare(a.latestDate);
       return String(b.sortKey).localeCompare(String(a.sortKey));
     });
   }, [appointments, range, groupBy, sortOrder]);
@@ -191,14 +193,14 @@ function Finances() {
       </div>
       <div className="finances-toolbar">
         <label>Period<select value={period} onChange={(e) => setPeriod(e.target.value)}><option value="year">This year</option><option value="12months">Last 12 months</option><option value="all">All time</option></select></label>
-        {tab === "income" && <><label>Group by<select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}><option value="month">Month</option><option value="year">Year</option><option value="type">Client type</option><option value="city">Town / city</option><option value="zip">ZIP code</option><option value="service">Service type</option><option value="client">Client</option><option value="payment">Payment type</option></select></label><label>Sort order<select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}><option value="amount-desc">Amount: high to low</option><option value="amount-asc">Amount: low to high</option><option value="label-asc">Name: A to Z</option><option value="label-desc">Name: Z to A</option><option value="date-desc">Date: newest first</option></select></label></>}
+        {tab === "income" && <><label>Group by<select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}><option value="month">Month</option><option value="year">Year</option><option value="type">Client type</option><option value="city">Town / city</option><option value="service">Service type</option><option value="payment">Payment type</option></select></label><label>Sort order<select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}><option value="amount-desc">Amount: high to low</option><option value="amount-asc">Amount: low to high</option><option value="label-asc">Name: A to Z</option><option value="label-desc">Name: Z to A</option><option value="date-desc">Date: newest first</option></select></label></>}
         {tab === "expenses" && <><label className="finances-search">Search<input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Vendor, category, notes…" /></label><button className="finances-primary" type="button" onClick={startNew}>+ Add expense</button><button type="button" onClick={exportExpenses}>Export CSV</button></>}
         {tab === "cashflow" && <button type="button" onClick={exportCashflow}>Export CSV</button>}
       </div>
       {error && <div className="finances-error" role="alert">{error}</div>}
       {loading ? <div className="finances-empty">Loading financial records…</div> : <>
         {tab === "income" && <><div className="finances-metrics"><article><span>Recorded income</span><strong>{currency.format(incomeTotal)}</strong><small>Cancelled appointments excluded</small></article><article><span>Paid appointments</span><strong>{appointments.filter((a) => a.status?.toLowerCase() !== "cancelled" && amountOf(a.payment) > 0 && (!range.start || String(a.start_time).slice(0, 10) >= range.start) && String(a.start_time).slice(0, 10) <= range.end).length}</strong><small>Based on appointment dates</small></article></div>
-          <section className="finances-panel"><h2>Income by {({ month: "month", year: "year", type: "client type", city: "town / city", zip: "ZIP code", service: "service", client: "client", payment: "payment type" })[groupBy]}</h2>
+          <section className="finances-panel"><h2>Income by {({ month: "month", year: "year", type: "client type", city: "town / city", service: "service", payment: "payment type" })[groupBy]}</h2>
             {incomeRows.length ? <><div className="finances-chart-layout">{["month", "year"].includes(groupBy) ? <div className="finances-line-chart"><svg viewBox={`0 0 720 240`} role="img" aria-label="Income trend chart"><line x1="56" x2="700" y1="196" y2="196" className="finances-axis"/><line x1="56" x2="700" y1="130" y2="130" className="finances-grid"/><line x1="56" x2="700" y1="64" y2="64" className="finances-grid"/><line x1="56" x2="700" y1={190 - (incomeRows.reduce((sum, r) => sum + r.amount, 0) / Math.max(1, incomeRows.length) / Math.max(1, ...incomeRows.map((r) => r.amount))) * 150} y2={190 - (incomeRows.reduce((sum, r) => sum + r.amount, 0) / Math.max(1, incomeRows.length) / Math.max(1, ...incomeRows.map((r) => r.amount))) * 150} className="finances-average-line"/><text x="696" y={Math.max(15, 184 - (incomeRows.reduce((sum, r) => sum + r.amount, 0) / Math.max(1, incomeRows.length) / Math.max(1, ...incomeRows.map((r) => r.amount))) * 150)} textAnchor="end" className="finances-average-label">Average</text><polyline points={incomeChartRows.map((r, i, arr) => `${70 + (arr.length <= 1 ? 0 : i * 620 / (arr.length - 1))},${190 - (r.amount / Math.max(1, ...incomeRows.map(x => x.amount))) * 150}`).join(" ")} className="finances-line"/>{incomeRows.slice().reverse().map((r, i, arr) => <g key={r.sortKey}><circle cx={70 + (arr.length <= 1 ? 0 : i * 620 / (arr.length - 1))} cy={190 - (r.amount / Math.max(1, ...incomeRows.map(x => x.amount))) * 150} r="4" className="finances-point"/><text x={70 + (arr.length <= 1 ? 0 : i * 620 / (arr.length - 1))} y="218" textAnchor="middle" className="finances-chart-label">{r.label.slice(0, 10)}</text></g>)}</svg></div> : <div className="finances-pie-wrap"><div className="finances-pie" style={{ background: `conic-gradient(${pieStops})` }} role="img" aria-label={`Income breakdown by ${groupBy}`}><div><strong>{currency.format(pieTotal)}</strong><span>Total</span></div></div></div>}
               <div className="finances-breakdown">{incomeRows.map((r, i) => <div className="finances-breakdown-row" key={r.sortKey}><span className="finances-dot" style={{ background: palette[i % palette.length] }} /><div><strong>{r.label}</strong><small>{r.count.toLocaleString(undefined, { maximumFractionDigits: 1 })} appointment{r.count === 1 ? "" : "s"} · {pieTotal ? (r.amount / pieTotal * 100).toFixed(1) : "0.0"}%</small></div><b>{currency.format(r.amount)}</b></div>)}</div></div></> : <p className="finances-empty">No recorded income for this period.</p>}
           </section></>}
