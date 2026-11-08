@@ -742,7 +742,7 @@
 }
 
 /* Consistent action button treatment, scoped to this modal only */
-.appointment-modal button:not(.appointment-modal-close) {
+.appointment-modal button:not(.appointment-modal-close):not(.client-search-option):not(.client-search-create):not(.client-search-toggle) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -765,12 +765,12 @@
   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
-.appointment-modal button:not(.appointment-modal-close):focus-visible {
+.appointment-modal button:not(.appointment-modal-close):not(.client-search-option):not(.client-search-create):not(.client-search-toggle):focus-visible {
   outline: 2px solid var(--appointment-focus);
   outline-offset: 2px;
 }
 
-.appointment-modal button:not(.appointment-modal-close):disabled {
+.appointment-modal button:not(.appointment-modal-close):not(.client-search-option):not(.client-search-create):not(.client-search-toggle):disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
@@ -1074,7 +1074,7 @@
     grid-column: 1 / -1;
   }
 
-  .appointment-modal button:not(.appointment-modal-close) {
+  .appointment-modal button:not(.appointment-modal-close):not(.client-search-option):not(.client-search-create):not(.client-search-toggle) {
     min-height: 42px;
     padding: 9px 11px;
   }

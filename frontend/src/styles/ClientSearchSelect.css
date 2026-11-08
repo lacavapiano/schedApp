@@ -1,3 +1,4 @@
+/* Client picker: shared dropdown styling for appointment and client forms. */
 .client-search-select {
   position: relative;
   width: 100%;
@@ -17,19 +18,21 @@
 
 .client-search-toggle {
   position: absolute;
-  right: 8px;
   top: 50%;
+  right: 8px;
   transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: #666;
-  cursor: pointer;
-  font-size: 16px;
   padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.client-search-toggle:hover {
-  color: #222;
+.client-search-toggle:hover:not(:disabled) {
+  color: var(--text-primary, #222);
+  background: var(--surface-hover, var(--hover-bg, #f1f3f5));
 }
 
 .client-search-dropdown {
@@ -40,304 +43,71 @@
   right: 0;
   max-height: 260px;
   overflow-y: auto;
-  background: white;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color, #ccc);
   border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #212529);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-.client-search-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 10px 12px;
-  border: none;
-  border-bottom: 1px solid #eee;
-  background: white;
-  text-align: left;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.client-search-option:hover,
-.client-search-option.selected {
-  background: #f5f7fa;
-}
-
-.client-search-option small {
-  color: #777;
-  font-size: 12px;
-}
-
-.client-search-empty {
-  padding: 12px;
-  color: #777;
-  font-size: 14px;
-}
-
-.client-search-create {
-  display: block;
-  width: 100%;
-  padding: 11px 12px;
-  border: none;
-  background: white;
-  color: #2563eb;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-}
-
-.client-search-create:hover {
-  background: #f5f7fa;
-}
-
-/* Keep the client picker options visually grouped as one dropdown, not separate buttons. */
 .client-search-dropdown .client-search-option,
 .client-search-dropdown .client-search-create {
   appearance: none;
   -webkit-appearance: none;
-  border: 0 !important;
-  outline: 0;
-  box-shadow: none !important;
-  transform: none !important;
-  border-radius: 0 !important;
-  background: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+  text-decoration: none;
+  text-transform: none;
+  white-space: normal;
+  cursor: pointer;
 }
 
 .client-search-dropdown .client-search-option {
-  display: flex;
-  width: 100%;
-  margin: 0;
-  border-bottom: 1px solid #eee !important;
+  border-bottom: 1px solid var(--border-color, #eee);
 }
 
 .client-search-dropdown .client-search-option:last-of-type {
-  border-bottom: 0 !important;
+  border-bottom: 0;
 }
 
 .client-search-dropdown .client-search-option:hover,
 .client-search-dropdown .client-search-option.selected,
 .client-search-dropdown .client-search-create:hover {
-  background: #f5f7fa !important;
+  background: var(--surface-hover, var(--hover-bg, #f5f7fa));
+}
+
+.client-search-dropdown .client-search-option small,
+.client-search-empty {
+  color: var(--text-secondary, #777);
+  font-size: 12px;
 }
 
 .client-search-dropdown .client-search-create {
-  border-top: 1px solid #eee !important;
-  color: #2563eb;
+  display: block;
+  border-top: 1px solid var(--border-color, #eee);
+  color: var(--link-color, #2563eb);
+  font-weight: 500;
 }
 
-:root[data-theme="dark"] .client-search-dropdown .client-search-option,
-:root[data-theme="dark"] .client-search-dropdown .client-search-create {
-  color: #f3f4f6;
-  border-color: #3c424d !important;
+.client-search-empty {
+  padding: 12px;
+  font-size: 14px;
 }
 
-:root[data-theme="dark"] .client-search-dropdown .client-search-option:hover,
-:root[data-theme="dark"] .client-search-dropdown .client-search-option.selected,
-:root[data-theme="dark"] .client-search-dropdown .client-search-create:hover {
-  background: #343a46 !important;
-}
-
-
-/* The appointment modal has a broad button reset with higher specificity.
-   Override it here so dropdown rows remain plain list items, not stacked buttons. */
-.appointment-modal .client-search-dropdown button.client-search-option,
-.appointment-modal .client-search-dropdown button.client-search-create {
-  display: block !important;
-  box-sizing: border-box !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 10px 12px !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  outline: none;
-  font: inherit !important;
-  font-size: 14px !important;
-  font-weight: 400 !important;
-  line-height: 1.4 !important;
-  text-align: left !important;
-  text-decoration: none !important;
-  text-transform: none !important;
-  white-space: normal !important;
-  transform: none !important;
-}
-
-.appointment-modal .client-search-dropdown button.client-search-option {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-  border-bottom: 1px solid #eee !important;
-  background: #fff !important;
-}
-
-.appointment-modal .client-search-dropdown button.client-search-option:last-of-type {
-  border-bottom: 0 !important;
-}
-
-.appointment-modal .client-search-dropdown button.client-search-create {
-  width: 100% !important;
-  border-top: 1px solid #eee !important;
-  background: #fff !important;
-  color: #2563eb !important;
-  font-weight: 500 !important;
-}
-
-.appointment-modal .client-search-dropdown button.client-search-option:hover,
-.appointment-modal .client-search-dropdown button.client-search-option.selected,
-.appointment-modal .client-search-dropdown button.client-search-create:hover {
-  background: #f5f7fa !important;
-}
-
-:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-option,
-:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-create {
-  background: var(--surface) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--border-color) !important;
-}
-
-:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-option:hover,
-:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-option.selected,
-:root[data-theme="dark"] .appointment-modal .client-search-dropdown button.client-search-create:hover {
-  background: var(--hover-bg) !important;
-}
-
-
-/* Keep the dropdown chevron as a small, unboxed control inside the input. */
-.appointment-modal .client-search-input-wrapper button.client-search-toggle {
-  position: absolute !important;
-  top: 50% !important;
-  right: 6px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 28px !important;
-  min-width: 28px !important;
-  height: 28px !important;
-  min-height: 28px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 4px !important;
-  outline: none;
-  box-shadow: none !important;
-  background: transparent !important;
-  color: var(--text-secondary, #666) !important;
-  font: inherit !important;
-  font-size: 16px !important;
-  line-height: 1 !important;
-  transform: translateY(-50%) !important;
-  cursor: pointer;
-}
-
-.appointment-modal .client-search-input-wrapper button.client-search-toggle:hover:not(:disabled) {
-  background: var(--hover-bg, #f1f3f5) !important;
-  color: var(--text-primary, #222) !important;
-}
-
-.appointment-modal .client-search-input-wrapper button.client-search-toggle:focus-visible {
-  outline: 2px solid var(--border-color, #777) !important;
-  outline-offset: -2px;
-}
-
-.appointment-modal .client-search-input-wrapper button.client-search-toggle:disabled {
-  background: transparent !important;
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-
-/* Dark-mode picker fix: set every layer explicitly because modal button resets
-   and legacy light-mode !important rules otherwise leak into the menu. */
-:root[data-theme="dark"] .client-search-select .client-search-dropdown,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown {
-  background-color: #1d2228 !important;
-  color: #f3f5f7 !important;
-  border: 1px solid #48525d !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45) !important;
-}
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option {
-  background-color: #1d2228 !important;
-  color: #f3f5f7 !important;
-  border-bottom: 1px solid #48525d !important;
-}
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option > span,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > span {
-  color: #f3f5f7 !important;
-}
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option > small,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > small {
-  color: #c0c8d0 !important;
-}
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-create,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-create {
-  background-color: #1d2228 !important;
-  color: #a9d0ff !important;
-  border-top: 1px solid #48525d !important;
-}
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option:hover,
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-option.selected,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:hover,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-option.selected,
-:root[data-theme="dark"] .client-search-select .client-search-dropdown button.client-search-create:hover,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown button.client-search-create:hover {
-  background-color: #343d47 !important;
-  color: #ffffff !important;
-}
-:root[data-theme="dark"] .client-search-select .client-search-dropdown .client-search-empty,
-:root[data-theme="dark"] .appointment-modal .client-search-select .client-search-dropdown .client-search-empty {
-  background-color: #1d2228 !important;
-  color: #d0d6dc !important;
-}
-
-/* Follow the OS theme too when the app has not explicitly selected light mode. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown {
-    background-color: #1d2228 !important;
-    color: #f3f5f7 !important;
-    border-color: #48525d !important;
-  }
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option {
-    background-color: #1d2228 !important;
-    color: #f3f5f7 !important;
-    border-color: #48525d !important;
-  }
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option > span,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > span {
-    color: #f3f5f7 !important;
-  }
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option > small,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option > small {
-    color: #c0c8d0 !important;
-  }
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-create,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-create {
-    background-color: #1d2228 !important;
-    color: #a9d0ff !important;
-    border-color: #48525d !important;
-  }
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option:hover,
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-option.selected,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:hover,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option:focus-visible,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-option.selected,
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown button.client-search-create:hover,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown button.client-search-create:hover {
-    background-color: #343d47 !important;
-    color: #ffffff !important;
-  }
-  :root:not([data-theme="light"]) .client-search-select .client-search-dropdown .client-search-empty,
-  :root:not([data-theme="light"]) .appointment-modal .client-search-select .client-search-dropdown .client-search-empty {
-    background-color: #1d2228 !important;
-    color: #d0d6dc !important;
-  }
+:root[data-theme="dark"] .client-search-dropdown {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
