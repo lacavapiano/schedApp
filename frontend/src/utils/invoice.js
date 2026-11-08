@@ -150,8 +150,8 @@ export function buildInvoiceDocument({
       color-scheme: light;
     }
     .sheet {
-      width: 850px;
-      max-width: 850px;
+      width: 725px;
+      max-width: 725px;
       min-height: 900px;
       margin: 0 auto;
       padding: 52px 0;
@@ -549,8 +549,8 @@ export async function downloadInvoicePdf({
     top: "0",
     zIndex: "-1",
     pointerEvents: "none",
-    width: "850px",
-    minWidth: "850px",
+    width: "725px",
+    minWidth: "725px",
     background: "#ffffff",
     color: "#1f2933",
     colorScheme: "light",
@@ -566,7 +566,7 @@ export async function downloadInvoicePdf({
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
           scale: 2,
-          windowWidth: 850,
+          windowWidth: 725,
           useCORS: true,
           backgroundColor: "#ffffff",
           scrollX: 0,
