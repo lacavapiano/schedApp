@@ -1168,3 +1168,175 @@
   font-weight: 650;
   overflow-wrap: anywhere;
 }
+
+
+/* Compact, independently collapsible piano cards */
+.appointment-piano-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.appointment-piano-toggle {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  min-width: 0;
+  padding: 2px 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--appointment-text) !important;
+  text-align: left !important;
+}
+
+.appointment-piano-toggle-icon {
+  flex: 0 0 16px;
+  color: var(--appointment-secondary);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.appointment-piano-toggle strong {
+  flex: 0 0 auto;
+}
+
+.appointment-piano-summary {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--appointment-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.appointment-piano-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Header actions menu replaces the separate invoice/cancel/complete footer actions */
+.appointment-modal-header {
+  gap: 12px;
+}
+
+.appointment-actions-menu {
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.appointment-actions-menu > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--appointment-border);
+  border-radius: var(--appointment-radius-sm);
+  background: var(--appointment-surface);
+  color: var(--appointment-text);
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  list-style: none;
+}
+
+.appointment-actions-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.appointment-actions-menu[open] > summary,
+.appointment-actions-menu > summary:hover {
+  background: var(--appointment-muted);
+}
+
+.appointment-actions-menu-panel {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: max-content;
+  min-width: 190px;
+  max-width: min(260px, calc(100vw - 32px));
+  padding: 6px;
+  border: 1px solid var(--appointment-border);
+  border-radius: var(--appointment-radius-md);
+  background: var(--appointment-surface);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 18%);
+}
+
+.appointment-modal .appointment-actions-menu-panel button {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--appointment-text);
+  text-align: left;
+}
+
+.appointment-modal .appointment-actions-menu-panel button:hover:not(:disabled) {
+  background: var(--appointment-muted);
+}
+
+.appointment-modal .appointment-actions-menu-panel button:last-child {
+  color: var(--appointment-text);
+}
+
+/* iOS Safari zooms focused controls below 16px; keep all modal controls at 16px on phones. */
+@media (max-width: 700px) {
+  .appointment-modal input,
+  .appointment-modal select,
+  .appointment-modal textarea,
+  .appointment-modal .client-search-select input,
+  .appointment-modal [role="combobox"] {
+    font-size: 16px !important;
+  }
+
+  .appointment-modal .appointment-piano-header {
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .appointment-modal .appointment-piano-toggle {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .appointment-modal .appointment-actions-menu > summary {
+    min-height: 42px;
+    padding: 9px 10px;
+  }
+
+  .appointment-modal-header {
+    gap: 8px;
+  }
+
+  .appointment-modal .appointment-modal-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .appointment-modal .appointment-modal-actions-right {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .appointment-modal .appointment-modal-actions-right > button {
+    flex: 1 1 0;
+  }
+}
