@@ -154,8 +154,7 @@ export function buildInvoiceDocument({
       max-width: 850px;
       min-height: 900px;
       margin: 0 auto;
-      --invoice-horizontal-padding: 56px;
-      padding: 52px var(--invoice-horizontal-padding);
+      padding: 52px 0;
       background: #fff !important;
       color: #1f2933 !important;
       font-family: Arial, Helvetica, sans-serif;
@@ -169,7 +168,7 @@ export function buildInvoiceDocument({
       justify-content: space-between;
       align-items: flex-start;
       gap: 28px;
-      padding-bottom: 26px;
+      padding: 0 56px 26px;
       border-bottom: 2px solid #202833;
     }
     .sheet .brand {
@@ -210,7 +209,7 @@ export function buildInvoiceDocument({
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 42px;
-      padding: 30px 0 32px;
+      padding: 30px 56px 32px;
     }
     .sheet .label {
       margin-bottom: 10px;
@@ -271,8 +270,8 @@ export function buildInvoiceDocument({
       white-space: nowrap;
     }
     .sheet .items {
-      width: calc(100% + 112px);
-      margin: 2px 0 0 -56px;
+      width: 100%;
+      margin: 2px 0 0;
     }
     .sheet table {
       width: 100%;
@@ -367,7 +366,7 @@ export function buildInvoiceDocument({
     .sheet .totals {
       width: 310px;
       max-width: 100%;
-      margin: 24px 0 0 auto;
+      margin: 24px 56px 0 auto;
       color: #1f2933 !important;
       font-variant-numeric: tabular-nums;
     }
@@ -404,7 +403,7 @@ export function buildInvoiceDocument({
       font-weight: 700;
     }
     .sheet .notes {
-      margin-top: 34px;
+      margin: 34px 56px 0;
       padding-top: 15px;
       border-top: 1px solid #cbd2d9;
       color: #374151 !important;
@@ -422,11 +421,11 @@ export function buildInvoiceDocument({
     @media (max-width: 650px) {
       .sheet {
         min-height: 0;
-        padding: 28px 18px;
+        padding: 28px 0;
       }
       .sheet .top {
         gap: 14px;
-        padding-bottom: 20px;
+        padding: 0 18px 20px;
       }
       .sheet .brand { font-size: 19px; }
       .sheet .invoice-heading { min-width: 0; }
@@ -434,15 +433,11 @@ export function buildInvoiceDocument({
       .sheet .invoice-meta { font-size: 11px; }
       .sheet .addresses {
         gap: 16px;
-        padding: 22px 0;
+        padding: 22px 18px;
       }
       .sheet .address-name { font-size: 14px; }
       .sheet .service-panel { padding: 11px; }
-      .sheet .items {
-        width: 100%;
-        margin: 2px 0 0;
-      }
-      .sheet .service-row {
+       .sheet .service-row {
         align-items: flex-start;
         gap: 8px;
       }
@@ -471,7 +466,9 @@ export function buildInvoiceDocument({
       .sheet .totals {
         width: 100%;
         max-width: 310px;
+        margin-right: 18px;
       }
+      .sheet .notes { margin-left: 18px; margin-right: 18px; }
     }
     @media print {
       @page { size: letter; margin: 0.55in; }
