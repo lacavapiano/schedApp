@@ -111,7 +111,6 @@ export function buildInvoiceDocument({
       </td>
       <td class="number-cell">${amounts.quantity.toFixed(isHourly ? 2 : 0)}</td>
       <td class="number-cell">${money(amounts.unitPrice)}</td>
-      <td class="number-cell">${money(amounts.subtotal)}</td>
       <td class="number-cell">${amounts.discount > 0 ? "−" + money(amounts.discount) : "—"}</td>
       <td class="number-cell amount-cell"><strong class="line-total">${money(amounts.total)}</strong></td>
     </tr>`;
@@ -341,12 +340,11 @@ export function buildInvoiceDocument({
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
-    .sheet .col-description { width: 38%; }
-    .sheet .col-quantity { width: 7%; }
-    .sheet .col-rate { width: 12%; }
-    .sheet .col-subtotal { width: 13%; }
+    .sheet .col-description { width: 49%; }
+    .sheet .col-quantity { width: 8%; }
+    .sheet .col-rate { width: 15%; }
     .sheet .col-discount { width: 12%; }
-    .sheet .col-amount { width: 18%; }
+    .sheet .col-amount { width: 16%; }
     .sheet .amount-cell,
     .sheet .line-total {
       color: #111827 !important;
@@ -462,7 +460,6 @@ export function buildInvoiceDocument({
           <col class="col-description">
           <col class="col-quantity">
           <col class="col-rate">
-          <col class="col-subtotal">
           <col class="col-discount">
           <col class="col-amount">
         </colgroup>
@@ -471,13 +468,12 @@ export function buildInvoiceDocument({
             <th scope="col" class="description-cell">Description</th>
             <th scope="col" class="number-cell">Qty</th>
             <th scope="col" class="number-cell">Rate</th>
-            <th scope="col" class="number-cell">Subtotal</th>
             <th scope="col" class="number-cell">Discount</th>
             <th scope="col" class="number-cell">Amount</th>
           </tr>
         </thead>
         <tbody>
-          ${lineItems || `<tr><td colspan="6">No saved service charges were found for this appointment. Save the appointment's service pricing before generating an invoice.</td></tr>`}
+          ${lineItems || `<tr><td colspan="5">No saved service charges were found for this appointment. Save the appointment's service pricing before generating an invoice.</td></tr>`}
         </tbody>
       </table>
     </section>
