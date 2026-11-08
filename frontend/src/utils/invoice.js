@@ -150,7 +150,7 @@ export function buildInvoiceDocument({
       color-scheme: light;
     }
     .sheet {
-      width: 100%;
+      width: 850px;
       max-width: 850px;
       min-height: 900px;
       margin: 0 auto;
@@ -418,58 +418,6 @@ export function buildInvoiceDocument({
       letter-spacing: .7px;
       text-transform: uppercase;
     }
-    @media (max-width: 650px) {
-      .sheet {
-        min-height: 0;
-        padding: 28px 0;
-      }
-      .sheet .top {
-        gap: 14px;
-        padding: 0 18px 20px;
-      }
-      .sheet .brand { font-size: 19px; }
-      .sheet .invoice-heading { min-width: 0; }
-      .sheet h1 { font-size: 25px; }
-      .sheet .invoice-meta { font-size: 11px; }
-      .sheet .addresses {
-        gap: 16px;
-        padding: 22px 18px;
-      }
-      .sheet .address-name { font-size: 14px; }
-      .sheet .service-panel { padding: 11px; }
-       .sheet .service-row {
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .sheet .service-value { font-size: 11px; }
-      .sheet th {
-        padding: 8px 3px;
-        font-size: 9px;
-        letter-spacing: 0;
-      }
-      .sheet td {
-        padding: 9px 3px;
-        font-size: 10px;
-      }
-      .sheet .description-cell { padding: 9px 5px; }
-      .sheet .col-description { width: 36%; }
-      .sheet .col-quantity { width: 7%; }
-      .sheet .col-rate { width: 12%; }
-      .sheet .col-subtotal { width: 13%; }
-      .sheet .col-discount { width: 12%; }
-      .sheet .col-amount { width: 20%; }
-      .sheet .item-description { gap: 2px; font-size: 10px; }
-      .sheet .description-location { font-size: 9px; }
-      .sheet .description-piano { font-size: 10px; }
-      .sheet .description-service { font-size: 11px; }
-      .sheet .item-detail { font-size: 9px; }
-      .sheet .totals {
-        width: 100%;
-        max-width: 310px;
-        margin-right: 18px;
-      }
-      .sheet .notes { margin-left: 18px; margin-right: 18px; }
-    }
     @media print {
       @page { size: letter; margin: 0.55in; }
       .sheet {
@@ -602,6 +550,7 @@ export async function downloadInvoicePdf({
     zIndex: "-1",
     pointerEvents: "none",
     width: "850px",
+    minWidth: "850px",
     background: "#ffffff",
     color: "#1f2933",
     colorScheme: "light",
@@ -617,6 +566,7 @@ export async function downloadInvoicePdf({
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
           scale: 2,
+          windowWidth: 850,
           useCORS: true,
           backgroundColor: "#ffffff",
           scrollX: 0,
