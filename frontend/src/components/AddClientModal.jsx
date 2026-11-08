@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient, updateClient } from "../services/api";
 import "../styles/ClientModal.css";
 import "../styles/ActionButtons.css";
@@ -41,6 +41,8 @@ function AddClientModal({
   });
 
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const submissionInProgress = useRef(false);
 
   const isEditing = Boolean(client);
 
@@ -401,6 +403,11 @@ function AddClientModal({
   async function handleSubmit(event) {
     event.preventDefault();
 
+    // Lock synchronously so rapid taps cannot start duplicate requests.
+    if (submissionInProgress.current) return;
+    submissionInProgress.current = true;
+    setSaving(true);
+
     const emails = formData.emails.filter(
       (item) => item.email.trim() !== ""
     );
@@ -468,12 +475,15 @@ function AddClientModal({
       onClose();
     } catch (error) {
       console.log(error);
-      setError(error.message);
+      setError(error.message || "Unable to save the client. Please try again.");
+    } finally {
+      submissionInProgress.current = false;
+      setSaving(false);
     }
   }
 
   return (
-    <div className="client-modal-overlay" onClick={onClose}>
+    <div className="client-modal-overlay" onClick={saving ? undefined : onClose}>
       <div
         className="client-modal"
         onClick={(event) => event.stopPropagation()}
@@ -487,6 +497,7 @@ function AddClientModal({
             type="button"
             className="client-modal-close"
             onClick={onClose}
+            disabled={saving}
             aria-label="Close"
           >
             ×
@@ -1079,11 +1090,12 @@ function AddClientModal({
           {/* Modal Actions */}
           <div className="modal-actions">
             <div className="modal-primary-actions">
-              <button type="button" className="modal-cancel action-button action-button--secondary" onClick={onClose}>
+              <button type="button" className="modal-cancel action-button action-button--secondary" onClick={onClose} disabled={saving}>
                 Cancel
               </button>
-              <button type="submit" className="modal-save action-button action-button--primary">
-                {isEditing ? "Save Changes" : "Save Client"}
+              <button type="submit" className="modal-save action-button action-button--primary" disabled={saving} aria-busy={saving}>
+                {saving && <span className="client-save-spinner" aria-hidden="true" />}
+                {saving ? "Saving…" : isEditing ? "Save Changes" : "Save Client"}
               </button>
             </div>
 
