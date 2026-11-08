@@ -144,22 +144,23 @@ export function buildInvoiceDocument({
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Invoice ${escapeHtml(invoiceNumber)}</title>
   <style>
-    /* The invoice is deliberately light-themed, regardless of the app theme. */
+    /* Fixed US Letter canvas: margins are built into the sheet, not split
+       between CSS and the PDF generator. This avoids platform-dependent sizing. */
     .sheet, .sheet * {
       box-sizing: border-box;
       color-scheme: light;
     }
     .sheet {
-      width: 725px;
-      max-width: 725px;
-      min-height: 0;
-      margin: 0 auto;
-      padding: 52px 0;
+      display: block;
+      width: 816px;
+      max-width: 816px;
+      margin: 0;
+      padding: 44px 48px 40px;
       background: #fff !important;
-      color: #1f2933 !important;
+      color: #202833 !important;
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      line-height: 1.55;
+      font-size: 13px;
+      line-height: 1.4;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
@@ -167,71 +168,72 @@ export function buildInvoiceDocument({
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 28px;
-      padding: 0 56px 26px;
+      gap: 24px;
+      padding: 0 0 20px;
       border-bottom: 2px solid #202833;
     }
     .sheet .brand {
       color: #111827 !important;
-      font-size: 24px;
+      font-size: 23px;
       font-weight: 700;
-      letter-spacing: -.5px;
+      letter-spacing: -.4px;
     }
     .sheet .business-contact {
-      margin-top: 7px;
-      color: #374151 !important;
-      font-size: 12px;
-      line-height: 1.65;
+      margin-top: 6px;
+      color: #4b5563 !important;
+      font-size: 11px;
+      line-height: 1.5;
     }
     .sheet .invoice-heading {
       flex: 0 0 auto;
-      min-width: 190px;
+      min-width: 180px;
       text-align: right;
     }
     .sheet h1 {
-      margin: -5px 0 7px;
+      margin: 0 0 5px;
       color: #111827 !important;
-      font-size: 32px;
-      line-height: 1.15;
+      font-size: 29px;
+      line-height: 1.1;
       font-weight: 700;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
     }
     .sheet .invoice-meta {
-      color: #374151 !important;
-      font-size: 12px;
-      line-height: 1.8;
+      color: #4b5563 !important;
+      font-size: 11px;
+      line-height: 1.65;
     }
     .sheet .invoice-meta strong {
       color: #111827 !important;
-      font-size: 14px;
+      font-size: 12px;
     }
     .sheet .addresses {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 42px;
-      padding: 30px 56px 32px;
+      gap: 32px;
+      padding: 24px 0 25px;
     }
     .sheet .label {
-      margin-bottom: 10px;
-      color: #374151 !important;
-      font-size: 11px;
+      margin: 0 0 7px;
+      color: #596473 !important;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: .8px;
       text-transform: uppercase;
     }
     .sheet .address-name {
       margin-bottom: 3px;
       color: #111827 !important;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
     }
     .sheet .address-lines {
-      color: #1f2933 !important;
-      font-size: 13px;
+      color: #374151 !important;
+      font-size: 11px;
+      line-height: 1.5;
     }
     .sheet .service-panel {
-      padding: 14px 16px;
-      border: 1px solid #cbd2d9;
+      padding: 11px 13px;
+      border: 1px solid #d5dae0;
       border-radius: 4px;
       background: #f8fafc !important;
     }
@@ -239,39 +241,39 @@ export function buildInvoiceDocument({
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
     .sheet .service-row + .service-row {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #d8dee5;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e1e5e9;
     }
     .sheet .service-label {
-      color: #374151 !important;
-      font-size: 12px;
+      color: #596473 !important;
+      font-size: 11px;
     }
     .sheet .service-value {
       color: #111827 !important;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       text-align: right;
     }
     .sheet .payment-status {
       display: inline-block;
-      padding: 3px 8px;
-      border: 1px solid #9ca3af;
+      padding: 3px 7px;
+      border: 1px solid #aeb7c2;
       border-radius: 3px;
       background: #fff !important;
       color: #111827 !important;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
-      letter-spacing: .4px;
+      letter-spacing: .3px;
       text-transform: uppercase;
       white-space: nowrap;
     }
     .sheet .items {
       width: 100%;
-      margin: 2px 0 0;
+      margin: 0;
     }
     .sheet table {
       width: 100%;
@@ -279,40 +281,28 @@ export function buildInvoiceDocument({
       table-layout: fixed;
       background: #fff !important;
     }
-    .sheet thead {
-      display: table-header-group;
-    }
+    .sheet thead { display: table-header-group; }
     .sheet th {
-      padding: 10px 7px;
+      padding: 9px 6px;
       border-bottom: 2px solid #374151;
       background: #f1f3f5 !important;
-      color: #1f2933 !important;
-      font-size: 10px;
+      color: #374151 !important;
+      font-size: 9px;
       font-weight: 700;
-      letter-spacing: .35px;
+      letter-spacing: .25px;
       text-align: left;
       text-transform: uppercase;
     }
     .sheet td {
-      padding: 13px 7px;
-      border-bottom: 1px solid #cbd2d9;
+      padding: 10px 6px;
+      border-bottom: 1px solid #d9dee4;
       background: #fff !important;
-      color: #1f2933 !important;
+      color: #26313d !important;
       vertical-align: top;
-      font-size: 12px;
-    }
-    /* Explicitly override the app's global strong/b color rules.
-       Service descriptions and line totals must stay dark on the white PDF. */
-    .sheet strong,
-    .sheet td strong,
-    .sheet .item-description,
-    .sheet .line-total {
-      color: #111827 !important;
-      opacity: 1 !important;
-      font-weight: 700 !important;
+      font-size: 10px;
     }
     .sheet .description-cell {
-      padding: 13px 12px 13px 10px;
+      padding-left: 8px;
       text-align: left;
       overflow-wrap: anywhere;
     }
@@ -320,31 +310,31 @@ export function buildInvoiceDocument({
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 3px;
-      font-size: 12px;
-      line-height: 1.35;
+      gap: 2px;
+      color: #111827 !important;
+      font-size: 10px;
+      line-height: 1.3;
     }
     .sheet .description-location {
-      color: #5b6570 !important;
-      font-size: 10px;
+      color: #647080 !important;
+      font-size: 9px;
       font-weight: 600;
-      letter-spacing: .25px;
     }
     .sheet .description-piano {
       color: #374151 !important;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
     }
     .sheet .description-service {
       color: #111827 !important;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
     }
     .sheet .item-detail {
       display: block;
-      margin-top: 5px;
-      color: #5b6570 !important;
-      font-size: 10px;
+      margin-top: 3px;
+      color: #647080 !important;
+      font-size: 9px;
     }
     .sheet .number-cell {
       text-align: right;
@@ -360,72 +350,69 @@ export function buildInvoiceDocument({
     .sheet .amount-cell,
     .sheet .line-total {
       color: #111827 !important;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 700 !important;
     }
     .sheet .totals {
-      width: 310px;
+      width: 275px;
       max-width: 100%;
-      margin: 24px 56px 0 auto;
-      color: #1f2933 !important;
+      margin: 18px 0 0 auto;
+      color: #26313d !important;
       font-variant-numeric: tabular-nums;
     }
     .sheet .total-row {
       display: flex;
       justify-content: space-between;
-      gap: 20px;
-      padding: 5px 0;
-      color: #1f2933 !important;
-      font-size: 13px;
+      gap: 16px;
+      padding: 4px 0;
+      color: #374151 !important;
+      font-size: 11px;
     }
     .sheet .grand {
-      margin-top: 7px;
-      padding: 11px 0 8px;
+      margin-top: 5px;
+      padding: 8px 0 6px;
       border-top: 1.5px solid #202833;
       color: #111827 !important;
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 700;
     }
     .sheet .balance {
-      margin-top: 10px;
-      padding: 12px 14px;
-      border: 1px solid #cbd2d9;
+      margin-top: 7px;
+      padding: 9px 11px;
+      border: 1px solid #d5dae0;
       border-radius: 4px;
       background: #f1f3f5 !important;
       color: #111827 !important;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
     }
     .sheet .balance .total-row {
       padding: 0;
       color: #111827 !important;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
     }
     .sheet .notes {
-      margin: 34px 56px 0;
-      padding-top: 15px;
-      border-top: 1px solid #cbd2d9;
-      color: #374151 !important;
-      font-size: 12px;
+      margin: 24px 0 0;
+      padding-top: 11px;
+      border-top: 1px solid #d5dae0;
+      color: #4b5563 !important;
+      font-size: 10px;
+      line-height: 1.45;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
     .sheet .notes strong {
       display: block;
       margin-bottom: 4px;
       color: #111827 !important;
-      font-size: 11px;
-      letter-spacing: .7px;
+      font-size: 9px;
+      letter-spacing: .6px;
       text-transform: uppercase;
     }
-    @media print {
-      @page { size: letter; margin: 0.55in; }
-      .sheet {
-        max-width: none;
-        min-height: 0;
-        padding: 0;
-      }
-      .sheet tr { break-inside: avoid; }
+    .sheet strong {
+      color: #111827 !important;
+      opacity: 1 !important;
     }
   </style>
 </head>
@@ -549,8 +536,8 @@ export async function downloadInvoicePdf({
     top: "0",
     zIndex: "-1",
     pointerEvents: "none",
-    width: "725px",
-    minWidth: "725px",
+    width: "816px",
+    minWidth: "816px",
     background: "#ffffff",
     color: "#1f2933",
     colorScheme: "light",
@@ -562,11 +549,12 @@ export async function downloadInvoicePdf({
     await html2pdf()
       .set({
         filename: `Invoice-${invoiceNumber}.pdf`,
-        margin: [12, 12, 12, 12],
+        margin: 0,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
           scale: 2,
-          windowWidth: 725,
+          windowWidth: 816,
+          width: 816,
           useCORS: true,
           backgroundColor: "#ffffff",
           scrollX: 0,
