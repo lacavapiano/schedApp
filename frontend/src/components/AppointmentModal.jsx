@@ -1041,6 +1041,7 @@ function AppointmentModal({
             </button>
           </div>
 
+          <div className="appointment-modal-body">
           {error && (
             <div className="appointment-modal-error">
               {error}
@@ -1710,6 +1711,7 @@ function AppointmentModal({
               </div>
             </form>
           )}
+          </div>
         </div>
       </div>
 
