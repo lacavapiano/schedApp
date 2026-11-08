@@ -88,22 +88,9 @@
   color: var(--text-secondary, #6c757d);
   font-size: 13px;
 }
-@media (max-width: 560px) {
-  .piano-climate-history { padding: 12px; }
-  .piano-climate-heading { gap: 8px; }
-  .piano-climate-heading p { max-width: 240px; }
-  .piano-climate-count { padding: 3px 7px; }
-}
-:root[data-theme="dark"] .piano-climate-axis-label,
-:root[data-theme="dark"] .piano-climate-date-label {
-  fill: var(--text-secondary, #b8bec8);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .piano-climate-axis-label,
-  :root:not([data-theme="light"]) .piano-climate-date-label {
-    fill: var(--text-secondary, #b8bec8);
-  }
-}
+
+
+
 
 .piano-climate-chart--stacked {
   min-width: 0;
@@ -111,6 +98,9 @@
 
 /* Keep the full climate summary visible on narrow screens without horizontal scrolling. */
 @media (max-width: 560px) {
+  .piano-climate-heading { gap: 8px; }
+  .piano-climate-count { padding: 3px 7px; }
+
   .piano-climate-history {
     padding: 10px;
     margin-top: 8px;
@@ -150,11 +140,5 @@
   font-size: 11px;
   font-weight: 600;
 }
-:root[data-theme="dark"] .piano-climate-axis-title {
-  fill: var(--text-secondary, #b8bec8);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .piano-climate-axis-title {
-    fill: var(--text-secondary, #b8bec8);
-  }
-}
+
+

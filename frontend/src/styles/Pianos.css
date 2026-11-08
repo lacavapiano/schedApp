@@ -433,14 +433,7 @@
 
 
 /* Respect system dark mode when the app theme is not explicitly configured. */
-@media (prefers-color-scheme: dark) {
-  .pianos-page,
-  .piano-detail-page {
-    color: var(--text-primary, #f1f1f1);
-  }
 
-
-}
 
 
 /* Compact piano summaries with maintenance and client context. */
@@ -499,13 +492,9 @@
 }
 
 
-:root[data-theme="dark"] .piano-panel-client-link {
-  color: var(--text-primary, #f1f1f1);
-}
 
-:root[data-theme="dark"] .piano-panel-client-summary {
-  color: var(--text-secondary, #b8bec8);
-}
+
+
 
 @media (max-width: 1100px) {
   .piano-panel-main {
@@ -534,15 +523,7 @@
 
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .piano-panel-client-link {
-    color: var(--text-primary, #f1f1f1);
-  }
 
-  :root:not([data-theme="light"]) .piano-panel-client-summary {
-    color: var(--text-secondary, #b8bec8);
-  }
-}
 
 
 /* Compact piano detail page: consistent with the piano list panels. */
@@ -611,14 +592,9 @@
   overflow-wrap: anywhere;
 }
 
-:root[data-theme="dark"] .piano-detail-fields > div > span:not(.piano-detail-label),
-:root[data-theme="dark"] .piano-detail-section .piano-client-link {
-  color: var(--text-primary, #f1f1f1);
-}
 
-:root[data-theme="dark"] .piano-detail-client-summary {
-  color: var(--text-secondary, #b8bec8) !important;
-}
+
+
 
 @media (max-width: 700px) {
   .piano-detail-toolbar {
@@ -644,16 +620,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .piano-detail-fields > div > span:not(.piano-detail-label),
-  :root:not([data-theme="light"]) .piano-detail-section .piano-client-link {
-    color: var(--text-primary, #f1f1f1);
-  }
 
-  :root:not([data-theme="light"]) .piano-detail-client-summary {
-    color: var(--text-secondary, #b8bec8) !important;
-  }
-}
 
 
 /* Desktop list panels: separate piano identity from the supporting details
@@ -838,9 +805,7 @@
   line-height: 1;
 }
 
-:root[data-theme="dark"] .piano-sort-button.is-active {
-  background: var(--surface-muted, #343a40);
-}
+
 
 @media (max-width: 560px) {
   .piano-list-sort {
@@ -1206,13 +1171,9 @@
   line-height: 1.35;
 }
 
-:root[data-theme="dark"] .piano-service-history-entry {
-  background: var(--surface-muted, #292d34);
-}
 
-:root[data-theme="dark"] .piano-service-history-notes {
-  background: var(--surface, #20232a);
-}
+
+
 
 @media (max-width: 600px) {
   .piano-service-history-section {
@@ -1407,45 +1368,15 @@
   outline-offset: 3px;
 }
 
-:root[data-theme="dark"] .piano-detail-page .piano-detail-section,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-section {
-  border-color: var(--border-color, #454b56);
-  background: var(--surface, #20232a);
-  color: var(--text-primary, #f3f4f6);
-}
 
-:root[data-theme="dark"] .piano-detail-page .piano-detail-header h2,
-:root[data-theme="dark"] .piano-detail-page .piano-detail-fields > div > span:not(.piano-detail-label),
-:root[data-theme="dark"] .piano-detail-page .piano-detail-client-summary,
-:root[data-theme="dark"] .piano-detail-page .piano-detail-owner .piano-client-link,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-header h2,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-fields > div > span:not(.piano-detail-label),
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-client-summary,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-owner .piano-client-link {
-  color: var(--text-primary, #f3f4f6);
-}
 
-:root[data-theme="dark"] .piano-detail-page .piano-detail-label,
-:root[data-theme="dark"] .piano-detail-page .piano-detail-client-summary,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-label,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-client-summary {
-  color: var(--text-secondary, #b8bec8);
-}
 
-:root[data-theme="dark"] .piano-detail-page .piano-type-badge,
-:root:not([data-theme="light"]) .piano-detail-page .piano-type-badge {
-  border-color: var(--border-color, #454b56);
-  background: var(--surface-muted, #2b2f38);
-  color: var(--text-secondary, #c0c6d0);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) .piano-detail-page .piano-detail-section {
-    border-color: var(--border-color, #454b56);
-    background: var(--surface, #20232a);
-    color: var(--text-primary, #f3f4f6);
-  }
-}
+
+
+
+
+
 
 @media (max-width: 700px) {
   .piano-detail-page .piano-detail-toolbar {
@@ -1590,24 +1521,11 @@
   font-weight: 650;
 }
 
-:root[data-theme="dark"] .piano-detail-page .piano-detail-grid > .piano-detail-section > h3,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid > .piano-detail-section > h3 {
-  border-bottom-color: var(--border-color, #454b56);
-}
 
-:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-label,
-:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-client-summary,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-label,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-client-summary {
-  color: var(--text-secondary, #c0c6d0);
-}
 
-:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-fields > div > span:not(.piano-detail-label),
-:root[data-theme="dark"] .piano-detail-page .piano-detail-grid .piano-detail-owner .piano-client-link,
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-fields > div > span:not(.piano-detail-label),
-:root:not([data-theme="light"]) .piano-detail-page .piano-detail-grid .piano-detail-owner .piano-client-link {
-  color: var(--text-primary, #f3f4f6);
-}
+
+
+
 
 @media (max-width: 700px) {
   .piano-detail-page .piano-detail-grid {
