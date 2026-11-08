@@ -34,6 +34,17 @@
   --success-bg: #e5f5e9;
   --success-border: #b9e4cb;
   --shadow-color: rgba(20, 28, 36, 0.12);
+  --action-surface-bg: var(--surface);
+  --status-completed-text: #176b36;
+  --status-completed-bg: #e5f5e9;
+  --status-confirmed-text: #1d5fa7;
+  --status-confirmed-bg: #e7f1fb;
+  --status-scheduled-text: #555b63;
+  --status-scheduled-bg: #e9ecef;
+  --status-cancelled-text: #a33;
+  --status-cancelled-bg: #fbe8e8;
+  --status-no-show-text: #875000;
+  --status-no-show-bg: #fff1d6;
 
   /* Compatibility aliases used by older component styles. */
   --text: var(--text-primary);
@@ -96,6 +107,17 @@
   --success-bg: #173d2a;
   --success-border: #326c4a;
   --shadow-color: rgba(0, 0, 0, 0.32);
+    --action-surface-bg: var(--surface-muted);
+    --status-completed-text: #a7f3c0;
+    --status-completed-bg: #173d2a;
+    --status-confirmed-text: #b9d9ff;
+    --status-confirmed-bg: #1b3552;
+    --status-scheduled-text: #e0e3e8;
+    --status-scheduled-bg: #3a3f49;
+    --status-cancelled-text: #ffc1c1;
+    --status-cancelled-bg: #512b30;
+    --status-no-show-text: #ffdda0;
+    --status-no-show-bg: #4a3820;
   color-scheme: dark;
 }
 
@@ -135,6 +157,17 @@
     --success-bg: #173d2a;
     --success-border: #326c4a;
     --shadow-color: rgba(0, 0, 0, 0.32);
+    --action-surface-bg: var(--surface-muted);
+    --status-completed-text: #a7f3c0;
+    --status-completed-bg: #173d2a;
+    --status-confirmed-text: #b9d9ff;
+    --status-confirmed-bg: #1b3552;
+    --status-scheduled-text: #e0e3e8;
+    --status-scheduled-bg: #3a3f49;
+    --status-cancelled-text: #ffc1c1;
+    --status-cancelled-bg: #512b30;
+    --status-no-show-text: #ffdda0;
+    --status-no-show-bg: #4a3820;
     color-scheme: dark;
   }
 }

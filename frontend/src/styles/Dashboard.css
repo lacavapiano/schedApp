@@ -1,16 +1,16 @@
 .dashboard {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 20px;
 }
 
 .dashboard-section {
-  background: var(--surface);
-  color: var(--text-primary);
+  overflow: hidden;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  overflow: hidden;
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 .dashboard-section-header {
@@ -20,9 +20,9 @@
 
 .dashboard-section-header h2 {
   margin: 0;
+  color: var(--text-primary);
   font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
 }
 
 .appointment-list {
@@ -31,13 +31,13 @@
 }
 
 .dashboard-appointment {
-  width: 100%;
   display: grid;
-  grid-template-columns: 110px 130px minmax(180px, 1fr) minmax(100px, 150px) minmax(180px, 1fr) auto;
   align-items: center;
+  width: 100%;
+  grid-template-columns: 110px 130px minmax(180px, 1fr) minmax(100px, 150px) minmax(180px, 1fr) auto;
   gap: 20px;
   padding: 14px 20px;
-  border: none;
+  border: 0;
   border-bottom: 1px solid var(--border-color);
   background: var(--surface);
   color: var(--text-primary);
@@ -46,7 +46,7 @@
 }
 
 .dashboard-appointment:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 .dashboard-appointment:hover {
@@ -54,38 +54,47 @@
 }
 
 .dashboard-appointment:focus-visible {
-  outline: 2px solid var(--focus-ring, var(--text-secondary));
+  outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
 }
 
 .dashboard-appointment-date {
-  font-size: 14px;
   color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .dashboard-appointment-time {
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
-  color: var(--text-primary);
 }
 
 .dashboard-appointment-client {
-  font-size: 15px;
-  font-weight: 600;
   min-width: 0;
   overflow: hidden;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-primary);
 }
 
 .dashboard-appointment-service {
-  font-size: 13px;
-  color: var(--text-secondary);
-  text-transform: capitalize;
   min-width: 0;
   overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.dashboard-appointment-address {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -100,28 +109,28 @@
 }
 
 .appointment-status-completed {
-  color: #176b36;
-  background: #e5f5e9;
+  background: var(--status-completed-bg);
+  color: var(--status-completed-text);
 }
 
 .appointment-status-confirmed {
-  color: #1d5fa7;
-  background: #e7f1fb;
+  background: var(--status-confirmed-bg);
+  color: var(--status-confirmed-text);
 }
 
 .appointment-status-scheduled {
-  color: #555b63;
-  background: #e9ecef;
+  background: var(--status-scheduled-bg);
+  color: var(--status-scheduled-text);
 }
 
 .appointment-status-cancelled {
-  color: #a33;
-  background: #fbe8e8;
+  background: var(--status-cancelled-bg);
+  color: var(--status-cancelled-text);
 }
 
 .appointment-status-no-show {
-  color: #875000;
-  background: #fff1d6;
+  background: var(--status-no-show-bg);
+  color: var(--status-no-show-text);
 }
 
 .appointment-list-empty {
@@ -132,80 +141,13 @@
 
 .dashboard-loading {
   padding: 40px;
+  color: var(--text-secondary);
   text-align: center;
-  color: var(--text-secondary);
-}
-
-.dashboard-appointment-status {
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.dashboard-appointment-address {
-  font-size: 12px;
-  color: var(--text-secondary);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Keep status badges readable against dark surfaces. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .appointment-status-completed {
-    color: #a7f3c0;
-    background: #173d2a;
-  }
-
-  :root:not([data-theme="light"]) .appointment-status-confirmed {
-    color: #b9d9ff;
-    background: #1b3552;
-  }
-
-  :root:not([data-theme="light"]) .appointment-status-scheduled {
-    color: #e0e3e8;
-    background: #3a3f49;
-  }
-
-  :root:not([data-theme="light"]) .appointment-status-cancelled {
-    color: #ffc1c1;
-    background: #512b30;
-  }
-
-  :root:not([data-theme="light"]) .appointment-status-no-show {
-    color: #ffdda0;
-    background: #4a3820;
-  }
-}
-
-:root[data-theme="dark"] .appointment-status-completed {
-  color: #a7f3c0;
-  background: #173d2a;
-}
-
-:root[data-theme="dark"] .appointment-status-confirmed {
-  color: #b9d9ff;
-  background: #1b3552;
-}
-
-:root[data-theme="dark"] .appointment-status-scheduled {
-  color: #e0e3e8;
-  background: #3a3f49;
-}
-
-:root[data-theme="dark"] .appointment-status-cancelled {
-  color: #ffc1c1;
-  background: #512b30;
-}
-
-:root[data-theme="dark"] .appointment-status-no-show {
-  color: #ffdda0;
-  background: #4a3820;
 }
 
 @media (max-width: 900px) {
   .dashboard-appointment {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px 16px;
   }
 
@@ -223,48 +165,50 @@
   }
 }
 
-@media (max-width: 650px) {
-  .dashboard-appointment {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-
-  .dashboard-appointment-date,
-  .dashboard-appointment-time,
-  .dashboard-appointment-client,
-  .dashboard-appointment-service,
-  .appointment-status {
-    grid-column: auto;
-  }
-
-  .appointment-status {
-    justify-self: start;
-    margin-top: 4px;
-  }
-}
-
-
 @media (max-width: 700px) {
   .dashboard-appointment {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 6px 12px;
     padding: 14px 12px;
   }
-  .dashboard-appointment-date { grid-column: 1; }
-  .dashboard-appointment-time { grid-column: 2; grid-row: 1; text-align: right; }
+
+  .dashboard-appointment-date {
+    grid-column: 1;
+  }
+
+  .dashboard-appointment-time {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+
   .dashboard-appointment-client,
   .dashboard-appointment-service,
-  .dashboard-appointment-address { grid-column: 1 / -1; white-space: normal; overflow-wrap: anywhere; }
-  .dashboard-appointment-status { grid-column: 1 / -1; justify-self: start; white-space: normal; }
-}
+  .dashboard-appointment-address {
+    grid-column: 1 / -1;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    text-overflow: clip;
+  }
 
+  .appointment-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+    white-space: normal;
+  }
+
+  .dashboard-section-header {
+    padding: 14px 12px;
+  }
+}
 
 .dashboard-cancelled-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 16px;
 }
 
 .dashboard-cancelled-toggle {
@@ -282,54 +226,24 @@
   cursor: pointer;
 }
 
-@media (max-width: 480px) {
-  .dashboard-cancelled-header {
-    align-items: flex-start;
-  }
+.dashboard-completed-list {
+  position: relative;
 }
 
-
-/* Completed history starts compact, with a subtle fade hinting at more rows. */
-.dashboard-completed-list { position: relative; }
 .dashboard-completed-list.is-collapsed::after {
-  content: "";
   position: absolute;
   z-index: 1;
-  left: 0;
   right: 0;
   bottom: 0;
-  height: 64px;
+  left: 0;
+  height: 82px;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0%), var(--surface) 94%);
+  content: "";
   pointer-events: none;
-  background: linear-gradient(to bottom, transparent, var(--surface));
-}
-.dashboard-show-more-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 12px 16px 16px;
-  border-top: 1px solid var(--border-color);
-}
-.dashboard-show-more {
-  appearance: none;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 9px 16px;
-  background: var(--surface);
-  color: var(--text-primary);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.dashboard-show-more:hover { background: var(--surface-hover); }
-.dashboard-show-more:focus-visible {
-  outline: 2px solid var(--focus-ring, var(--text-secondary));
-  outline-offset: 2px;
 }
 
-
-/* Refined completed-history presentation */
 .dashboard-section:has(.dashboard-completed-list) {
-  box-shadow: 0 2px 8px rgb(0 0 0 / 4%);
+  box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .dashboard-completed-list .dashboard-appointment {
@@ -340,37 +254,37 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.dashboard-completed-list.is-collapsed::after {
-  height: 82px;
-  background: linear-gradient(
-    to bottom,
-    rgb(0 0 0 / 0%),
-    var(--surface) 94%
-  );
-}
-
 .dashboard-show-more-wrap {
   position: relative;
+  display: flex;
+  justify-content: center;
   padding: 14px 16px 16px;
   border-top: 0;
   background: var(--surface);
 }
 
 .dashboard-show-more {
-  min-width: 180px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 180px;
   gap: 8px;
-  border-color: var(--border-color);
-  border-radius: 999px;
   padding: 10px 20px;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
   transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
 }
 
 .dashboard-show-more:hover {
   border-color: var(--text-secondary);
+  background: var(--surface-hover);
   transform: translateY(-1px);
 }
 
@@ -378,42 +292,15 @@
   transform: translateY(0);
 }
 
-:root[data-theme="dark"] .dashboard-section:has(.dashboard-completed-list) {
-  box-shadow: 0 2px 10px rgb(0 0 0 / 14%);
+.dashboard-show-more:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
-:root[data-theme="dark"] .dashboard-completed-list.is-collapsed::after {
-  background: linear-gradient(
-    to bottom,
-    rgb(0 0 0 / 0%),
-    var(--surface) 94%
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dashboard-completed-list .dashboard-appointment,
-  .dashboard-show-more {
-    transition: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard-show-more-wrap {
-    padding: 12px;
-  }
-
-  .dashboard-show-more {
-    width: 100%;
-    min-width: 0;
-  }
-}
-
-
-/* Dashboard action toolbar mirrors the Calendar's new-appointment control. */
 .dashboard-toolbar {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-end;
   margin-bottom: 0;
 }
 
@@ -421,11 +308,11 @@
   padding: 10px 16px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  font-size: 15px;
-  font-family: inherit;
-  cursor: pointer;
-  background: var(--surface);
+  background: var(--action-surface-bg);
   color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
 }
 
 .dashboard-new-appointment-button:hover {
@@ -433,171 +320,341 @@
 }
 
 .dashboard-new-appointment-button:focus-visible {
-  outline: 2px solid var(--focus-ring, var(--text-secondary));
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
-:root[data-theme="dark"] .dashboard-new-appointment-button {
-  background: #343a46;
-  color: #f3f4f6;
-  border-color: #545c69;
-}
-
-@media (max-width: 480px) {
-  .dashboard-new-appointment-button {
-    width: 100%;
-  }
-}
-
-
-/* Dashboard appointments / income view switcher */
 .dashboard-tabs {
-  display: flex; gap: 6px; border-bottom: 1px solid var(--border-color); padding: 0 2px;
+  display: flex;
+  gap: 6px;
+  padding: 0 2px;
+  border-bottom: 1px solid var(--border-color);
 }
+
 .dashboard-tabs button {
-  appearance: none; border: 1px solid transparent; border-bottom: 2px solid transparent;
-  border-radius: 6px 6px 0 0; background: transparent; color: var(--text-secondary);
-  font: inherit; font-size: 14px; font-weight: 600; padding: 11px 16px; cursor: pointer;
+  padding: 11px 16px;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
-.dashboard-tabs button:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+.dashboard-tabs button:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
 .dashboard-tabs button.is-active {
-  color: var(--text-primary); border-color: var(--border-color);
-  border-bottom-color: var(--text-primary); background: var(--surface);
+  border-color: var(--border-color);
+  border-bottom-color: var(--text-primary);
+  background: var(--surface);
+  color: var(--text-primary);
 }
-.income-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.income-header p { margin: 6px 0 0; color: var(--text-secondary); font-size: 13px; }
-.income-filters { display: flex; gap: 12px; flex-wrap: wrap; }
-.income-filters label { display: flex; flex-direction: column; gap: 5px; color: var(--text-secondary); font-size: 12px; font-weight: 600; }
+
+.income-report,
+.income-report .income-summary,
+.income-report .income-breakdown,
+.income-report .income-line-chart {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.income-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.income-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 20px;
+}
+
+.income-header p {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.income-report > .income-header {
+  padding: 18px 20px 0;
+}
+
+.income-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.income-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .income-filters select {
-  min-width: 140px; max-width: 100%; padding: 8px 10px; border: 1px solid var(--border-color);
-  border-radius: 6px; background: var(--surface); color: var(--text-primary); font: inherit; font-size: 13px;
-}
-.income-summary { padding: 18px; display: grid; grid-template-columns: minmax(200px, .75fr) minmax(0, 2fr); gap: 18px; }
-.income-total-card { align-self: start; display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--surface-hover); }
-.income-total-card span { color: var(--text-secondary); font-size: 13px; font-weight: 600; }
-.income-total-card strong { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; overflow-wrap: anywhere; }
-.income-total-card small { color: var(--text-secondary); font-size: 12px; }
-.income-breakdown { min-width: 0; }
-.income-breakdown h3 { margin: 0 0 12px; font-size: 15px; color: var(--text-primary); }
-.income-breakdown-list { display: flex; flex-direction: column; }
-.income-breakdown-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
-.income-breakdown-row:last-child { border-bottom: 0; }
-.income-breakdown-label { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.income-breakdown-label span { color: var(--text-primary); font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
-.income-breakdown-label small { color: var(--text-secondary); font-size: 11px; }
-.income-breakdown-row > strong { color: var(--text-primary); font-size: 14px; font-variant-numeric: tabular-nums; }
-.income-bar-track { grid-column: 1 / -1; height: 5px; background: var(--surface-hover); border-radius: 99px; overflow: hidden; }
-.income-bar-track span { display: block; height: 100%; background: var(--text-secondary); border-radius: inherit; }
-@media (max-width: 650px) {
-  .income-header { flex-direction: column; }
-  .income-filters { width: 100%; }
-  .income-filters label { flex: 1; min-width: 0; }
-  .income-filters select { min-width: 0; width: 100%; }
-  .income-summary { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
-  .income-total-card { padding: 15px; }
-  .dashboard-tabs button { flex: 1; }
+  min-width: 140px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
 }
 
+.income-summary {
+  display: grid;
+  grid-template-columns: minmax(200px, 0.75fr) minmax(0, 2fr);
+  gap: 18px;
+  padding: 18px;
+}
 
-/* Income analytics: compact, responsive pie chart and legible mobile controls. */
-.income-report { min-width: 0; }
-.income-report > .income-header { padding: 18px 20px 0; }
-.income-header h2 { margin: 0; color: var(--text-primary); font-size: 20px; }
+.income-total-card {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-hover);
+}
+
+.income-total-card span {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.income-total-card strong {
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.income-total-card small {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.income-breakdown {
+  min-width: 0;
+}
+
+.income-breakdown h3 {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.income-breakdown-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.income-breakdown-row {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.income-breakdown-row:last-child {
+  border-bottom: 0;
+}
+
+.income-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.income-breakdown-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.income-breakdown-label span {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.income-breakdown-label small {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.income-breakdown-row > strong {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.income-bar-track {
+  grid-column: 1 / -1;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-hover);
+}
+
+.income-bar-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--text-secondary);
+}
+
 .income-visualization {
   display: grid;
-  grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr);
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.3fr);
   align-items: center;
   gap: 20px;
 }
-.income-pie-wrap { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 8px; }
+
+.income-pie-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 8px;
+}
+
 .income-pie {
+  display: grid;
+  place-items: center;
   width: min(100%, 220px);
   aspect-ratio: 1;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 7%);
 }
+
 .income-pie-hole {
-  width: 57%;
-  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 57%;
+  aspect-ratio: 1;
   gap: 3px;
+  padding: 6px;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
   background: var(--surface);
-  border: 1px solid var(--border-color);
   text-align: center;
-  padding: 6px;
-}
-.income-pie-hole strong { max-width: 100%; color: var(--text-primary); font-size: clamp(11px, 1.5vw, 15px); overflow-wrap: anywhere; }
-.income-pie-hole span { color: var(--text-secondary); font-size: 11px; }
-.income-breakdown-row { grid-template-columns: 10px minmax(0, 1fr) auto; gap: 8px 10px; }
-.income-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-.income-breakdown-row .income-breakdown-label small { line-height: 1.4; }
-.income-breakdown-row > strong { white-space: nowrap; }
-@media (max-width: 650px) {
-  .income-report > .income-header { padding: 15px 12px 0; gap: 14px; }
-  .income-header p { line-height: 1.45; }
-  .income-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .income-filters label { font-size: 12px; }
-  .income-filters select { min-height: 42px; padding: 9px 8px; font-size: 14px; }
-  .income-summary { padding: 12px; gap: 18px; }
-  .income-total-card { padding: 14px; gap: 6px; }
-  .income-total-card strong { font-size: 29px; }
-  .income-breakdown h3 { margin-bottom: 8px; line-height: 1.35; }
-  .income-visualization { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .income-pie-wrap { padding: 6px 0 12px; }
-  .income-pie { width: min(62vw, 210px); }
-  .income-pie-hole strong { font-size: 13px; }
-  .income-breakdown-row { padding: 10px 0; gap: 8px; }
-  .income-breakdown-label span { font-size: 13px; }
-  .income-breakdown-row > strong { font-size: 13px; }
-}
-@media (max-width: 360px) {
-  .income-filters { grid-template-columns: minmax(0, 1fr); }
-  .income-pie { width: min(70vw, 190px); }
 }
 
-
-/* Time-based income trends */
-.income-line-chart { min-width: 0; padding: 12px 0 18px; }
-.income-line-chart-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 8px; }
-.income-line-chart-heading strong { color: var(--text-primary); font-size: 14px; }
-.income-line-chart-heading span { color: var(--text-secondary); font-size: 12px; }
-.income-line-chart-scroll { width: 100%; min-width: 0; }
-.income-line-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
-.income-line-grid { stroke: var(--border-color); stroke-width: 1; stroke-dasharray: 3 4; }
-.income-line-axis-label { fill: var(--text-secondary); font-size: 11px; }
-.income-line-path { fill: none; stroke: #2463a6; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.income-line-point { fill: var(--surface); stroke: #2463a6; stroke-width: 2.5; }
-@media (max-width: 650px) {
-  .income-line-chart { padding-top: 8px; }
-  .income-line-chart-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
-  .income-line-chart svg { min-width: 560px; }
-  .income-line-chart-scroll { overflow-x: auto; padding: 4px 2px 10px; }
+.income-pie-hole strong {
+  max-width: 100%;
+  color: var(--text-primary);
+  font-size: clamp(11px, 1.5vw, 15px);
+  overflow-wrap: anywhere;
 }
 
+.income-pie-hole span {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
 
-/* Mobile-friendly time series: wider plot, scrollable month labels, and a clear average reference. */
+.income-line-chart {
+  min-width: 0;
+  padding: 12px 0 18px;
+}
+
+.income-line-chart-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 8px;
+}
+
+.income-line-chart-heading strong {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.income-line-chart-heading span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
 .income-line-chart-scroll {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
+  contain: inline-size;
 }
+
 .income-line-chart svg {
-  min-width: 0;
+  display: block;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  height: auto;
+  overflow: visible;
 }
+
+.income-line-grid {
+  stroke: var(--border-color);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.income-line-axis-label {
+  fill: var(--text-secondary);
+  font-size: 11px;
+}
+
+.income-line-path {
+  fill: none;
+  stroke: #2463a6;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.income-line-point {
+  fill: var(--surface);
+  stroke: #2463a6;
+  stroke-width: 2.5;
+}
+
 .income-line-average {
   stroke: #d97706;
   stroke-width: 2;
   stroke-dasharray: 5 5;
   opacity: 0.95;
 }
+
 .income-line-average-label {
   fill: #d97706;
   font-size: 11px;
@@ -607,57 +664,156 @@
   stroke-width: 4px;
   stroke-linejoin: round;
 }
+
 @media (max-width: 650px) {
-  .income-line-chart { padding-bottom: 12px; }
+  .dashboard-cancelled-header {
+    align-items: flex-start;
+  }
+
+  .dashboard-show-more-wrap {
+    padding: 12px;
+  }
+
+  .dashboard-show-more {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dashboard-new-appointment-button {
+    width: 100%;
+  }
+
+  .dashboard-tabs button {
+    flex: 1;
+  }
+
+  .income-report > .income-header {
+    flex-direction: column;
+    gap: 14px;
+    padding: 15px 12px 0;
+  }
+
+  .income-header p {
+    line-height: 1.45;
+  }
+
+  .income-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 10px;
+  }
+
+  .income-filters label {
+    min-width: 0;
+    font-size: 12px;
+  }
+
+  .income-filters select {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 9px 8px;
+    font-size: 14px;
+  }
+
+  .income-summary {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+
+  .income-total-card {
+    gap: 6px;
+    padding: 14px;
+  }
+
+  .income-total-card strong {
+    font-size: 29px;
+  }
+
+  .income-breakdown h3 {
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+
+  .income-visualization {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .income-pie-wrap {
+    padding: 6px 0 12px;
+  }
+
+  .income-pie {
+    width: min(62vw, 210px);
+  }
+
+  .income-pie-hole strong {
+    font-size: 13px;
+  }
+
+  .income-breakdown-row {
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .income-breakdown-label span,
+  .income-breakdown-row > strong {
+    font-size: 13px;
+  }
+
+  .income-line-chart {
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+
   .income-line-chart-heading {
-    flex-direction: row;
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .income-line-chart-heading span { font-size: 11px; }
-  .income-line-chart-scroll { margin-right: -4px; }
-  .income-line-chart svg { max-width: none; }
-  .income-line-axis-label { font-size: 12px; }
-}
 
-.income-line-chart svg {
-  width: auto;
-  max-width: none;
-}
-
-
-/* Keep the trend chart's horizontal scrolling inside the chart, never the page. */
-.income-report,
-.income-report .income-summary,
-.income-report .income-breakdown,
-.income-report .income-line-chart {
-  min-width: 0;
-  max-width: 100%;
-}
-.income-line-chart-scroll {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  contain: inline-size;
-}
-.income-line-chart-scroll svg {
-  display: block;
-  flex: 0 0 auto;
-  width: auto;
-  max-width: none;
-}
-@media (max-width: 650px) {
-  .income-report .income-summary {
-    width: 100%;
-    box-sizing: border-box;
+  .income-line-chart-heading span {
+    font-size: 11px;
   }
+
   .income-line-chart-scroll {
     margin-right: 0;
-    padding-right: 8px;
+    padding: 4px 8px 10px 2px;
+  }
+
+  .income-line-chart svg {
+    min-width: 560px;
+  }
+
+  .income-line-axis-label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-new-appointment-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .income-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .income-pie {
+    width: min(70vw, 190px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-completed-list .dashboard-appointment,
+  .dashboard-show-more {
+    transition: none;
   }
 }
