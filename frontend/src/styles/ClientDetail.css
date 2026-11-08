@@ -25,11 +25,14 @@
 
 .client-type-badge {
   display: inline-block;
-  padding: 4px 9px;
+  padding: 3px 8px;
+  border: 1px solid var(--border-color, #dee2e6);
   border-radius: 5px;
-  background: #f0f0f0;
-  color: #555;
-  font-size: 13px;
+  background: var(--surface-muted, #f1f3f5);
+  color: var(--text-secondary, #626b76);
+  font-size: 11px;
+  line-height: 1.35;
+  text-transform: capitalize;
 }
 
 .client-detail-grid {
@@ -304,7 +307,15 @@
 
 
 
-/* Dark-mode contrast for the client record. */:root[data-theme="dark"] .client-detail-page,
+/* Dark-mode contrast for the client record. */
+:root[data-theme="dark"] .client-detail-page .client-type-badge,
+:root:not([data-theme="light"]) .client-detail-page .client-type-badge {
+  border-color: var(--border-color, #454b56);
+  background: var(--surface-muted, #2b2f38);
+  color: var(--text-secondary, #c0c6d0);
+}
+
+:root[data-theme="dark"] .client-detail-page,
 :root[data-theme="dark"] .client-detail-page p,
 :root[data-theme="dark"] .client-detail-page span,
 :root[data-theme="dark"] .client-detail-page strong,

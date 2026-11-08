@@ -28,8 +28,11 @@ function Calendar() {
 
   useEffect(() => {
     const calendarApi = calendarRef.current?.getApi();
-    if (calendarApi) {
-      calendarApi.changeView(isMobile ? "timeGridDay" : "dayGridMonth");
+    const nextView = isMobile ? "timeGridDay" : "dayGridMonth";
+
+    // Avoid reinitializing the view on mount; only switch after a breakpoint change.
+    if (calendarApi && calendarApi.view.type !== nextView) {
+      calendarApi.changeView(nextView);
     }
   }, [isMobile]);
 
@@ -240,7 +243,8 @@ function Calendar() {
             events={events}
             eventClick={handleEventClick}
             eventContent={renderEventContent}
-            height="auto"
+            height={isMobile ? 760 : "auto"}
+            expandRows={true}
             dayMaxEvents={3}
             nowIndicator={true}
             selectable={false}

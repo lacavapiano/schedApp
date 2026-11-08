@@ -354,6 +354,12 @@
     font-size: 13px;
   }
 
+  /* Keep the mobile day view from collapsing to a near-zero-height harness. */
+  .calendar-container .fc .fc-view-harness,
+  .calendar-container .fc .fc-view {
+    min-height: 680px;
+  }
+
   .calendar-container .fc .fc-toolbar {
     display: grid;
     grid-template-columns: 1fr;
