@@ -270,7 +270,7 @@ export function buildInvoiceDocument({
       white-space: nowrap;
     }
     .sheet .items {
-      margin-top: 2px;
+      margin: 2px -32px 0;
     }
     .sheet table {
       width: 100%;
@@ -436,6 +436,7 @@ export function buildInvoiceDocument({
       }
       .sheet .address-name { font-size: 14px; }
       .sheet .service-panel { padding: 11px; }
+      .sheet .items { margin-left: 0; margin-right: 0; }
       .sheet .service-row {
         align-items: flex-start;
         gap: 8px;
