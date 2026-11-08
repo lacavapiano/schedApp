@@ -195,6 +195,8 @@ function AppointmentModal({
   const [error, setError] = useState("");
   const [showClientModal, setShowClientModal] = useState(false);
   const [showPianoModal, setShowPianoModal] = useState(false);
+  const [collapsedPianos, setCollapsedPianos] = useState({});
+  const [showAppointmentActions, setShowAppointmentActions] = useState(false);
 
   async function handleGenerateInvoice() {
     if (!appointment?.id) return;
@@ -1010,6 +1012,26 @@ function AppointmentModal({
               )}
             </div>
 
+            {isEditing && (
+              <details className="appointment-actions-menu">
+                <summary aria-label="Appointment actions">Actions <span aria-hidden="true">▾</span></summary>
+                <div className="appointment-actions-menu-panel">
+                  <button type="button" onClick={() => { setShowAppointmentActions(false); handleGenerateInvoice(); }} disabled={saving || deleting}>
+                    Generate Invoice PDF
+                  </button>
+                  {(appointment.status || "scheduled") === "scheduled" && (
+                    <>
+                      <button type="button" onClick={() => { setShowAppointmentActions(false); handleDelete(); }} disabled={saving || deleting}>
+                        {deleting ? "Cancelling..." : "Cancel Appointment"}
+                      </button>
+                      <button type="button" onClick={() => { setShowAppointmentActions(false); handleSubmit(null, true); }} disabled={saving || deleting}>
+                        {saving && completionMode ? "Completing..." : "Complete Appointment"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </details>
+            )}
             <button
               type="button"
               className="appointment-modal-close"
@@ -1188,23 +1210,38 @@ function AppointmentModal({
                       }
                     >
                       <div className="appointment-piano-header">
-                        <strong>
-                          Piano {index + 1}
-                        </strong>
+                        <button
+                          type="button"
+                          className="appointment-piano-toggle"
+                          aria-expanded={!collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`]}
+                          onClick={() => {
+                            const key = appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`;
+                            setCollapsedPianos((previous) => ({ ...previous, [key]: !previous[key] }));
+                          }}
+                        >
+                          <span className="appointment-piano-toggle-icon" aria-hidden="true">
+                            {collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] ? "▸" : "▾"}
+                          </span>
+                          <strong>Piano {index + 1}</strong>
+                          <span className="appointment-piano-summary">
+                            {(() => {
+                              const selected = clientPianos.find((piano) => piano.id === appointmentPiano.piano_id);
+                              return selected ? [selected.make, selected.model].filter(Boolean).join(" ") || "Selected piano" : "Select a piano";
+                            })()}
+                          </span>
+                        </button>
 
                         <button
                           type="button"
                           className="appointment-remove-button"
-                          onClick={() =>
-                            removePiano(
-                              index
-                            )
-                          }
+                          onClick={() => removePiano(index)}
                         >
                           Remove
                         </button>
                       </div>
 
+                      {!collapsedPianos[appointmentPiano.id || appointmentPiano.piano_id || `new-piano-${index}`] && (
+                      <div className="appointment-piano-content">
                       <div className="appointment-form-field">
                         <label>Piano</label>
 
@@ -1505,6 +1542,8 @@ function AppointmentModal({
                           }
                         />
                       </div>
+                      </div>
+                      )}
                     </div>
                   )
                 )}
@@ -1636,37 +1675,8 @@ function AppointmentModal({
                 />
               </div>
 
-              {/* Actions */}
+              {/* Form actions */}
               <div className="appointment-modal-actions">
-                {isEditing && (
-                  <button
-                    type="button"
-                    className="appointment-cancel-button action-button action-button--secondary"
-                    onClick={handleGenerateInvoice}
-                    disabled={saving || deleting}
-                  >
-                    Generate Invoice PDF
-                  </button>
-                )}
-
-                {isEditing && (appointment.status || "scheduled") === "scheduled" && (
-                  <button
-                    type="button"
-                    className="appointment-delete-button action-button action-button--danger"
-                    onClick={
-                      handleDelete
-                    }
-                    disabled={
-                      deleting ||
-                      saving
-                    }
-                  >
-                    {deleting
-                      ? "Cancelling..."
-                      : "Cancel Appointment"}
-                  </button>
-                )}
-
                 <div className="appointment-modal-actions-right">
                   
                   <button
@@ -1696,16 +1706,6 @@ function AppointmentModal({
                       : "Save Appointment"}
                   </button>
 
-                  {isEditing && (appointment.status || "scheduled") === "scheduled" && (
-                    <button
-                      type="button"
-                      className="appointment-complete-button action-button action-button--primary"
-                      onClick={() => handleSubmit(null, true)}
-                      disabled={saving || deleting}
-                    >
-                      {saving && completionMode ? "Completing..." : "Complete Appointment"}
-                    </button>
-                  )}
                 </div>
               </div>
             </form>
