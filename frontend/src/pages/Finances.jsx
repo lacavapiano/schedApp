@@ -135,7 +135,17 @@ function Finances() {
       }
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("You must be logged in.");
-      const isInventory = form.expense_type === "inventory";\n      const payload = { ...form, amount: Number(form.amount), business_use_percent: Number(form.business_use_percent), quantity_purchased: isInventory && form.quantity_purchased !== "" ? Number(form.quantity_purchased) : null, quantity_remaining: isInventory && form.quantity_remaining !== "" ? Number(form.quantity_remaining) : null, inventory_sale_amount: isInventory ? Number(form.inventory_sale_amount || 0) : 0, inventory_sale_date: isInventory && form.inventory_sale_date ? form.inventory_sale_date : null, inventory_client_id: isInventory && form.inventory_client_id ? form.inventory_client_id : null, owner_id: user.id, updated_at: new Date().toISOString() };
+      const isInventory = form.expense_type === "inventory";
+      if (isInventory) {
+        const purchased = Number(form.quantity_purchased);
+        const remaining = Number(form.quantity_remaining);
+        if (!(purchased > 0) || !Number.isFinite(remaining) || remaining < 0 || remaining > purchased) {
+          throw new Error("Enter a valid quantity purchased and a remaining quantity between zero and the amount purchased.");
+        }
+        if (Number(form.inventory_sale_amount || 0) > 0 && !form.inventory_sale_date) {
+          throw new Error("Add the sale date when recording product sale revenue.");
+        }
+      }\n      const payload = { ...form, amount: Number(form.amount), business_use_percent: Number(form.business_use_percent), quantity_purchased: isInventory && form.quantity_purchased !== "" ? Number(form.quantity_purchased) : null, quantity_remaining: isInventory && form.quantity_remaining !== "" ? Number(form.quantity_remaining) : null, inventory_sale_amount: isInventory ? Number(form.inventory_sale_amount || 0) : 0, inventory_sale_date: isInventory && form.inventory_sale_date ? form.inventory_sale_date : null, inventory_client_id: isInventory && form.inventory_client_id ? form.inventory_client_id : null, owner_id: user.id, updated_at: new Date().toISOString() };
       delete payload.id; delete payload.created_at; delete payload.receipt_path; delete payload.receipt_name; delete payload.receipt_type;
       let result;
       if (editing) result = await supabase.from("expenses").update(payload).eq("id", editing.id).select().single();
