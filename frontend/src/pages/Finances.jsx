@@ -23,7 +23,8 @@ function downloadCsv(filename, rows) {
 function Finances() {
   const [tab, setTab] = useState("income");
   const [appointments, setAppointments] = useState([]);
-  const [expenses, setExpenses] = useState([]);\n  const [clients, setClients] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [period, setPeriod] = useState("year");
@@ -40,7 +41,10 @@ function Finances() {
     setLoading(true); setError("");
     try {
       const appointmentRows = await getAppointments();
-      setAppointments(appointmentRows || []);\n      const clientResult = await supabase.from("clients").select("id,name").order("name");\n      if (clientResult.error) throw clientResult.error;\n      setClients(clientResult.data || []);
+      setAppointments(appointmentRows || []);
+      const clientResult = await supabase.from("clients").select("id,name").order("name");
+      if (clientResult.error) throw clientResult.error;
+      setClients(clientResult.data || []);
     } catch (err) {
       console.error("Failed to load appointment income:", err);
       setError(err.message || "Unable to load appointment income.");
@@ -109,7 +113,11 @@ function Finances() {
     a.status?.toLowerCase() !== "cancelled" && amountOf(a.payment) > 0 &&
     (!range.start || String(a.start_time).slice(0, 10) >= range.start) && String(a.start_time).slice(0, 10) <= range.end
   ).reduce((sum, a) => sum + amountOf(a.payment), 0), [appointments, range]);
-  const expenseTotal = visibleExpenses.reduce((sum, e) => sum + amountOf(e.amount), 0);\n  const inventoryRows = visibleExpenses.filter((e) => e.expense_type === "inventory");\n  const inventoryPurchaseTotal = inventoryRows.reduce((sum, e) => sum + amountOf(e.amount), 0);\n  const inventoryRemainingValue = inventoryRows.reduce((sum, e) => { const qty = Number(e.quantity_purchased || 0); const remaining = Number(e.quantity_remaining ?? qty); return sum + (qty > 0 ? amountOf(e.amount) * Math.min(qty, remaining) / qty : 0); }, 0);\n  const estimatedCogs = inventoryPurchaseTotal - inventoryRemainingValue;
+  const expenseTotal = visibleExpenses.reduce((sum, e) => sum + amountOf(e.amount), 0);
+  const inventoryRows = visibleExpenses.filter((e) => e.expense_type === "inventory");
+  const inventoryPurchaseTotal = inventoryRows.reduce((sum, e) => sum + amountOf(e.amount), 0);
+  const inventoryRemainingValue = inventoryRows.reduce((sum, e) => { const qty = Number(e.quantity_purchased || 0); const remaining = Number(e.quantity_remaining ?? qty); return sum + (qty > 0 ? amountOf(e.amount) * Math.min(qty, remaining) / qty : 0); }, 0);
+  const estimatedCogs = inventoryPurchaseTotal - inventoryRemainingValue;
   const deductibleTotal = visibleExpenses.reduce((sum, e) => sum + (e.deductible ? amountOf(e.amount) * Math.min(100, Math.max(0, Number(e.business_use_percent ?? 100))) / 100 : 0), 0);
   const cashflowExpenseTotal = expenses.filter((e) => (!range.start || e.expense_date >= range.start) && e.expense_date <= range.end).reduce((sum, e) => sum + amountOf(e.amount), 0);
   const incomeChartRows = [...incomeRows].sort((a, b) => String(a.sortKey).localeCompare(String(b.sortKey)));
@@ -119,7 +127,8 @@ function Finances() {
   const cashflowRows = useMemo(() => [
     ...appointments.filter((a) => a.status?.toLowerCase() !== "cancelled" && amountOf(a.payment) > 0 && (!range.start || String(a.start_time).slice(0, 10) >= range.start) && String(a.start_time).slice(0, 10) <= range.end)
       .map((a) => ({ date: String(a.start_time).slice(0, 10), description: a.client?.name ? `Appointment — ${a.client.name}` : "Appointment income", category: "Income", income: amountOf(a.payment), expense: 0, kind: "income" })),
-    ...expenses.filter((e) => (!range.start || e.expense_date >= range.start) && e.expense_date <= range.end).map((e) => ({ date: e.expense_date, description: [e.vendor, e.description].filter(Boolean).join(" — ") || e.category, category: e.category, income: 0, expense: amountOf(e.amount), kind: "expense" })),\n    ...expenses.filter((e) => e.expense_type === "inventory" && amountOf(e.inventory_sale_amount) > 0 && e.inventory_sale_date && (!range.start || e.inventory_sale_date >= range.start) && e.inventory_sale_date <= range.end).map((e) => ({ date: e.inventory_sale_date, description: `Product sale — ${e.description || e.vendor || "Resale item"}`, category: "Product sales", income: amountOf(e.inventory_sale_amount), expense: 0, kind: "income" })),
+    ...expenses.filter((e) => (!range.start || e.expense_date >= range.start) && e.expense_date <= range.end).map((e) => ({ date: e.expense_date, description: [e.vendor, e.description].filter(Boolean).join(" — ") || e.category, category: e.category, income: 0, expense: amountOf(e.amount), kind: "expense" })),
+    ...expenses.filter((e) => e.expense_type === "inventory" && amountOf(e.inventory_sale_amount) > 0 && e.inventory_sale_date && (!range.start || e.inventory_sale_date >= range.start) && e.inventory_sale_date <= range.end).map((e) => ({ date: e.inventory_sale_date, description: `Product sale — ${e.description || e.vendor || "Resale item"}`, category: "Product sales", income: amountOf(e.inventory_sale_amount), expense: 0, kind: "income" })),
   ].sort((a, b) => b.date.localeCompare(a.date)), [appointments, expenses, range]);
 
   function startNew() { setEditing(null); setForm({ ...emptyForm, expense_date: new Date().toISOString().slice(0, 10) }); setReceiptFile(null); setShowForm(true); }
@@ -145,7 +154,8 @@ function Finances() {
         if (Number(form.inventory_sale_amount || 0) > 0 && !form.inventory_sale_date) {
           throw new Error("Add the sale date when recording product sale revenue.");
         }
-      }\n      const payload = { ...form, amount: Number(form.amount), business_use_percent: Number(form.business_use_percent), quantity_purchased: isInventory && form.quantity_purchased !== "" ? Number(form.quantity_purchased) : null, quantity_remaining: isInventory && form.quantity_remaining !== "" ? Number(form.quantity_remaining) : null, inventory_sale_amount: isInventory ? Number(form.inventory_sale_amount || 0) : 0, inventory_sale_date: isInventory && form.inventory_sale_date ? form.inventory_sale_date : null, inventory_client_id: isInventory && form.inventory_client_id ? form.inventory_client_id : null, owner_id: user.id, updated_at: new Date().toISOString() };
+      }
+      const payload = { ...form, amount: Number(form.amount), business_use_percent: Number(form.business_use_percent), quantity_purchased: isInventory && form.quantity_purchased !== "" ? Number(form.quantity_purchased) : null, quantity_remaining: isInventory && form.quantity_remaining !== "" ? Number(form.quantity_remaining) : null, inventory_sale_amount: isInventory ? Number(form.inventory_sale_amount || 0) : 0, inventory_sale_date: isInventory && form.inventory_sale_date ? form.inventory_sale_date : null, inventory_client_id: isInventory && form.inventory_client_id ? form.inventory_client_id : null, owner_id: user.id, updated_at: new Date().toISOString() };
       delete payload.id; delete payload.created_at; delete payload.receipt_path; delete payload.receipt_name; delete payload.receipt_type;
       let result;
       if (editing) result = await supabase.from("expenses").update(payload).eq("id", editing.id).select().single();
@@ -223,8 +233,10 @@ function Finances() {
         <label>Date<input type="date" required value={form.expense_date} onChange={(e) => setForm({ ...form, expense_date: e.target.value })}/></label>
         <label>Amount ($)<input type="number" min="0.01" step="0.01" required value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })}/></label>
         <label>Vendor<input value={form.vendor || ""} onChange={(e) => setForm({ ...form, vendor: e.target.value })} placeholder="Store or supplier"/></label>
-        <label>Record type<select value={form.expense_type || "operating"} onChange={(e) => setForm({ ...form, expense_type: e.target.value, category: e.target.value === "inventory" ? "Cost of Goods Sold - Inventory" : e.target.value === "service_material" ? "Service Materials and Supplies" : (form.category === "Cost of Goods Sold - Inventory" || form.category === "Service Materials and Supplies" ? "Other" : form.category) })}><option value="operating">Operating expense</option><option value="service_material">Materials used in services</option><option value="inventory">Product purchased for resale</option></select></label>\n        <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{categories.map((c) => <option key={c}>{c}</option>)}</select></label>
-        <label className="finances-form-wide">Description<input value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What was purchased?"/></label>\n        {form.expense_type === "inventory" && <><label>Quantity purchased<input type="number" min="0.001" step="0.001" required value={form.quantity_purchased || ""} onChange={(e) => setForm({ ...form, quantity_purchased: e.target.value, quantity_remaining: form.quantity_remaining === "" ? e.target.value : form.quantity_remaining })}/></label><label>Quantity remaining<input type="number" min="0" step="0.001" value={form.quantity_remaining ?? ""} onChange={(e) => setForm({ ...form, quantity_remaining: e.target.value })}/></label><label>Product sale revenue ($)<input type="number" min="0" step="0.01" value={form.inventory_sale_amount || "0"} onChange={(e) => setForm({ ...form, inventory_sale_amount: e.target.value })}/></label><label>Sale date<input type="date" value={form.inventory_sale_date || ""} onChange={(e) => setForm({ ...form, inventory_sale_date: e.target.value })}/></label><label className="finances-form-wide">Client<select value={form.inventory_client_id || ""} onChange={(e) => setForm({ ...form, inventory_client_id: e.target.value })}><option value="">No client linked</option>{clients.map((client) => <option key={client.id} value={client.id}>{client.name}</option>)}</select></label><p className="finances-form-wide finances-inventory-note">Update remaining quantity as products are sold. Estimated cost of items sold is calculated from purchase cost and remaining quantity; confirm your accounting method with your tax preparer.</p></>}
+        <label>Record type<select value={form.expense_type || "operating"} onChange={(e) => setForm({ ...form, expense_type: e.target.value, category: e.target.value === "inventory" ? "Cost of Goods Sold - Inventory" : e.target.value === "service_material" ? "Service Materials and Supplies" : (form.category === "Cost of Goods Sold - Inventory" || form.category === "Service Materials and Supplies" ? "Other" : form.category) })}><option value="operating">Operating expense</option><option value="service_material">Materials used in services</option><option value="inventory">Product purchased for resale</option></select></label>
+        <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{categories.map((c) => <option key={c}>{c}</option>)}</select></label>
+        <label className="finances-form-wide">Description<input value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What was purchased?"/></label>
+        {form.expense_type === "inventory" && <><label>Quantity purchased<input type="number" min="0.001" step="0.001" required value={form.quantity_purchased || ""} onChange={(e) => setForm({ ...form, quantity_purchased: e.target.value, quantity_remaining: form.quantity_remaining === "" ? e.target.value : form.quantity_remaining })}/></label><label>Quantity remaining<input type="number" min="0" step="0.001" value={form.quantity_remaining ?? ""} onChange={(e) => setForm({ ...form, quantity_remaining: e.target.value })}/></label><label>Product sale revenue ($)<input type="number" min="0" step="0.01" value={form.inventory_sale_amount || "0"} onChange={(e) => setForm({ ...form, inventory_sale_amount: e.target.value })}/></label><label>Sale date<input type="date" value={form.inventory_sale_date || ""} onChange={(e) => setForm({ ...form, inventory_sale_date: e.target.value })}/></label><label className="finances-form-wide">Client<select value={form.inventory_client_id || ""} onChange={(e) => setForm({ ...form, inventory_client_id: e.target.value })}><option value="">No client linked</option>{clients.map((client) => <option key={client.id} value={client.id}>{client.name}</option>)}</select></label><p className="finances-form-wide finances-inventory-note">Update remaining quantity as products are sold. Estimated cost of items sold is calculated from purchase cost and remaining quantity; confirm your accounting method with your tax preparer.</p></>}
         <label>Business use (%)<input type="number" min="0" max="100" step="1" value={form.business_use_percent} onChange={(e) => setForm({ ...form, business_use_percent: e.target.value })}/></label>
         <label>Payment method<input value={form.payment_method || ""} onChange={(e) => setForm({ ...form, payment_method: e.target.value })} placeholder="Card, cash, etc."/></label>
         <label className="finances-form-wide">Notes<input value={form.notes || ""} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Tax notes or business purpose"/></label>
