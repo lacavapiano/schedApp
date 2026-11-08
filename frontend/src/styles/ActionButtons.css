@@ -1,15 +1,14 @@
-/* Shared action-button system. */
+/* Shared action buttons: use these classes for consistent controls across pages and forms. */
 .action-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   min-height: 36px;
+  box-sizing: border-box;
   padding: 8px 14px;
   border: 1px solid transparent;
   border-radius: 6px;
-  box-sizing: border-box;
-  color: inherit;
   font: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -27,36 +26,36 @@
 }
 
 .action-button:focus-visible {
-  outline: 2px solid var(--focus-ring, #315f91);
+  outline: 2px solid #93c5fd;
   outline-offset: 2px;
 }
 
 .action-button-group {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .action-button--primary {
-  border-color: #2563eb;
   background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
 }
 
 .action-button--primary:hover:not(:disabled) {
-  border-color: #1d4ed8;
   background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .action-button--primary:active:not(:disabled) {
-  border-color: #1e40af;
   background: #1e40af;
+  border-color: #1e40af;
 }
 
 .action-button--secondary {
-  border-color: var(--border-color, #d1d5db);
   background: var(--surface, #fff);
+  border-color: var(--border-color, #d1d5db);
   color: var(--text-primary, #212529);
 }
 
@@ -65,8 +64,8 @@
 }
 
 .action-button--danger {
-  border-color: #b91c1c;
   background: transparent;
+  border-color: #b91c1c;
   color: #b91c1c;
 }
 
@@ -93,36 +92,36 @@
 }
 
 @media (max-width: 700px) {
+  .action-button-group {
+    gap: 8px;
+  }
+
   .action-button {
     min-height: 40px;
     padding: 9px 12px;
     white-space: normal;
   }
-
-  .action-button-group {
-    gap: 8px;
-  }
 }
 
 :root[data-theme="dark"] .action-button--primary {
-  border-color: #f3f4f6;
   background: #f3f4f6;
+  border-color: #f3f4f6;
   color: #17191e;
 }
 
 :root[data-theme="dark"] .action-button--primary:hover:not(:disabled) {
-  border-color: #dbe0e7;
   background: #dbe0e7;
+  border-color: #dbe0e7;
 }
 
 :root[data-theme="dark"] .action-button--secondary {
-  border-color: var(--border-color, #545c69);
   background: var(--surface-muted, #292d36);
+  border-color: var(--border-color, #545c69);
   color: var(--text-primary, #f3f4f6);
 }
 
 :root[data-theme="dark"] .action-button--secondary:hover:not(:disabled) {
-  background: var(--surface-hover, #343a46);
+  background: var(--hover-bg, #343a46);
 }
 
 :root[data-theme="dark"] .action-button--danger {
@@ -134,42 +133,11 @@
   background: #3a2024;
 }
 
-:root[data-theme="dark"] .action-button-error {
-  color: #ffb4b4;
+:root[data-theme="dark"] .action-button--quiet,
+:root:not([data-theme="light"]) .action-button--quiet {
+  color: var(--text-primary, #f3f4f6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .action-button--primary {
-    border-color: #f3f4f6;
-    background: #f3f4f6;
-    color: #17191e;
-  }
-
-  :root:not([data-theme="light"]) .action-button--primary:hover:not(:disabled) {
-    border-color: #dbe0e7;
-    background: #dbe0e7;
-  }
-
-  :root:not([data-theme="light"]) .action-button--secondary {
-    border-color: var(--border-color, #545c69);
-    background: var(--surface-muted, #292d36);
-    color: var(--text-primary, #f3f4f6);
-  }
-
-  :root:not([data-theme="light"]) .action-button--secondary:hover:not(:disabled) {
-    background: var(--surface-hover, #343a46);
-  }
-
-  :root:not([data-theme="light"]) .action-button--danger {
-    border-color: #ff8a8a;
-    color: #ffb4b4;
-  }
-
-  :root:not([data-theme="light"]) .action-button--danger:hover:not(:disabled) {
-    background: #3a2024;
-  }
-
-  :root:not([data-theme="light"]) .action-button-error {
-    color: #ffb4b4;
-  }
+:root[data-theme="dark"] .action-button-error {
+  color: #ffb4b4;
 }
