@@ -78,8 +78,4 @@
   }
 }
 
-:root[data-theme="dark"] .record-detail-section {
-  background: var(--surface, #20232a);
-  color: var(--text-primary, #f3f4f6);
-  border-color: var(--border-color, #454b56);
-}
+
